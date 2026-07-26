@@ -1,6 +1,4 @@
-export const dynamic = "force-dynamic";
-
-import type { Metadata, Viewport } from "next";
+import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Providers } from "@/components/providers";
 import { Navbar } from "@/components/navbar";
@@ -10,55 +8,29 @@ import { ReadingProgress } from "@/components/reading-progress";
 import { getSiteConfig, getProfile, getSocials } from "@/lib/content";
 import "./globals.css";
 
-const site = getSiteConfig();
-const profile = getProfile();
-const socials = getSocials();
+export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: {
-    default: `${profile.name} — ${profile.role}`,
-    template: `%s — ${profile.name}`,
-  },
-  description: site.description,
-  keywords: site.keywords,
-  authors: [{ name: profile.name }],
-  creator: profile.name,
-  metadataBase: new URL(site.url),
-  openGraph: {
-    type: "website",
-    locale: site.locale,
-    url: site.url,
-    title: `${profile.name} — ${profile.role}`,
+export async function generateMetadata(): Promise<Metadata> {
+  const site = await getSiteConfig();
+  const profile = await getProfile();
+
+  return {
+    title: { default: `${profile.name} — ${profile.role}`, template: `%s — ${profile.name}` },
     description: site.description,
-    siteName: profile.name,
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: `${profile.name} — ${profile.role}`,
-    description: site.description,
-    creator: "@alidelavar",
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
-  },
-};
+    keywords: site.keywords,
+    authors: [{ name: profile.name }],
+    creator: profile.name,
+    metadataBase: new URL(site.url),
+    openGraph: { type: "website", locale: site.locale, url: site.url, title: `${profile.name} — ${profile.role}`, description: site.description, siteName: profile.name },
+    twitter: { card: "summary_large_image", title: `${profile.name} — ${profile.role}`, description: site.description },
+    robots: { index: true, follow: true },
+  };
+}
 
-export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#fafafa" },
-    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
-  ],
-};
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  const profile = await getProfile();
+  const socials = await getSocials();
 
-export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="fa" dir="rtl" suppressHydrationWarning>
       <head>

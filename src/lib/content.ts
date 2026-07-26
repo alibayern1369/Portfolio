@@ -1,192 +1,194 @@
 import db from "@/db";
+import { initDatabase } from "@/db";
+import { seedDatabase } from "@/db/seed";
 import type {
-  SiteConfig,
-  Profile,
-  Social,
-  SkillsData,
-  SkillCategory,
-  Experience,
-  Testimonial,
-  Project,
-  AboutData,
+  SiteConfig, Profile, Social, SkillsData, SkillCategory,
+  Experience, Testimonial, Project, AboutData,
 } from "@/types";
 
-// Profile
-export function getProfile(): Profile {
-  const row = db.prepare("SELECT * FROM profile WHERE id = 1").get() as Record<string, unknown> | undefined;
-  
-  if (!row) {
-    return {
-      name: "علی دلاور",
-      role: "توسعه‌دهنده",
-      tagline: "",
-      bio: "",
-      shortBio: "",
-      avatar: "/images/profile.jpg",
-      location: "تهران",
-      email: "email@example.com",
-      availability: "آماده همکاری",
-      resumeUrl: "/resume.pdf",
-      heroHeadline: ["سلام", "من علی هستم"],
-      heroDescription: ""
-    };
+// Initialize DB on first call - use a promise to prevent race conditions
+let initPromise: Promise<void> | null = null;
+
+function ensureDb(): Promise<void> {
+  if (!initPromise) {
+    initPromise = (async () => {
+      try {
+        await initDatabase();
+        await seedDatabase();
+      } catch (e) {
+        console.error("ensureDb error:", e);
+        initPromise = null;
+      }
+    })();
   }
+  return initPromise;
+}
+
+function row(obj: Record<string, unknown> | undefined): Record<string, unknown> {
+  return obj ?? {};
+}
+
+// Profile
+export async function getProfile(): Promise<Profile> {
+  await ensureDb();
+  const result = await db.execute("SELECT * FROM profile WHERE id = 1");
+  const r = row(result.rows[0] as Record<string, unknown> | undefined);
 
   return {
-    name: row.name as string,
-    role: row.role as string,
-    tagline: row.tagline as string || "",
-    bio: row.bio as string || "",
-    shortBio: row.short_bio as string || "",
-    avatar: row.avatar as string || "/images/profile.jpg",
-    location: row.location as string || "",
-    email: row.email as string || "",
-    availability: row.availability as string || "",
-    resumeUrl: row.resume_url as string || "",
-    heroHeadline: JSON.parse(row.hero_headline as string || "[]"),
-    heroDescription: row.hero_description as string || ""
+    name: String(r.name ?? "علی دلاور"),
+    role: String(r.role ?? ""),
+    tagline: String(r.tagline ?? ""),
+    bio: String(r.bio ?? ""),
+    shortBio: String(r.short_bio ?? ""),
+    avatar: String(r.avatar ?? "/images/profile.jpg"),
+    location: String(r.location ?? ""),
+    email: String(r.email ?? ""),
+    availability: String(r.availability ?? ""),
+    resumeUrl: String(r.resume_url ?? ""),
+    heroHeadline: JSON.parse(String(r.hero_headline ?? "[]")),
+    heroDescription: String(r.hero_description ?? ""),
   };
 }
 
 // Site config
-export function getSiteConfig(): SiteConfig {
-  const row = db.prepare("SELECT * FROM site_settings WHERE id = 1").get() as Record<string, unknown> | undefined;
-  
-  if (!row) {
-    return {
-      name: "علی دلاور",
-      title: "پورتفولیو",
-      description: "",
-      url: "https://example.com",
-      locale: "fa-IR",
-      ogImage: "/images/og.jpg",
-      keywords: []
-    };
-  }
+export async function getSiteConfig(): Promise<SiteConfig> {
+  await ensureDb();
+  const result = await db.execute("SELECT * FROM site_settings WHERE id = 1");
+  const r = row(result.rows[0] as Record<string, unknown> | undefined);
 
   return {
-    name: row.site_name as string || "",
-    title: row.site_title as string || "",
-    description: row.site_description as string || "",
-    url: row.site_url as string || "",
-    locale: row.locale as string || "fa-IR",
+    name: String(r.site_name ?? ""),
+    title: String(r.site_title ?? ""),
+    description: String(r.site_description ?? ""),
+    url: String(r.site_url ?? "https://example.com"),
+    locale: String(r.locale ?? "fa-IR"),
     ogImage: "/images/og.jpg",
-    keywords: JSON.parse(row.keywords as string || "[]")
+    keywords: JSON.parse(String(r.keywords ?? "[]")),
   };
 }
 
 // Socials
-export function getSocials(): Social[] {
-  const rows = db.prepare("SELECT * FROM socials ORDER BY sort_order").all() as Record<string, unknown>[];
-  return rows.map(row => ({
-    name: row.name as string,
-    url: row.url as string || "",
-    icon: row.icon as string || ""
-  }));
+export async function getSocials(): Promise<Social[]> {
+  await ensureDb();
+  const result = await db.execute("SELECT * FROM socials ORDER BY sort_order");
+  return result.rows.map((row) => {
+    const r = row as unknown as Record<string, unknown>;
+    return { name: String(r.name ?? ""), url: String(r.url ?? ""), icon: String(r.icon ?? "") };
+  });
 }
 
 // Skills
-export function getSkills(): SkillsData {
-  const rows = db.prepare("SELECT * FROM skill_categories ORDER BY sort_order").all() as Record<string, unknown>[];
-  const categories: SkillCategory[] = rows.map(row => ({
-    name: row.name as string,
-    icon: row.icon as string || "",
-    skills: JSON.parse(row.skills as string || "[]")
-  }));
+export async function getSkills(): Promise<SkillsData> {
+  await ensureDb();
+  const result = await db.execute("SELECT * FROM skill_categories ORDER BY sort_order");
+  const categories: SkillCategory[] = result.rows.map((row) => {
+    const r = row as unknown as Record<string, unknown>;
+    return {
+      name: String(r.name ?? ""),
+      icon: String(r.icon ?? ""),
+      skills: JSON.parse(String(r.skills ?? "[]")),
+    };
+  });
   return { categories };
 }
 
 // Experiences
-export function getExperiences(): Experience[] {
-  const rows = db.prepare("SELECT * FROM experiences ORDER BY sort_order").all() as Record<string, unknown>[];
-  return rows.map(row => ({
-    company: row.company as string,
-    role: row.role as string,
-    period: row.period as string || "",
-    location: row.location as string || "",
-    description: row.description as string || "",
-    achievements: JSON.parse(row.achievements as string || "[]"),
-    technologies: JSON.parse(row.technologies as string || "[]")
-  }));
+export async function getExperiences(): Promise<Experience[]> {
+  await ensureDb();
+  const result = await db.execute("SELECT * FROM experiences ORDER BY sort_order");
+  return result.rows.map((row) => {
+    const r = row as unknown as Record<string, unknown>;
+    return {
+      company: String(r.company ?? ""),
+      role: String(r.role ?? ""),
+      period: String(r.period ?? ""),
+      location: String(r.location ?? ""),
+      description: String(r.description ?? ""),
+      achievements: JSON.parse(String(r.achievements ?? "[]")),
+      technologies: JSON.parse(String(r.technologies ?? "[]")),
+    };
+  });
 }
 
 // Testimonials
-export function getTestimonials(): Testimonial[] {
-  const rows = db.prepare("SELECT * FROM testimonials ORDER BY sort_order").all() as Record<string, unknown>[];
-  return rows.map(row => ({
-    name: row.name as string,
-    role: row.role as string || "",
-    company: row.company as string || "",
-    avatar: row.avatar as string || "",
-    text: row.text as string || ""
-  }));
+export async function getTestimonials(): Promise<Testimonial[]> {
+  await ensureDb();
+  const result = await db.execute("SELECT * FROM testimonials ORDER BY sort_order");
+  return result.rows.map((row) => {
+    const r = row as unknown as Record<string, unknown>;
+    return {
+      name: String(r.name ?? ""),
+      role: String(r.role ?? ""),
+      company: String(r.company ?? ""),
+      avatar: String(r.avatar ?? ""),
+      text: String(r.text ?? ""),
+    };
+  });
 }
 
 // About
-export function getAbout(): AboutData {
-  const row = db.prepare("SELECT * FROM about_page WHERE id = 1").get() as Record<string, unknown> | undefined;
-  
-  if (!row) {
-    return { title: "درباره من", subtitle: "", content: "" };
-  }
+export async function getAbout(): Promise<AboutData> {
+  await ensureDb();
+  const result = await db.execute("SELECT * FROM about_page WHERE id = 1");
+  const r = row(result.rows[0] as Record<string, unknown> | undefined);
 
   return {
-    title: row.title as string || "درباره من",
-    subtitle: row.subtitle as string || "",
-    content: row.content as string || ""
+    title: String(r.title ?? "درباره من"),
+    subtitle: String(r.subtitle ?? ""),
+    content: String(r.content ?? ""),
   };
 }
 
 // Projects
-export function getAllProjects(): Project[] {
-  const rows = db.prepare("SELECT * FROM projects ORDER BY sort_order, created_at DESC").all() as Record<string, unknown>[];
-  return rows.map(row => ({
-    slug: row.slug as string,
-    title: row.title as string,
-    description: row.description as string || "",
-    image: row.image as string || "",
-    tags: JSON.parse(row.tags as string || "[]"),
-    category: row.category as string || "",
-    featured: Boolean(row.featured),
-    liveUrl: row.live_url as string || "",
-    githubUrl: row.github_url as string || "",
-    date: row.created_at as string || "",
-    content: row.content as string || ""
-  }));
+export async function getAllProjects(): Promise<Project[]> {
+  await ensureDb();
+  const result = await db.execute("SELECT * FROM projects ORDER BY sort_order, created_at DESC");
+  return result.rows.map((row) => {
+    const r = row as unknown as Record<string, unknown>;
+    return {
+      slug: String(r.slug ?? ""),
+      title: String(r.title ?? ""),
+      description: String(r.description ?? ""),
+      image: String(r.image ?? ""),
+      tags: JSON.parse(String(r.tags ?? "[]")),
+      category: String(r.category ?? ""),
+      featured: Boolean(r.featured),
+      liveUrl: String(r.live_url ?? ""),
+      githubUrl: String(r.github_url ?? ""),
+      date: String(r.created_at ?? ""),
+      content: String(r.content ?? ""),
+    };
+  });
 }
 
-export function getProjectBySlug(slug: string): Project | undefined {
-  const row = db.prepare("SELECT * FROM projects WHERE slug = ?").get(slug) as Record<string, unknown> | undefined;
-  
-  if (!row) return undefined;
+export async function getProjectBySlug(slug: string): Promise<Project | undefined> {
+  await ensureDb();
+  const result = await db.execute({ sql: "SELECT * FROM projects WHERE slug = ?", args: [slug] });
+  const r = result.rows[0] as unknown as Record<string, unknown> | undefined;
+  if (!r) return undefined;
 
   return {
-    slug: row.slug as string,
-    title: row.title as string,
-    description: row.description as string || "",
-    image: row.image as string || "",
-    tags: JSON.parse(row.tags as string || "[]"),
-    category: row.category as string || "",
-    featured: Boolean(row.featured),
-    liveUrl: row.live_url as string || "",
-    githubUrl: row.github_url as string || "",
-    date: row.created_at as string || "",
-    content: row.content as string || ""
+    slug: String(r.slug ?? ""),
+    title: String(r.title ?? ""),
+    description: String(r.description ?? ""),
+    image: String(r.image ?? ""),
+    tags: JSON.parse(String(r.tags ?? "[]")),
+    category: String(r.category ?? ""),
+    featured: Boolean(r.featured),
+    liveUrl: String(r.live_url ?? ""),
+    githubUrl: String(r.github_url ?? ""),
+    date: String(r.created_at ?? ""),
+    content: String(r.content ?? ""),
   };
 }
 
-export function getFeaturedProjects(): Project[] {
-  return getAllProjects().filter(p => p.featured);
+export async function getFeaturedProjects(): Promise<Project[]> {
+  const projects = await getAllProjects();
+  return projects.filter((p) => p.featured);
 }
 
-export function getProjectCategories(): string[] {
-  const projects = getAllProjects();
-  const categories = new Set(projects.map(p => p.category));
+export async function getProjectCategories(): Promise<string[]> {
+  const projects = await getAllProjects();
+  const categories = new Set(projects.map((p) => p.category));
   return ["همه", ...Array.from(categories)];
-}
-
-export function getAllTags(): string[] {
-  const projects = getAllProjects();
-  const tags = new Set(projects.flatMap(p => p.tags));
-  return Array.from(tags);
 }

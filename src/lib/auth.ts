@@ -45,12 +45,8 @@ export async function getSession(): Promise<User | null> {
 }
 
 export async function login(username: string, password: string): Promise<{ success: boolean; token?: string; error?: string }> {
-  const user = db.prepare("SELECT * FROM users WHERE username = ?").get(username) as {
-    id: number;
-    username: string;
-    password: string;
-    role: string;
-  } | undefined;
+  const result = await db.execute({ sql: "SELECT * FROM users WHERE username = ?", args: [username] });
+  const user = result.rows[0] as unknown as { id: number; username: string; password: string; role: string } | undefined;
 
   if (!user) {
     return { success: false, error: "نام کاربری یا رمز عبور اشتباه است" };
