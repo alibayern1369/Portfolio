@@ -28,6 +28,16 @@ function row(obj: Record<string, unknown> | undefined): Record<string, unknown> 
   return obj ?? {};
 }
 
+function parseJson<T>(value: unknown, fallback: T): T {
+  if (value == null || value === "") return fallback;
+  if (typeof value !== "string") return value as T;
+  try {
+    return JSON.parse(value) as T;
+  } catch {
+    return fallback;
+  }
+}
+
 // Profile
 export async function getProfile(): Promise<Profile> {
   await ensureDb();
@@ -45,7 +55,7 @@ export async function getProfile(): Promise<Profile> {
     email: String(r.email ?? ""),
     availability: String(r.availability ?? ""),
     resumeUrl: String(r.resume_url ?? ""),
-    heroHeadline: JSON.parse(String(r.hero_headline ?? "[]")),
+    heroHeadline: parseJson<string[]>(r.hero_headline, []),
     heroDescription: String(r.hero_description ?? ""),
   };
 }
@@ -63,7 +73,7 @@ export async function getSiteConfig(): Promise<SiteConfig> {
     url: String(r.site_url ?? "https://example.com"),
     locale: String(r.locale ?? "fa-IR"),
     ogImage: "/images/og.jpg",
-    keywords: JSON.parse(String(r.keywords ?? "[]")),
+    keywords: parseJson<string[]>(r.keywords, []),
   };
 }
 
@@ -86,7 +96,7 @@ export async function getSkills(): Promise<SkillsData> {
     return {
       name: String(r.name ?? ""),
       icon: String(r.icon ?? ""),
-      skills: JSON.parse(String(r.skills ?? "[]")),
+      skills: parseJson<string[]>(r.skills, []),
     };
   });
   return { categories };
@@ -104,8 +114,8 @@ export async function getExperiences(): Promise<Experience[]> {
       period: String(r.period ?? ""),
       location: String(r.location ?? ""),
       description: String(r.description ?? ""),
-      achievements: JSON.parse(String(r.achievements ?? "[]")),
-      technologies: JSON.parse(String(r.technologies ?? "[]")),
+      achievements: parseJson<string[]>(r.achievements, []),
+      technologies: parseJson<string[]>(r.technologies, []),
     };
   });
 }
@@ -150,7 +160,7 @@ export async function getAllProjects(): Promise<Project[]> {
       title: String(r.title ?? ""),
       description: String(r.description ?? ""),
       image: String(r.image ?? ""),
-      tags: JSON.parse(String(r.tags ?? "[]")),
+      tags: parseJson<string[]>(r.tags, []),
       category: String(r.category ?? ""),
       featured: Boolean(r.featured),
       liveUrl: String(r.live_url ?? ""),
@@ -172,7 +182,7 @@ export async function getProjectBySlug(slug: string): Promise<Project | undefine
     title: String(r.title ?? ""),
     description: String(r.description ?? ""),
     image: String(r.image ?? ""),
-    tags: JSON.parse(String(r.tags ?? "[]")),
+    tags: parseJson<string[]>(r.tags, []),
     category: String(r.category ?? ""),
     featured: Boolean(r.featured),
     liveUrl: String(r.live_url ?? ""),
