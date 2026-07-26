@@ -1,0 +1,34 @@
+{
+  "categories": [
+    {
+      "name": "فرانت‌اند",
+      "icon": "monitor",
+      "skills": ["React", "Next.js", "TypeScript", "Tailwind CSS", "Framer Motion", "Vue.js"]
+    },
+    {
+      "name": "بک‌اند",
+      "icon": "server",
+      "skills": ["Node.js", "Python", "PostgreSQL", "MongoDB", "Redis", "GraphQL"]
+    },
+    {
+      "name": "طراحی",
+      "icon": "palette",
+      "skills": ["Figma", "Adobe XD", "Sketch", "طراحی UI/UX", "پروتوتایپ", "سیستم طراحی"]
+    },
+    {
+      "name": "دوآپس",
+      "icon": "cloud",
+      "skills": ["Docker", "AWS", "Vercel", "CI/CD", "GitHub Actions", "Terraform"]
+    },
+    {
+      "name": "ابزارها",
+      "icon": "wrench",
+      "skills": ["Git", "VS Code", "Jira", "Notion", "Slack", "Linear"]
+    },
+    {
+      "name": "مهارت‌های نرم",
+      "icon": "users",
+      "skills": ["رهبری تیم", "اجایل/اسکرام", "ارتباطات", "حل مسئله", "منتورینگ", "کد ریویو"]
+    }
+  ]
+}

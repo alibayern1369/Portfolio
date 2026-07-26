@@ -1,0 +1,18 @@
+{
+  "name": "علی دلاور — نمونه‌کارها",
+  "short_name": "علی دلاور",
+  "description": "نمونه‌کارهای توسعه‌دهنده فول‌استک و طراح رابط کاربری",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
+  "dir": "rtl",
+  "lang": "fa",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "any",
+      "type": "image/x-icon"
+    }
+  ]
+}
