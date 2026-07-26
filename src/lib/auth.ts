@@ -1,0 +1,70 @@
+import { SignJWT, jwtVerify } from "jose";
+import { cookies } from "next/headers";
+import bcrypt from "bcryptjs";
+import db from "@/db";
+
+const JWT_SECRET = new TextEncoder().encode(
+  process.env.JWT_SECRET || "your-secret-key-change-in-production"
+);
+
+export interface User {
+  id: number;
+  username: string;
+  role: string;
+}
+
+export async function hashPassword(password: string): Promise<string> {
+  return bcrypt.hash(password, 10);
+}
+
+export async function verifyPassword(password: string, hash: string): Promise<boolean> {
+  return bcrypt.compare(password, hash);
+}
+
+export async function createToken(user: User): Promise<string> {
+  return new SignJWT({ id: user.id, username: user.username, role: user.role })
+    .setProtectedHeader({ alg: "HS256" })
+    .setExpirationTime("7d")
+    .sign(JWT_SECRET);
+}
+
+export async function verifyToken(token: string): Promise<User | null> {
+  try {
+    const { payload } = await jwtVerify(token, JWT_SECRET);
+    return payload as unknown as User;
+  } catch {
+    return null;
+  }
+}
+
+export async function getSession(): Promise<User | null> {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("auth_token")?.value;
+  if (!token) return null;
+  return verifyToken(token);
+}
+
+export async function login(username: string, password: string): Promise<{ success: boolean; token?: string; error?: string }> {
+  const user = db.prepare("SELECT * FROM users WHERE username = ?").get(username) as {
+    id: number;
+    username: string;
+    password: string;
+    role: string;
+  } | undefined;
+
+  if (!user) {
+    return { success: false, error: "نام کاربری یا رمز عبور اشتباه است" };
+  }
+
+  const valid = await verifyPassword(password, user.password);
+  if (!valid) {
+    return { success: false, error: "نام کاربری یا رمز عبور اشتباه است" };
+  }
+
+  const token = await createToken({ id: user.id, username: user.username, role: user.role });
+  return { success: true, token };
+}
+
+export function requireAdmin(user: User | null): boolean {
+  return user?.role === "admin";
+}

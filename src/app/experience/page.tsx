@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import type { Metadata } from "next";
 import { Section } from "@/components/section";
 import { SectionTitle } from "@/components/section-title";

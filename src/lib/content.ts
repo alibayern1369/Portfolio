@@ -1,106 +1,192 @@
-import fs from "fs";
-import path from "path";
-import matter from "gray-matter";
+import db from "@/db";
 import type {
   SiteConfig,
   Profile,
   Social,
   SkillsData,
+  SkillCategory,
   Experience,
   Testimonial,
   Project,
   AboutData,
 } from "@/types";
 
-const contentDir = path.join(process.cwd(), "content");
-
-function readJson<T>(filename: string): T {
-  const filePath = path.join(contentDir, filename);
-  const raw = fs.readFileSync(filePath, "utf-8");
-  return JSON.parse(raw) as T;
-}
-
-export function getSiteConfig(): SiteConfig {
-  return readJson<SiteConfig>("site.json");
-}
-
+// Profile
 export function getProfile(): Profile {
-  return readJson<Profile>("profile.json");
-}
+  const row = db.prepare("SELECT * FROM profile WHERE id = 1").get() as Record<string, unknown> | undefined;
+  
+  if (!row) {
+    return {
+      name: "علی دلاور",
+      role: "توسعه‌دهنده",
+      tagline: "",
+      bio: "",
+      shortBio: "",
+      avatar: "/images/profile.jpg",
+      location: "تهران",
+      email: "email@example.com",
+      availability: "آماده همکاری",
+      resumeUrl: "/resume.pdf",
+      heroHeadline: ["سلام", "من علی هستم"],
+      heroDescription: ""
+    };
+  }
 
-export function getSocials(): Social[] {
-  return readJson<Social[]>("socials.json");
-}
-
-export function getSkills(): SkillsData {
-  return readJson<SkillsData>("skills.json");
-}
-
-export function getExperiences(): Experience[] {
-  return readJson<Experience[]>("experience.json");
-}
-
-export function getTestimonials(): Testimonial[] {
-  return readJson<Testimonial[]>("testimonials.json");
-}
-
-export function getAbout(): AboutData {
-  const filePath = path.join(contentDir, "about.md");
-  const raw = fs.readFileSync(filePath, "utf-8");
-  const { data, content } = matter(raw);
   return {
-    title: data.title as string,
-    subtitle: data.subtitle as string,
-    content,
+    name: row.name as string,
+    role: row.role as string,
+    tagline: row.tagline as string || "",
+    bio: row.bio as string || "",
+    shortBio: row.short_bio as string || "",
+    avatar: row.avatar as string || "/images/profile.jpg",
+    location: row.location as string || "",
+    email: row.email as string || "",
+    availability: row.availability as string || "",
+    resumeUrl: row.resume_url as string || "",
+    heroHeadline: JSON.parse(row.hero_headline as string || "[]"),
+    heroDescription: row.hero_description as string || ""
   };
 }
 
-export function getAllProjects(): Project[] {
-  const projectsDir = path.join(contentDir, "projects");
-  const files = fs.readdirSync(projectsDir).filter((f) => f.endsWith(".md"));
-
-  const projects = files.map((file) => {
-    const slug = file.replace(/\.md$/, "");
-    const raw = fs.readFileSync(path.join(projectsDir, file), "utf-8");
-    const { data, content } = matter(raw);
-
+// Site config
+export function getSiteConfig(): SiteConfig {
+  const row = db.prepare("SELECT * FROM site_settings WHERE id = 1").get() as Record<string, unknown> | undefined;
+  
+  if (!row) {
     return {
-      slug,
-      title: data.title as string,
-      description: data.description as string,
-      image: data.image as string,
-      tags: data.tags as string[],
-      category: data.category as string,
-      featured: data.featured as boolean,
-      liveUrl: data.liveUrl as string,
-      githubUrl: data.githubUrl as string,
-      date: data.date as string,
-      content,
+      name: "علی دلاور",
+      title: "پورتفولیو",
+      description: "",
+      url: "https://example.com",
+      locale: "fa-IR",
+      ogImage: "/images/og.jpg",
+      keywords: []
     };
-  });
+  }
 
-  return projects.sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-  );
+  return {
+    name: row.site_name as string || "",
+    title: row.site_title as string || "",
+    description: row.site_description as string || "",
+    url: row.site_url as string || "",
+    locale: row.locale as string || "fa-IR",
+    ogImage: "/images/og.jpg",
+    keywords: JSON.parse(row.keywords as string || "[]")
+  };
+}
+
+// Socials
+export function getSocials(): Social[] {
+  const rows = db.prepare("SELECT * FROM socials ORDER BY sort_order").all() as Record<string, unknown>[];
+  return rows.map(row => ({
+    name: row.name as string,
+    url: row.url as string || "",
+    icon: row.icon as string || ""
+  }));
+}
+
+// Skills
+export function getSkills(): SkillsData {
+  const rows = db.prepare("SELECT * FROM skill_categories ORDER BY sort_order").all() as Record<string, unknown>[];
+  const categories: SkillCategory[] = rows.map(row => ({
+    name: row.name as string,
+    icon: row.icon as string || "",
+    skills: JSON.parse(row.skills as string || "[]")
+  }));
+  return { categories };
+}
+
+// Experiences
+export function getExperiences(): Experience[] {
+  const rows = db.prepare("SELECT * FROM experiences ORDER BY sort_order").all() as Record<string, unknown>[];
+  return rows.map(row => ({
+    company: row.company as string,
+    role: row.role as string,
+    period: row.period as string || "",
+    location: row.location as string || "",
+    description: row.description as string || "",
+    achievements: JSON.parse(row.achievements as string || "[]"),
+    technologies: JSON.parse(row.technologies as string || "[]")
+  }));
+}
+
+// Testimonials
+export function getTestimonials(): Testimonial[] {
+  const rows = db.prepare("SELECT * FROM testimonials ORDER BY sort_order").all() as Record<string, unknown>[];
+  return rows.map(row => ({
+    name: row.name as string,
+    role: row.role as string || "",
+    company: row.company as string || "",
+    avatar: row.avatar as string || "",
+    text: row.text as string || ""
+  }));
+}
+
+// About
+export function getAbout(): AboutData {
+  const row = db.prepare("SELECT * FROM about_page WHERE id = 1").get() as Record<string, unknown> | undefined;
+  
+  if (!row) {
+    return { title: "درباره من", subtitle: "", content: "" };
+  }
+
+  return {
+    title: row.title as string || "درباره من",
+    subtitle: row.subtitle as string || "",
+    content: row.content as string || ""
+  };
+}
+
+// Projects
+export function getAllProjects(): Project[] {
+  const rows = db.prepare("SELECT * FROM projects ORDER BY sort_order, created_at DESC").all() as Record<string, unknown>[];
+  return rows.map(row => ({
+    slug: row.slug as string,
+    title: row.title as string,
+    description: row.description as string || "",
+    image: row.image as string || "",
+    tags: JSON.parse(row.tags as string || "[]"),
+    category: row.category as string || "",
+    featured: Boolean(row.featured),
+    liveUrl: row.live_url as string || "",
+    githubUrl: row.github_url as string || "",
+    date: row.created_at as string || "",
+    content: row.content as string || ""
+  }));
 }
 
 export function getProjectBySlug(slug: string): Project | undefined {
-  const projects = getAllProjects();
-  return projects.find((p) => p.slug === slug);
+  const row = db.prepare("SELECT * FROM projects WHERE slug = ?").get(slug) as Record<string, unknown> | undefined;
+  
+  if (!row) return undefined;
+
+  return {
+    slug: row.slug as string,
+    title: row.title as string,
+    description: row.description as string || "",
+    image: row.image as string || "",
+    tags: JSON.parse(row.tags as string || "[]"),
+    category: row.category as string || "",
+    featured: Boolean(row.featured),
+    liveUrl: row.live_url as string || "",
+    githubUrl: row.github_url as string || "",
+    date: row.created_at as string || "",
+    content: row.content as string || ""
+  };
 }
 
 export function getFeaturedProjects(): Project[] {
-  return getAllProjects().filter((p) => p.featured);
+  return getAllProjects().filter(p => p.featured);
 }
 
 export function getProjectCategories(): string[] {
   const projects = getAllProjects();
-  const categories = new Set(projects.map((p) => p.category));
+  const categories = new Set(projects.map(p => p.category));
   return ["همه", ...Array.from(categories)];
 }
 
 export function getAllTags(): string[] {
   const projects = getAllProjects();
-  const tags = new Set(projects.flatMap((p) => p.tags));
+  const tags = new Set(projects.flatMap(p => p.tags));
   return Array.from(tags);
 }
