@@ -6,7 +6,6 @@ import type {
   Experience, Testimonial, Project, AboutData,
 } from "@/types";
 
-// Initialize DB on first call - use a promise to prevent race conditions
 let initPromise: Promise<void> | null = null;
 
 function ensureDb(): Promise<void> {
@@ -24,15 +23,18 @@ function ensureDb(): Promise<void> {
   return initPromise;
 }
 
-function row(obj: Record<string, unknown> | undefined): Record<string, unknown> {
-  return obj ?? {};
+function r(obj: unknown): Record<string, unknown> {
+  return (obj as Record<string, unknown>) ?? {};
 }
 
-function parseJson<T>(value: unknown, fallback: T): T {
-  if (value == null || value === "") return fallback;
-  if (typeof value !== "string") return value as T;
+function str(val: unknown, fallback = ""): string {
+  if (val === null || val === undefined) return fallback;
+  return String(val);
+}
+
+function json<T>(val: unknown, fallback: T): T {
   try {
-    return JSON.parse(value) as T;
+    return JSON.parse(String(val)) as T;
   } catch {
     return fallback;
   }
@@ -42,21 +44,21 @@ function parseJson<T>(value: unknown, fallback: T): T {
 export async function getProfile(): Promise<Profile> {
   await ensureDb();
   const result = await db.execute("SELECT * FROM profile WHERE id = 1");
-  const r = row(result.rows[0] as Record<string, unknown> | undefined);
+  const row = r(result.rows[0]);
 
   return {
-    name: String(r.name ?? "علی دلاور"),
-    role: String(r.role ?? ""),
-    tagline: String(r.tagline ?? ""),
-    bio: String(r.bio ?? ""),
-    shortBio: String(r.short_bio ?? ""),
-    avatar: String(r.avatar ?? "/images/profile.jpg"),
-    location: String(r.location ?? ""),
-    email: String(r.email ?? ""),
-    availability: String(r.availability ?? ""),
-    resumeUrl: String(r.resume_url ?? ""),
-    heroHeadline: parseJson<string[]>(r.hero_headline, []),
-    heroDescription: String(r.hero_description ?? ""),
+    name: str(row.name, "علی دلاور"),
+    role: str(row.role, "توسعه‌دهنده"),
+    tagline: str(row.tagline),
+    bio: str(row.bio),
+    shortBio: str(row.short_bio),
+    avatar: str(row.avatar, "/images/profile.jpg"),
+    location: str(row.location),
+    email: str(row.email),
+    availability: str(row.availability),
+    resumeUrl: str(row.resume_url),
+    heroHeadline: json<string[]>(row.hero_headline, ["سلام", "من علی هستم"]),
+    heroDescription: str(row.hero_description),
   };
 }
 
@@ -64,16 +66,16 @@ export async function getProfile(): Promise<Profile> {
 export async function getSiteConfig(): Promise<SiteConfig> {
   await ensureDb();
   const result = await db.execute("SELECT * FROM site_settings WHERE id = 1");
-  const r = row(result.rows[0] as Record<string, unknown> | undefined);
+  const row = r(result.rows[0]);
 
   return {
-    name: String(r.site_name ?? ""),
-    title: String(r.site_title ?? ""),
-    description: String(r.site_description ?? ""),
-    url: String(r.site_url ?? "https://example.com"),
-    locale: String(r.locale ?? "fa-IR"),
+    name: str(row.site_name, "علی دلاور"),
+    title: str(row.site_title),
+    description: str(row.site_description),
+    url: str(row.site_url, "https://alidelavar.dev"),
+    locale: str(row.locale, "fa-IR"),
     ogImage: "/images/og.jpg",
-    keywords: parseJson<string[]>(r.keywords, []),
+    keywords: json<string[]>(row.keywords, []),
   };
 }
 
@@ -82,8 +84,8 @@ export async function getSocials(): Promise<Social[]> {
   await ensureDb();
   const result = await db.execute("SELECT * FROM socials ORDER BY sort_order");
   return result.rows.map((row) => {
-    const r = row as unknown as Record<string, unknown>;
-    return { name: String(r.name ?? ""), url: String(r.url ?? ""), icon: String(r.icon ?? "") };
+    const d = r(row);
+    return { name: str(d.name), url: str(d.url), icon: str(d.icon) };
   });
 }
 
@@ -92,12 +94,8 @@ export async function getSkills(): Promise<SkillsData> {
   await ensureDb();
   const result = await db.execute("SELECT * FROM skill_categories ORDER BY sort_order");
   const categories: SkillCategory[] = result.rows.map((row) => {
-    const r = row as unknown as Record<string, unknown>;
-    return {
-      name: String(r.name ?? ""),
-      icon: String(r.icon ?? ""),
-      skills: parseJson<string[]>(r.skills, []),
-    };
+    const d = r(row);
+    return { name: str(d.name), icon: str(d.icon), skills: json<string[]>(d.skills, []) };
   });
   return { categories };
 }
@@ -107,15 +105,12 @@ export async function getExperiences(): Promise<Experience[]> {
   await ensureDb();
   const result = await db.execute("SELECT * FROM experiences ORDER BY sort_order");
   return result.rows.map((row) => {
-    const r = row as unknown as Record<string, unknown>;
+    const d = r(row);
     return {
-      company: String(r.company ?? ""),
-      role: String(r.role ?? ""),
-      period: String(r.period ?? ""),
-      location: String(r.location ?? ""),
-      description: String(r.description ?? ""),
-      achievements: parseJson<string[]>(r.achievements, []),
-      technologies: parseJson<string[]>(r.technologies, []),
+      company: str(d.company), role: str(d.role), period: str(d.period),
+      location: str(d.location), description: str(d.description),
+      achievements: json<string[]>(d.achievements, []),
+      technologies: json<string[]>(d.technologies, []),
     };
   });
 }
@@ -125,13 +120,10 @@ export async function getTestimonials(): Promise<Testimonial[]> {
   await ensureDb();
   const result = await db.execute("SELECT * FROM testimonials ORDER BY sort_order");
   return result.rows.map((row) => {
-    const r = row as unknown as Record<string, unknown>;
+    const d = r(row);
     return {
-      name: String(r.name ?? ""),
-      role: String(r.role ?? ""),
-      company: String(r.company ?? ""),
-      avatar: String(r.avatar ?? ""),
-      text: String(r.text ?? ""),
+      name: str(d.name), role: str(d.role), company: str(d.company),
+      avatar: str(d.avatar), text: str(d.text),
     };
   });
 }
@@ -140,13 +132,8 @@ export async function getTestimonials(): Promise<Testimonial[]> {
 export async function getAbout(): Promise<AboutData> {
   await ensureDb();
   const result = await db.execute("SELECT * FROM about_page WHERE id = 1");
-  const r = row(result.rows[0] as Record<string, unknown> | undefined);
-
-  return {
-    title: String(r.title ?? "درباره من"),
-    subtitle: String(r.subtitle ?? ""),
-    content: String(r.content ?? ""),
-  };
+  const row = r(result.rows[0]);
+  return { title: str(row.title, "درباره من"), subtitle: str(row.subtitle), content: str(row.content) };
 }
 
 // Projects
@@ -154,19 +141,13 @@ export async function getAllProjects(): Promise<Project[]> {
   await ensureDb();
   const result = await db.execute("SELECT * FROM projects ORDER BY sort_order, created_at DESC");
   return result.rows.map((row) => {
-    const r = row as unknown as Record<string, unknown>;
+    const d = r(row);
     return {
-      slug: String(r.slug ?? ""),
-      title: String(r.title ?? ""),
-      description: String(r.description ?? ""),
-      image: String(r.image ?? ""),
-      tags: parseJson<string[]>(r.tags, []),
-      category: String(r.category ?? ""),
-      featured: Boolean(r.featured),
-      liveUrl: String(r.live_url ?? ""),
-      githubUrl: String(r.github_url ?? ""),
-      date: String(r.created_at ?? ""),
-      content: String(r.content ?? ""),
+      slug: str(d.slug), title: str(d.title), description: str(d.description),
+      image: str(d.image), tags: json<string[]>(d.tags, []),
+      category: str(d.category), featured: Boolean(d.featured),
+      liveUrl: str(d.live_url), githubUrl: str(d.github_url),
+      date: str(d.created_at), content: str(d.content),
     };
   });
 }
@@ -174,21 +155,14 @@ export async function getAllProjects(): Promise<Project[]> {
 export async function getProjectBySlug(slug: string): Promise<Project | undefined> {
   await ensureDb();
   const result = await db.execute({ sql: "SELECT * FROM projects WHERE slug = ?", args: [slug] });
-  const r = result.rows[0] as unknown as Record<string, unknown> | undefined;
-  if (!r) return undefined;
-
+  if (!result.rows[0]) return undefined;
+  const d = r(result.rows[0]);
   return {
-    slug: String(r.slug ?? ""),
-    title: String(r.title ?? ""),
-    description: String(r.description ?? ""),
-    image: String(r.image ?? ""),
-    tags: parseJson<string[]>(r.tags, []),
-    category: String(r.category ?? ""),
-    featured: Boolean(r.featured),
-    liveUrl: String(r.live_url ?? ""),
-    githubUrl: String(r.github_url ?? ""),
-    date: String(r.created_at ?? ""),
-    content: String(r.content ?? ""),
+    slug: str(d.slug), title: str(d.title), description: str(d.description),
+    image: str(d.image), tags: json<string[]>(d.tags, []),
+    category: str(d.category), featured: Boolean(d.featured),
+    liveUrl: str(d.live_url), githubUrl: str(d.github_url),
+    date: str(d.created_at), content: str(d.content),
   };
 }
 

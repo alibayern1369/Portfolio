@@ -1,10 +1,9 @@
 import type { MetadataRoute } from "next";
-import { getSiteConfig } from "@/lib/content";
 
-export default async function robots(): Promise<MetadataRoute.Robots> {
-  const site = await getSiteConfig();
+export default function robots(): MetadataRoute.Robots {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://alidelavar.dev";
   return {
     rules: { userAgent: "*", allow: "/" },
-    sitemap: `${site.url}/sitemap.xml`,
+    sitemap: `${siteUrl}/sitemap.xml`,
   };
 }

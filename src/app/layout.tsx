@@ -20,7 +20,7 @@ export async function generateMetadata(): Promise<Metadata> {
     keywords: site.keywords,
     authors: [{ name: profile.name }],
     creator: profile.name,
-    metadataBase: new URL(site.url || "http://localhost:3000"),
+    metadataBase: new URL(site.url),
     openGraph: { type: "website", locale: site.locale, url: site.url, title: `${profile.name} — ${profile.role}`, description: site.description, siteName: profile.name },
     twitter: { card: "summary_large_image", title: `${profile.name} — ${profile.role}`, description: site.description },
     robots: { index: true, follow: true },
