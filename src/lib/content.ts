@@ -74,6 +74,7 @@ export async function getSiteConfig(): Promise<SiteConfig> {
     description: str(row.site_description),
     url: str(row.site_url, "https://alidelavar.dev"),
     locale: str(row.locale, "fa-IR"),
+    defaultTheme: (str(row.default_theme, "system") as "light" | "dark" | "system"),
     ogImage: "/images/og.jpg",
     keywords: json<string[]>(row.keywords, []),
   };

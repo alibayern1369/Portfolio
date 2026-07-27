@@ -5,13 +5,13 @@ import { useRouter } from "next/navigation";
 import { AdminShell } from "@/components/admin/admin-shell";
 import { Save } from "lucide-react";
 
-interface SettingsData { site_name: string; site_title: string; site_description: string; site_url: string; locale: string; keywords: string; }
+interface SettingsData { site_name: string; site_title: string; site_description: string; site_url: string; locale: string; keywords: string; default_theme: "light" | "dark" | "system"; }
 
 export default function AdminSettingsPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [data, setData] = useState<SettingsData>({ site_name: "", site_title: "", site_description: "", site_url: "", locale: "fa-IR", keywords: "" });
+  const [data, setData] = useState<SettingsData>({ site_name: "", site_title: "", site_description: "", site_url: "", locale: "fa-IR", keywords: "", default_theme: "system" });
   const [keywords, setKeywords] = useState<string[]>([]);
 
   useEffect(() => {
@@ -19,7 +19,7 @@ export default function AdminSettingsPage() {
       .then(res => res.status === 401 ? (router.push("/admin/login"), null) : res.json())
       .then(res => {
         if (res?.settings) {
-          setData(res.settings);
+          setData({ ...res.settings, default_theme: res.settings.default_theme || "system" });
           try { setKeywords(JSON.parse(res.settings.keywords || "[]")); } catch { setKeywords([]); }
         }
         setLoading(false);
@@ -67,6 +67,15 @@ export default function AdminSettingsPage() {
             <div className="sm:col-span-2">
               <label className="block text-sm font-medium mb-2">کلمات کلیدی (با کاما جدا کنید)</label>
               <input value={keywords.join(", ")} onChange={e => setKeywords(e.target.value.split(",").map(k => k.trim()).filter(Boolean))} className="w-full px-4 py-3 bg-background border border-border rounded-xl" />
+            </div>
+            <div className="sm:col-span-2">
+              <label className="block text-sm font-medium mb-2">تم پیش‌فرض</label>
+              <select value={data.default_theme} onChange={e => setData({...data, default_theme: e.target.value as "light" | "dark" | "system"})} className="w-full px-4 py-3 bg-background border border-border rounded-xl">
+                <option value="system">استفاده از تنظیمات سیستم</option>
+                <option value="light">روشن</option>
+                <option value="dark">تاریک</option>
+              </select>
+              <p className="mt-2 text-xs text-muted-foreground">این گزینه تعیین می‌کند وب‌سایت هنگام بارگذاری اولیه از کدام تم استفاده کند.</p>
             </div>
           </div>
         </div>

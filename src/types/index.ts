@@ -6,6 +6,7 @@ export interface SiteConfig {
   locale: string;
   ogImage: string;
   keywords: string[];
+  defaultTheme: "light" | "dark" | "system";
 }
 
 export interface Profile {

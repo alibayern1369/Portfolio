@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSession, requireAdmin } from "@/lib/auth";
-import { writeFile, mkdir } from "fs/promises";
-import { existsSync } from "fs";
-import path from "path";
+import { execute } from "@/lib/db-helpers";
+import { initDatabase } from "@/db";
 
 export async function POST(request: Request) {
   const user = await getSession();
@@ -12,43 +11,43 @@ export async function POST(request: Request) {
 
   try {
     const formData = await request.formData();
-    const file = formData.get("file") as File | null;
-    const folder = (formData.get("folder") as string) || "uploads";
+    const fileValue = formData.get("file");
+    const file = fileValue instanceof File ? fileValue : null;
+    const folderValue = formData.get("folder");
+    const folder = typeof folderValue === "string" && folderValue.trim() ? folderValue.trim() : "uploads";
 
     if (!file) {
-      return NextResponse.json({ error: "فایلی انتخاب نشده" }, { status: 400 });
+      return NextResponse.json({ error: "فایلی انتخاب نشده یا فرمت نامعتبر است" }, { status: 400 });
     }
 
-    // Validate file type
     const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/svg+xml"];
     if (!allowedTypes.includes(file.type)) {
-      return NextResponse.json({ error: "فرمت فایل مجاز نیست" }, { status: 400 });
+      return NextResponse.json({ error: "فرمت فایل مجاز نیست (JPG, PNG, WebP, GIF)" }, { status: 400 });
     }
 
-    // Validate size (5MB max)
     if (file.size > 5 * 1024 * 1024) {
       return NextResponse.json({ error: "حداکثر حجم فایل ۵ مگابایت است" }, { status: 400 });
     }
 
-    // Create unique filename
+    // Convert to base64
+    const bytes = await file.arrayBuffer();
+    const base64 = Buffer.from(bytes).toString("base64");
+
     const ext = file.name.split(".").pop() || "jpg";
     const timestamp = Date.now();
-    const safeName = `${timestamp}.${ext}`;
+    const safeName = `${folder}-${timestamp}.${ext}`;
 
-    // Ensure directory exists
-    const uploadDir = path.join(process.cwd(), "public", "images", folder);
-    if (!existsSync(uploadDir)) {
-      await mkdir(uploadDir, { recursive: true });
-    }
+    // Ensure media table exists
+    await initDatabase();
 
-    // Write file
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    const filePath = path.join(uploadDir, safeName);
-    await writeFile(filePath, buffer);
+    // Store in database
+    const result = await execute(
+      `INSERT INTO media (filename, original_name, mime_type, size, path) VALUES (?, ?, ?, ?, ?)`,
+      [safeName, file.name, file.type, file.size, base64]
+    );
 
-    // Return the public URL path
-    const publicPath = `/images/${folder}/${safeName}`;
+    const id = Number(result.lastInsertRowid);
+    const publicPath = `/api/media/${id}`;
 
     return NextResponse.json({
       success: true,

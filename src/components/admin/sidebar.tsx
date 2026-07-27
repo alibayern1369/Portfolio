@@ -14,7 +14,8 @@ import {
   FileText,
   LogOut,
   Menu,
-  X
+  X,
+  Users
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -28,6 +29,7 @@ const menuItems = [
   { href: "/admin/testimonials", label: "نظرات", icon: MessageSquareQuote },
   { href: "/admin/socials", label: "شبکه‌های اجتماعی", icon: Share2 },
   { href: "/admin/about", label: "درباره من", icon: FileText },
+  { href: "/admin/users", label: "کاربران", icon: Users },
   { href: "/admin/settings", label: "تنظیمات", icon: Settings },
 ];
 

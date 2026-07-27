@@ -47,6 +47,7 @@ const TABLES = [
     id INTEGER PRIMARY KEY DEFAULT 1,
     site_name TEXT, site_title TEXT, site_description TEXT,
     site_url TEXT, locale TEXT DEFAULT 'fa-IR', keywords TEXT,
+    default_theme TEXT DEFAULT 'system',
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`,
   `CREATE TABLE IF NOT EXISTS projects (
@@ -99,6 +100,11 @@ export async function initDatabase() {
   try {
     for (const sql of TABLES) {
       await db.execute(sql);
+    }
+    try {
+      await db.execute("ALTER TABLE site_settings ADD COLUMN default_theme TEXT DEFAULT 'system'");
+    } catch {
+      // Column already exists or table does not exist yet.
     }
     globalForDb.__dbInitialized = true;
   } catch (e) {

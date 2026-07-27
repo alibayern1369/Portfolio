@@ -30,6 +30,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function RootLayout({ children }: { children: ReactNode }) {
   const profile = await getProfile();
   const socials = await getSocials();
+  const site = await getSiteConfig();
 
   return (
     <html lang="fa" dir="rtl" suppressHydrationWarning>
@@ -38,7 +39,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <link rel="manifest" href="/manifest.json" />
       </head>
       <body className="min-h-screen bg-background text-foreground antialiased">
-        <Providers>
+        <Providers defaultTheme={site.defaultTheme}>
           <ReadingProgress />
           <Navbar />
           <main className="min-h-screen">{children}</main>

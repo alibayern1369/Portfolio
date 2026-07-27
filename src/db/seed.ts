@@ -36,14 +36,15 @@ export async function seedDatabase() {
 
   // Seed site settings
   await db.execute({
-    sql: `INSERT OR IGNORE INTO site_settings (id, site_name, site_title, site_description, site_url, locale, keywords) VALUES (1, ?, ?, ?, ?, ?, ?)`,
+    sql: `INSERT OR IGNORE INTO site_settings (id, site_name, site_title, site_description, site_url, locale, keywords, default_theme) VALUES (1, ?, ?, ?, ?, ?, ?, ?)`,
     args: [
       "علی دلاور",
       "توسعه‌دهنده فول‌استک و طراح رابط کاربری",
       "من تجربه‌های دیجیتال زیبا و با عملکرد بالا خلق می‌کنم؛ در نقطه تلاقی طراحی و مهندسی.",
       "https://alidelavar.dev",
       "fa-IR",
-      JSON.stringify(["توسعه‌دهنده فول‌استک", "توسعه‌دهنده وب", "طراح رابط کاربری"])
+      JSON.stringify(["توسعه‌دهنده فول‌استک", "توسعه‌دهنده وب", "طراح رابط کاربری"]),
+      "system"
     ]
   });
 

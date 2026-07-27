@@ -2,7 +2,6 @@
 
 import { useState, useRef } from "react";
 import { Upload, X, ImageIcon, Loader2 } from "lucide-react";
-import Image from "next/image";
 
 interface ImageUploadProps {
   value: string;
@@ -21,10 +20,12 @@ export function ImageUpload({
 }: ImageUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [dragOver, setDragOver] = useState(false);
+  const [error, setError] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleUpload = async (file: File) => {
     setUploading(true);
+    setError("");
     try {
       const formData = new FormData();
       formData.append("file", file);
@@ -39,10 +40,10 @@ export function ImageUpload({
       if (data.success) {
         onChange(data.path);
       } else {
-        alert(data.error || "خطا در آپلود");
+        setError(data.error || "خطا در آپلود");
       }
     } catch {
-      alert("خطا در آپلود فایل");
+      setError("خطا در اتصال به سرور");
     } finally {
       setUploading(false);
     }
@@ -51,6 +52,7 @@ export function ImageUpload({
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) handleUpload(file);
+    if (inputRef.current) inputRef.current.value = "";
   };
 
   const handleDrop = (e: React.DragEvent) => {
@@ -68,14 +70,19 @@ export function ImageUpload({
     <div>
       <label className="block text-sm font-medium mb-2">{label}</label>
 
+      {error && (
+        <div className="mb-2 px-3 py-2 bg-red-500/10 border border-red-500/20 text-red-500 rounded-lg text-xs">
+          {error}
+        </div>
+      )}
+
       {value ? (
         <div className={`relative overflow-hidden rounded-xl border border-border bg-secondary ${aspectClass}`}>
-          <Image
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
             src={value}
             alt="Preview"
-            fill
-            className="object-cover"
-            sizes="400px"
+            className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-black/0 hover:bg-black/40 transition-all flex items-center justify-center opacity-0 hover:opacity-100">
             <div className="flex gap-2">
@@ -137,22 +144,21 @@ export function ImageUpload({
         </div>
       )}
 
-      {/* Also show path input for manual entry */}
-      <div className="mt-2 flex gap-2">
+      <div className="mt-2">
         <input
           type="text"
           dir="ltr"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="flex-1 px-3 py-2 bg-background border border-border rounded-lg text-xs text-left text-muted-foreground focus:outline-none focus:border-foreground/20"
-          placeholder="/images/..."
+          className="w-full px-3 py-2 bg-background border border-border rounded-lg text-xs text-left text-muted-foreground focus:outline-none focus:border-foreground/20"
+          placeholder="یا مسیر فایل را وارد کنید: /images/..."
         />
       </div>
 
       <input
         ref={inputRef}
         type="file"
-        accept="image/*"
+        accept="image/jpeg,image/png,image/webp,image/gif"
         onChange={handleFileSelect}
         className="hidden"
       />

@@ -1,8 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Lock, User, Eye, EyeOff } from "lucide-react";
+import { Lock, User, Eye, EyeOff, ShieldCheck } from "lucide-react";
+
+declare global {
+  interface Window {
+    grecaptcha?: {
+      ready: (cb: () => void) => void;
+      execute: (siteKey: string, opts: { action: string }) => Promise<string>;
+    };
+  }
+}
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -12,16 +21,46 @@ export default function AdminLoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+
+  // Load reCAPTCHA v3 script
+  useEffect(() => {
+    if (!recaptchaSiteKey) return;
+    if (document.querySelector(`script[src*="recaptcha"]`)) return;
+
+    const script = document.createElement("script");
+    script.src = `https://www.google.com/recaptcha/api.js?render=${recaptchaSiteKey}`;
+    script.async = true;
+    document.head.appendChild(script);
+  }, [recaptchaSiteKey]);
+
+  const getRecaptchaToken = useCallback(async (): Promise<string | null> => {
+    if (!recaptchaSiteKey || !window.grecaptcha) return null;
+    try {
+      return await new Promise((resolve) => {
+        window.grecaptcha!.ready(async () => {
+          const token = await window.grecaptcha!.execute(recaptchaSiteKey, { action: "login" });
+          resolve(token);
+        });
+      });
+    } catch {
+      return null;
+    }
+  }, [recaptchaSiteKey]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
     try {
+      // Get reCAPTCHA token if configured
+      const recaptchaToken = await getRecaptchaToken();
+
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ username, password, recaptchaToken }),
       });
 
       const data = await res.json();
@@ -48,7 +87,7 @@ export default function AdminLoginPage() {
             <Lock className="w-8 h-8" />
           </div>
           <h1 className="text-2xl font-bold">پنل مدیریت</h1>
-          <p className="text-muted-foreground mt-2">برای ورود وارد شوید</p>
+          <p className="text-muted-foreground mt-2">برای ورود اطلاعات خود را وارد کنید</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4 bg-card border border-border rounded-2xl p-6">
@@ -67,7 +106,6 @@ export default function AdminLoginPage() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 className="w-full pr-11 pl-4 py-3 bg-background border border-border rounded-xl focus:border-foreground/20 focus:outline-none"
-                placeholder="admin"
                 required
                 dir="ltr"
               />
@@ -83,7 +121,6 @@ export default function AdminLoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full pr-11 pl-11 py-3 bg-background border border-border rounded-xl focus:border-foreground/20 focus:outline-none"
-                placeholder="••••••••"
                 required
                 dir="ltr"
               />
@@ -104,11 +141,14 @@ export default function AdminLoginPage() {
           >
             {loading ? "در حال ورود..." : "ورود"}
           </button>
-        </form>
 
-        <p className="text-center text-sm text-muted-foreground mt-6">
-          نام کاربری: admin | رمز عبور: admin123
-        </p>
+          {recaptchaSiteKey && (
+            <div className="flex items-center justify-center gap-1.5 text-[10px] text-muted-foreground/50 pt-2">
+              <ShieldCheck className="w-3 h-3" />
+              محافظت شده با reCAPTCHA
+            </div>
+          )}
+        </form>
       </div>
     </div>
   );
