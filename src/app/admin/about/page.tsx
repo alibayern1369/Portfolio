@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AdminShell } from "@/components/admin/admin-shell";
+import { MarkdownEditor } from "@/components/admin/markdown-editor";
 import { Save } from "lucide-react";
 
 interface AboutData { title: string; subtitle: string; content: string; }
@@ -30,21 +31,27 @@ export default function AdminAboutPage() {
 
   return (
     <AdminShell title="درباره من" description="صفحه درباره من">
-      <div className="max-w-4xl space-y-6">
-        <div className="bg-card border border-border rounded-2xl p-6">
+      <div className="mx-auto max-w-4xl min-w-0 space-y-6">
+        <div className="rounded-2xl border border-border bg-card p-4 sm:p-6">
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="block text-sm font-medium mb-2">عنوان</label>
-              <input value={data.title} onChange={e => setData({...data, title: e.target.value})} className="w-full px-4 py-3 bg-background border border-border rounded-xl" />
+              <label className="mb-2 block text-sm font-medium">عنوان</label>
+              <input value={data.title} onChange={e => setData({...data, title: e.target.value})} className="w-full rounded-xl border border-border bg-background px-4 py-3" />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-2">زیرعنوان</label>
-              <input value={data.subtitle} onChange={e => setData({...data, subtitle: e.target.value})} className="w-full px-4 py-3 bg-background border border-border rounded-xl" />
+              <label className="mb-2 block text-sm font-medium">زیرعنوان</label>
+              <input value={data.subtitle} onChange={e => setData({...data, subtitle: e.target.value})} className="w-full rounded-xl border border-border bg-background px-4 py-3" />
             </div>
           </div>
           <div className="mt-4">
-            <label className="block text-sm font-medium mb-2">محتوا (مارک‌داون)</label>
-            <textarea value={data.content} onChange={e => setData({...data, content: e.target.value})} rows={15} className="w-full px-4 py-3 bg-background border border-border rounded-xl resize-none font-mono text-sm" />
+            <MarkdownEditor
+              value={data.content}
+              onChange={(content) => setData({ ...data, content })}
+              rows={15}
+              folder="about"
+              label="محتوا (مارک‌داون)"
+              hint="می‌توانید وسط متن، عکس آپلود کنید تا بین پاراگراف‌ها نمایش داده شود."
+            />
           </div>
         </div>
         <button onClick={handleSave} disabled={saving} className="flex items-center gap-2 px-6 py-3 bg-foreground text-background font-medium rounded-xl hover:opacity-90 disabled:opacity-50">

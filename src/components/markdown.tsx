@@ -2,8 +2,22 @@ interface MarkdownProps {
   content: string;
 }
 
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
 function simpleMarkdownToHtml(md: string): string {
   let html = md;
+
+  html = html.replace(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+"([^"]*)")?\)/g, (_match, alt, src) => {
+    const safeAlt = escapeHtml(alt || "تصویر پروژه");
+    const safeSrc = escapeHtml(src);
+    return `<figure class="prose-image"><img src="${safeSrc}" alt="${safeAlt}" loading="lazy" decoding="async" /><figcaption>${safeAlt}</figcaption></figure>`;
+  });
 
   // Headers
   html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
@@ -31,7 +45,11 @@ function simpleMarkdownToHtml(md: string): string {
       !trimmed.startsWith('<ul') &&
       !trimmed.startsWith('<li') &&
       !trimmed.startsWith('</ul') &&
-      !trimmed.startsWith('</li')
+      !trimmed.startsWith('</li') &&
+      !trimmed.startsWith('<figure') &&
+      !trimmed.startsWith('</figure') &&
+      !trimmed.startsWith('<img') &&
+      !trimmed.startsWith('<figcaption')
     ) {
       result.push(`<p>${trimmed}</p>`);
     } else {

@@ -68,15 +68,15 @@ export default function AdminTestimonialsPage() {
 
       <div className="grid gap-4 sm:grid-cols-2">
         {items.map(item => (
-          <div key={item.id} className="p-4 bg-card border border-border rounded-2xl">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-xs font-bold">{item.avatar}</div>
-              <div>
-                <h3 className="font-semibold">{item.name}</h3>
-                <p className="text-xs text-muted-foreground">{item.role}، {item.company}</p>
+          <div key={item.id} className="min-w-0 rounded-2xl border border-border bg-card p-4">
+            <div className="mb-3 flex items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary text-xs font-bold">{item.avatar}</div>
+              <div className="min-w-0">
+                <h3 className="truncate font-semibold">{item.name}</h3>
+                <p className="truncate text-xs text-muted-foreground">{item.role}، {item.company}</p>
               </div>
             </div>
-            <p className="text-sm text-muted-foreground line-clamp-2 mb-3">«{item.text}»</p>
+            <p className="mb-3 line-clamp-2 break-safe text-sm text-muted-foreground">«{item.text}»</p>
             <div className="flex gap-2">
               <button onClick={() => { setEditing(item.id); setForm(item); }} className="text-sm hover:underline">ویرایش</button>
               <button onClick={() => handleDelete(item.id)} className="text-sm text-red-500 hover:underline">حذف</button>

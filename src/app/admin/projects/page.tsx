@@ -71,44 +71,45 @@ export default function AdminProjectsPage() {
           {projects.map(project => (
             <div
               key={project.id}
-              className="flex items-center gap-4 p-4 bg-card border border-border rounded-2xl hover:border-foreground/10 transition-all"
+              className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-4 transition-all hover:border-foreground/10 sm:flex-row sm:items-center sm:gap-4"
             >
               {project.image && (
+                // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={project.image}
                   alt={project.title}
-                  className="w-20 h-14 object-cover rounded-lg"
+                  className="h-28 w-full shrink-0 rounded-lg object-cover sm:h-14 sm:w-20"
                 />
               )}
-              <div className="flex-1 min-w-0">
+              <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
-                  <h3 className="font-semibold truncate">{project.title}</h3>
+                  <h3 className="truncate font-semibold">{project.title}</h3>
                   {project.featured === 1 && (
-                    <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                    <Star className="h-4 w-4 shrink-0 fill-yellow-500 text-yellow-500" />
                   )}
                 </div>
-                <p className="text-sm text-muted-foreground truncate">{project.description}</p>
+                <p className="truncate text-sm text-muted-foreground">{project.description}</p>
                 <span className="text-xs text-muted-foreground">{project.category}</span>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex shrink-0 items-center gap-2">
                 <Link
                   href={`/projects/${project.slug}`}
                   target="_blank"
-                  className="p-2 text-muted-foreground hover:text-foreground hover:bg-secondary rounded-lg"
+                  className="rounded-lg p-2 text-muted-foreground hover:bg-secondary hover:text-foreground"
                 >
-                  <ExternalLink className="w-5 h-5" />
+                  <ExternalLink className="h-5 w-5" />
                 </Link>
                 <Link
                   href={`/admin/projects/${project.id}`}
-                  className="p-2 text-muted-foreground hover:text-foreground hover:bg-secondary rounded-lg"
+                  className="rounded-lg p-2 text-muted-foreground hover:bg-secondary hover:text-foreground"
                 >
-                  <Edit className="w-5 h-5" />
+                  <Edit className="h-5 w-5" />
                 </Link>
                 <button
                   onClick={() => handleDelete(project.id)}
-                  className="p-2 text-red-500 hover:bg-red-500/10 rounded-lg"
+                  className="rounded-lg p-2 text-red-500 hover:bg-red-500/10"
                 >
-                  <Trash2 className="w-5 h-5" />
+                  <Trash2 className="h-5 w-5" />
                 </button>
               </div>
             </div>

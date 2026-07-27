@@ -24,7 +24,7 @@ const menuItems = [
   { href: "/admin", label: "داشبورد", icon: LayoutDashboard },
   { href: "/admin/profile", label: "پروفایل", icon: User },
   { href: "/admin/projects", label: "پروژه‌ها", icon: FolderKanban },
-  { href: "/admin/experiences", label: "تجربیات", icon: Briefcase },
+  { href: "/admin/services", label: "خدمات", icon: Briefcase },
   { href: "/admin/skills", label: "مهارت‌ها", icon: Wrench },
   { href: "/admin/testimonials", label: "نظرات", icon: MessageSquareQuote },
   { href: "/admin/socials", label: "شبکه‌های اجتماعی", icon: Share2 },
@@ -67,8 +67,8 @@ export function AdminSidebar() {
                   : "text-muted-foreground hover:text-foreground hover:bg-secondary"
               )}
             >
-              <item.icon className="w-5 h-5" />
-              {item.label}
+              <item.icon className="h-5 w-5 shrink-0" />
+              <span className="truncate">{item.label}</span>
             </Link>
           );
         })}

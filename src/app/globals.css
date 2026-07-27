@@ -88,6 +88,20 @@ body {
   color: var(--color-foreground);
   transition: background-color 0.3s ease, color 0.3s ease;
   line-height: 1.8;
+  overflow-x: hidden;
+}
+
+/* Admin panel responsive helpers */
+.admin-panel input,
+.admin-panel textarea,
+.admin-panel select {
+  max-width: 100%;
+  min-width: 0;
+}
+
+.admin-panel .break-safe {
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 /* Selection styling */
@@ -164,8 +178,55 @@ body {
 }
 
 /* Markdown content styles */
+.prose-content {
+  --prose-font-size: 1rem;
+  --prose-text-align: right;
+  font-size: var(--prose-font-size);
+  text-align: var(--prose-text-align);
+}
+
+.prose-content[data-font-size="sm"],
+[data-content-font-size="sm"] .prose-content {
+  --prose-font-size: 0.925rem;
+}
+
+.prose-content[data-font-size="base"],
+[data-content-font-size="base"] .prose-content {
+  --prose-font-size: 1rem;
+}
+
+.prose-content[data-font-size="lg"],
+[data-content-font-size="lg"] .prose-content {
+  --prose-font-size: 1.125rem;
+}
+
+.prose-content[data-font-size="xl"],
+[data-content-font-size="xl"] .prose-content {
+  --prose-font-size: 1.25rem;
+}
+
+.prose-content[data-text-align="right"],
+[data-content-text-align="right"] .prose-content {
+  --prose-text-align: right;
+}
+
+.prose-content[data-text-align="left"],
+[data-content-text-align="left"] .prose-content {
+  --prose-text-align: left;
+}
+
+.prose-content[data-text-align="center"],
+[data-content-text-align="center"] .prose-content {
+  --prose-text-align: center;
+}
+
+.prose-content[data-text-align="justify"],
+[data-content-text-align="justify"] .prose-content {
+  --prose-text-align: justify;
+}
+
 .prose-content h2 {
-  font-size: 1.5rem;
+  font-size: 1.5em;
   font-weight: 700;
   margin-top: 2rem;
   margin-bottom: 1rem;
@@ -173,7 +234,7 @@ body {
 }
 
 .prose-content h3 {
-  font-size: 1.25rem;
+  font-size: 1.25em;
   font-weight: 600;
   margin-top: 1.5rem;
   margin-bottom: 0.75rem;
@@ -183,6 +244,7 @@ body {
 .prose-content p {
   margin-bottom: 1rem;
   line-height: 2;
+  text-align: var(--prose-text-align);
   color: var(--color-muted-foreground);
 }
 
@@ -191,6 +253,7 @@ body {
   padding-right: 1.5rem;
   padding-left: 0;
   margin-bottom: 1rem;
+  text-align: var(--prose-text-align);
 }
 
 .prose-content li {
@@ -202,6 +265,35 @@ body {
 .prose-content strong {
   font-weight: 600;
   color: var(--color-foreground);
+}
+
+.prose-content .prose-image {
+  margin: 2rem 0;
+  padding: 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 1.25rem;
+  background: var(--color-card);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.dark .prose-content .prose-image {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.24);
+}
+
+.prose-content .prose-image img {
+  display: block;
+  width: 100%;
+  max-height: 420px;
+  object-fit: cover;
+  border-radius: 0.9rem;
+}
+
+.prose-content .prose-image figcaption {
+  margin-top: 0.75rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--color-muted-foreground);
 }
 
 /* Persian number rendering */

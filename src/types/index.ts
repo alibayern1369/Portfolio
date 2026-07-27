@@ -7,6 +7,10 @@ export interface SiteConfig {
   ogImage: string;
   keywords: string[];
   defaultTheme: "light" | "dark" | "system";
+  logo: string;
+  logoText: string;
+  contentFontSize: "sm" | "base" | "lg" | "xl";
+  contentTextAlign: "right" | "left" | "center" | "justify";
 }
 
 export interface Profile {
@@ -48,6 +52,14 @@ export interface Experience {
   description: string;
   achievements: string[];
   technologies: string[];
+}
+
+export interface Service {
+  id?: number;
+  title: string;
+  description: string;
+  icon: string;
+  sortOrder?: number;
 }
 
 export interface Testimonial {

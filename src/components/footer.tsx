@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { GitHubIcon, LinkedInIcon, TwitterIcon, DribbbleIcon } from "./icons";
+import { SiteLogo } from "./site-logo";
 import type { Social } from "@/types";
 import type { ComponentType, SVGProps } from "react";
 
@@ -13,9 +13,11 @@ const iconMap: Record<string, ComponentType<SVGProps<SVGSVGElement>>> = {
 interface FooterProps {
   name: string;
   socials: Social[];
+  logo?: string;
+  logoText?: string;
 }
 
-export function Footer({ name, socials }: FooterProps) {
+export function Footer({ name, socials, logo, logoText }: FooterProps) {
   const currentYear = new Date().getFullYear();
 
   return (
@@ -23,9 +25,7 @@ export function Footer({ name, socials }: FooterProps) {
       <div className="mx-auto max-w-6xl px-6 py-12">
         <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
           <div>
-            <Link href="/" className="text-lg font-bold tracking-tight">
-              <span className="gradient-text">ع.د</span>
-            </Link>
+            <SiteLogo logo={logo} logoText={logoText} />
             <p className="mt-1 text-sm text-muted-foreground">
               خلق تجربه‌های دیجیتال
             </p>

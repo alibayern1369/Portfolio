@@ -48,10 +48,10 @@ export default function AdminProfilePage() {
 
   return (
     <AdminShell title="پروفایل" description="اطلاعات شخصی و هیرو صفحه اصلی">
-      <div className="max-w-4xl space-y-6">
+      <div className="mx-auto max-w-4xl min-w-0 space-y-6">
         {/* Avatar Upload */}
-        <div className="bg-card border border-border rounded-2xl p-6">
-          <h2 className="font-semibold mb-4">عکس پروفایل</h2>
+        <div className="rounded-2xl border border-border bg-card p-4 sm:p-6">
+          <h2 className="mb-4 font-semibold">عکس پروفایل</h2>
           <div className="max-w-[200px]">
             <ImageUpload
               value={data.avatar}
@@ -64,8 +64,8 @@ export default function AdminProfilePage() {
         </div>
 
         {/* Basic Info */}
-        <div className="bg-card border border-border rounded-2xl p-6">
-          <h2 className="font-semibold mb-4">اطلاعات اصلی</h2>
+        <div className="rounded-2xl border border-border bg-card p-4 sm:p-6">
+          <h2 className="mb-4 font-semibold">اطلاعات اصلی</h2>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <label className="block text-sm font-medium mb-2">نام</label>
@@ -95,17 +95,17 @@ export default function AdminProfilePage() {
         </div>
 
         {/* Hero Section */}
-        <div className="bg-card border border-border rounded-2xl p-6">
-          <h2 className="font-semibold mb-4">بخش هیرو (Hero)</h2>
+        <div className="rounded-2xl border border-border bg-card p-4 sm:p-6">
+          <h2 className="mb-4 font-semibold">بخش هیرو (Hero)</h2>
           <div className="mb-4">
-            <label className="block text-sm font-medium mb-2">خطوط عنوان</label>
+            <label className="mb-2 block text-sm font-medium">خطوط عنوان</label>
             {headlines.map((line, i) => (
-              <div key={i} className="flex gap-2 mb-2">
-                <input type="text" value={line} onChange={e => { const n = [...headlines]; n[i] = e.target.value; setHeadlines(n); }} className="flex-1 px-4 py-3 bg-background border border-border rounded-xl focus:border-foreground/20 focus:outline-none" />
-                <button onClick={() => setHeadlines(headlines.filter((_, j) => j !== i))} className="p-3 text-red-500 hover:bg-red-500/10 rounded-xl"><Trash2 className="w-5 h-5" /></button>
+              <div key={i} className="mb-2 flex min-w-0 gap-2">
+                <input type="text" value={line} onChange={e => { const n = [...headlines]; n[i] = e.target.value; setHeadlines(n); }} className="min-w-0 flex-1 rounded-xl border border-border bg-background px-4 py-3 focus:border-foreground/20 focus:outline-none" />
+                <button onClick={() => setHeadlines(headlines.filter((_, j) => j !== i))} className="shrink-0 rounded-xl p-3 text-red-500 hover:bg-red-500/10"><Trash2 className="h-5 w-5" /></button>
               </div>
             ))}
-            <button onClick={() => setHeadlines([...headlines, ""])} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"><Plus className="w-4 h-4" /> افزودن خط</button>
+            <button onClick={() => setHeadlines([...headlines, ""])} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"><Plus className="h-4 w-4" /> افزودن خط</button>
           </div>
           <div>
             <label className="block text-sm font-medium mb-2">توضیحات هیرو</label>

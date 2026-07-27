@@ -21,7 +21,7 @@ export function SectionTitle({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5 }}
-      className={`mb-12 md:mb-16 ${align === "center" ? "text-center" : "text-left"}`}
+          className={`mb-12 md:mb-16 ${align === "center" ? "text-center" : "text-right"}`}
     >
       {label && (
         <span className="mb-3 inline-block rounded-full border border-border bg-secondary px-4 py-1.5 text-xs font-medium uppercase tracking-wider text-muted-foreground">
@@ -32,7 +32,7 @@ export function SectionTitle({
         {title}
       </h2>
       {description && (
-        <p className="mx-auto mt-4 max-w-2xl text-base text-muted-foreground md:text-lg">
+        <p className="mx-auto mt-4 max-w-2xl px-1 text-base text-muted-foreground md:text-lg">
           {description}
         </p>
       )}

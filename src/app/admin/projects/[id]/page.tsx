@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { AdminShell } from "@/components/admin/admin-shell";
 import { ImageUpload } from "@/components/admin/image-upload";
+import { MarkdownEditor } from "@/components/admin/markdown-editor";
 import { Save, ArrowRight, Plus, X } from "lucide-react";
 import Link from "next/link";
 
@@ -59,9 +60,9 @@ export default function AdminProjectEditPage() {
         <ArrowRight className="w-4 h-4" /> بازگشت به لیست
       </Link>
 
-      <div className="max-w-4xl space-y-6">
+      <div className="mx-auto max-w-4xl min-w-0 space-y-6">
         {/* Project Image Upload */}
-        <div className="bg-card border border-border rounded-2xl p-6">
+        <div className="rounded-2xl border border-border bg-card p-4 sm:p-6">
           <h2 className="font-semibold mb-4">تصویر پروژه</h2>
           <ImageUpload
             value={data.image}
@@ -72,7 +73,7 @@ export default function AdminProjectEditPage() {
           />
         </div>
 
-        <div className="bg-card border border-border rounded-2xl p-6">
+        <div className="rounded-2xl border border-border bg-card p-4 sm:p-6">
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <label className="block text-sm font-medium mb-2">عنوان</label>
@@ -104,8 +105,14 @@ export default function AdminProjectEditPage() {
             <textarea value={data.description} onChange={e => setData({...data, description: e.target.value})} rows={2} className="w-full px-4 py-3 bg-background border border-border rounded-xl focus:border-foreground/20 focus:outline-none resize-none" />
           </div>
           <div className="mt-4">
-            <label className="block text-sm font-medium mb-2">محتوا (مارک‌داون)</label>
-            <textarea value={data.content} onChange={e => setData({...data, content: e.target.value})} rows={8} className="w-full px-4 py-3 bg-background border border-border rounded-xl focus:border-foreground/20 focus:outline-none resize-none font-mono text-sm" dir="rtl" />
+            <MarkdownEditor
+              value={data.content}
+              onChange={(content) => setData({ ...data, content })}
+              rows={12}
+              folder="projects"
+              label="محتوا (مارک‌داون)"
+              hint="می‌توانید وسط متن، عکس آپلود کنید تا بین پاراگراف‌ها نمایش داده شود."
+            />
           </div>
           <div className="mt-4">
             <label className="block text-sm font-medium mb-2">تگ‌ها</label>

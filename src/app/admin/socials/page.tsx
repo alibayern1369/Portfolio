@@ -71,19 +71,21 @@ export default function AdminSocialsPage() {
 
       <div className="space-y-2">
         {items.map(item => (
-          <div key={item.id} className="flex items-center gap-4 p-4 bg-card border border-border rounded-xl">
-            <span className="text-xl">
+          <div key={item.id} className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4 sm:flex-row sm:items-center sm:gap-4">
+            <span className="shrink-0 text-xl">
               {item.icon === "github" && "🐙"}
               {item.icon === "linkedin" && "💼"}
               {item.icon === "twitter" && "🐦"}
               {item.icon === "dribbble" && "🏀"}
             </span>
-            <div className="flex-1">
+            <div className="min-w-0 flex-1">
               <h3 className="font-medium">{item.name}</h3>
-              <p className="text-xs text-muted-foreground" dir="ltr">{item.url}</p>
+              <p className="break-safe text-xs text-muted-foreground" dir="ltr">{item.url}</p>
             </div>
-            <button onClick={() => { setEditing(item.id); setForm(item); }} className="text-sm hover:underline">ویرایش</button>
-            <button onClick={() => handleDelete(item.id)} className="p-2 text-red-500"><Trash2 className="w-4 h-4" /></button>
+            <div className="flex shrink-0 items-center gap-2">
+              <button onClick={() => { setEditing(item.id); setForm(item); }} className="text-sm hover:underline">ویرایش</button>
+              <button onClick={() => handleDelete(item.id)} className="rounded-lg p-2 text-red-500"><Trash2 className="w-4 h-4" /></button>
+            </div>
           </div>
         ))}
       </div>

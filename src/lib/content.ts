@@ -3,7 +3,7 @@ import { initDatabase } from "@/db";
 import { seedDatabase } from "@/db/seed";
 import type {
   SiteConfig, Profile, Social, SkillsData, SkillCategory,
-  Experience, Testimonial, Project, AboutData,
+  Experience, Service, Testimonial, Project, AboutData,
 } from "@/types";
 
 let initPromise: Promise<void> | null = null;
@@ -68,6 +68,9 @@ export async function getSiteConfig(): Promise<SiteConfig> {
   const result = await db.execute("SELECT * FROM site_settings WHERE id = 1");
   const row = r(result.rows[0]);
 
+  const fontSize = str(row.content_font_size, "base");
+  const textAlign = str(row.content_text_align, "right");
+
   return {
     name: str(row.site_name, "علی دلاور"),
     title: str(row.site_title),
@@ -77,6 +80,10 @@ export async function getSiteConfig(): Promise<SiteConfig> {
     defaultTheme: (str(row.default_theme, "system") as "light" | "dark" | "system"),
     ogImage: "/images/og.jpg",
     keywords: json<string[]>(row.keywords, []),
+    logo: str(row.logo),
+    logoText: str(row.logo_text, "ع.د"),
+    contentFontSize: (["sm", "base", "lg", "xl"].includes(fontSize) ? fontSize : "base") as SiteConfig["contentFontSize"],
+    contentTextAlign: (["right", "left", "center", "justify"].includes(textAlign) ? textAlign : "right") as SiteConfig["contentTextAlign"],
   };
 }
 
@@ -101,7 +108,7 @@ export async function getSkills(): Promise<SkillsData> {
   return { categories };
 }
 
-// Experiences
+// Experiences (legacy)
 export async function getExperiences(): Promise<Experience[]> {
   await ensureDb();
   const result = await db.execute("SELECT * FROM experiences ORDER BY sort_order");
@@ -112,6 +119,22 @@ export async function getExperiences(): Promise<Experience[]> {
       location: str(d.location), description: str(d.description),
       achievements: json<string[]>(d.achievements, []),
       technologies: json<string[]>(d.technologies, []),
+    };
+  });
+}
+
+// Services
+export async function getServices(): Promise<Service[]> {
+  await ensureDb();
+  const result = await db.execute("SELECT * FROM services ORDER BY sort_order, id");
+  return result.rows.map((row) => {
+    const d = r(row);
+    return {
+      id: Number(d.id),
+      title: str(d.title),
+      description: str(d.description),
+      icon: str(d.icon, "sparkles"),
+      sortOrder: Number(d.sort_order ?? 0),
     };
   });
 }

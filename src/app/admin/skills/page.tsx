@@ -86,17 +86,17 @@ export default function AdminSkillsPage() {
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {items.map(item => (
-          <div key={item.id} className="p-4 bg-card border border-border rounded-2xl">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="font-semibold">{item.name}</h3>
-              <div className="flex gap-1">
-                <button onClick={() => startEdit(item)} className="p-1 hover:bg-secondary rounded text-sm">ویرایش</button>
+          <div key={item.id} className="min-w-0 rounded-2xl border border-border bg-card p-4">
+            <div className="mb-2 flex items-start justify-between gap-2">
+              <h3 className="break-safe font-semibold">{item.name}</h3>
+              <div className="flex shrink-0 gap-1">
+                <button onClick={() => startEdit(item)} className="rounded p-1 text-sm hover:bg-secondary">ویرایش</button>
                 <button onClick={() => handleDelete(item.id)} className="p-1 text-red-500"><Trash2 className="w-4 h-4" /></button>
               </div>
             </div>
             <div className="flex flex-wrap gap-1">
               {JSON.parse(item.skills || "[]").map((s: string, i: number) => (
-                <span key={i} className="px-2 py-1 bg-secondary rounded text-xs">{s}</span>
+                <span key={i} className="rounded bg-secondary px-2 py-1 text-xs">{s}</span>
               ))}
             </div>
           </div>

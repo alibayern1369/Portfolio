@@ -41,9 +41,15 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       <body className="min-h-screen bg-background text-foreground antialiased">
         <Providers defaultTheme={site.defaultTheme}>
           <ReadingProgress />
-          <Navbar />
-          <main className="min-h-screen">{children}</main>
-          <Footer name={profile.name} socials={socials} />
+          <Navbar logo={site.logo} logoText={site.logoText} />
+          <main
+            className="min-h-screen"
+            data-content-font-size={site.contentFontSize}
+            data-content-text-align={site.contentTextAlign}
+          >
+            {children}
+          </main>
+          <Footer name={profile.name} socials={socials} logo={site.logo} logoText={site.logoText} />
           <BackToTop />
         </Providers>
       </body>

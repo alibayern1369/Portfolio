@@ -12,23 +12,25 @@ interface AdminShellProps {
 
 export function AdminShell({ children, title, description }: AdminShellProps) {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="admin-panel min-h-screen overflow-x-hidden bg-background">
       <AdminSidebar />
-      
-      <main className="md:mr-72">
-        <header className="sticky top-0 z-30 bg-background/80 backdrop-blur-lg border-b border-border">
-          <div className="flex items-center justify-between px-6 py-4">
-            <div>
-              <h1 className="text-xl font-bold">{title}</h1>
+
+      <main className="min-w-0 md:mr-72">
+        <header className="sticky top-0 z-30 border-b border-border bg-background/80 backdrop-blur-lg">
+          <div className="flex items-start justify-between gap-3 px-4 py-4 pt-16 sm:px-6 md:items-center md:pt-4">
+            <div className="min-w-0 flex-1">
+              <h1 className="truncate text-lg font-bold sm:text-xl">{title}</h1>
               {description && (
-                <p className="text-sm text-muted-foreground">{description}</p>
+                <p className="mt-0.5 break-words text-sm text-muted-foreground">{description}</p>
               )}
             </div>
-            <ThemeToggle />
+            <div className="shrink-0">
+              <ThemeToggle />
+            </div>
           </div>
         </header>
 
-        <div className="p-6">
+        <div className="min-w-0 overflow-x-hidden p-4 sm:p-6">
           {children}
         </div>
       </main>

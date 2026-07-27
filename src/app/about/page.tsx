@@ -40,11 +40,11 @@ export default async function AboutPage() {
               </a>
             </div>
           </div>
-          <div className="lg:col-span-2"><Markdown content={about.content} /></div>
+          <div className="min-w-0 lg:col-span-2"><Markdown content={about.content} /></div>
         </div>
       </Section>
       <Section>
-        <SectionTitle label="مهارت‌ها" title="فناوری‌هایی که با آن‌ها کار می‌کنم" />
+        <SectionTitle label="تخصص‌ها" title="مهارت‌ها و ابزارها" description="توانایی‌هایی که در پروژه‌ها و خدمات کسب‌وکار استفاده می‌کنم." />
         <SkillsGrid categories={skills.categories} />
       </Section>
       <Section><CTA name={profile.name} /></Section>

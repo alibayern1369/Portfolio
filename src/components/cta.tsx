@@ -24,8 +24,7 @@ export function CTA({ name }: CTAProps) {
           بیایید با هم کار کنیم
         </h2>
         <p className="mx-auto mt-4 max-w-lg text-muted-foreground leading-relaxed">
-          من همیشه مشتاق شنیدن درباره پروژه‌ها و فرصت‌های جدید هستم.
-          اگر سؤالی دارید یا فقط می‌خواهید سلام کنید، خوشحال می‌شوم.
+          اگر برای طراحی، توسعه وبسایت، نرم‌افزار یا اپ موبایل نیاز به همکاری دارید، خوشحال می‌شوم گفتگو کنیم.
         </p>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
           <Link

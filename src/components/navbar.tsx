@@ -6,17 +6,23 @@ import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { ThemeToggle } from "./theme-toggle";
+import { SiteLogo } from "./site-logo";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
   { href: "/", label: "خانه" },
+  { href: "/services", label: "خدمات" },
   { href: "/projects", label: "پروژه‌ها" },
   { href: "/about", label: "درباره من" },
-  { href: "/experience", label: "تجربیات" },
   { href: "/contact", label: "تماس" },
 ];
 
-export function Navbar() {
+interface NavbarProps {
+  logo?: string;
+  logoText?: string;
+}
+
+export function Navbar({ logo, logoText }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const pathname = usePathname();
@@ -43,12 +49,7 @@ export function Navbar() {
         )}
       >
         <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <Link
-            href="/"
-            className="text-lg font-bold tracking-tight transition-opacity hover:opacity-70"
-          >
-            <span className="gradient-text">ع.د</span>
-          </Link>
+          <SiteLogo logo={logo} logoText={logoText} />
 
           {/* Desktop Nav */}
           <div className="hidden items-center gap-1 md:flex">

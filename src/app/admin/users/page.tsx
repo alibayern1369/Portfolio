@@ -223,20 +223,20 @@ export default function AdminUsersPage() {
           {/* Users Table */}
           <div className="space-y-2">
             {users.map(user => (
-              <div key={user.id} className="flex items-center gap-4 p-4 border border-border rounded-xl">
-                <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-sm font-bold">
+              <div key={user.id} className="flex items-center gap-3 rounded-xl border border-border p-3 sm:gap-4 sm:p-4">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary text-sm font-bold">
                   {user.username.charAt(0).toUpperCase()}
                 </div>
-                <div className="flex-1">
-                  <p className="font-medium" dir="ltr">{user.username}</p>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate font-medium" dir="ltr">{user.username}</p>
                   <p className="text-xs text-muted-foreground">{user.role}</p>
                 </div>
                 <button
                   onClick={() => handleDeleteUser(user.id)}
-                  className="p-2 text-red-500 hover:bg-red-500/10 rounded-lg"
+                  className="shrink-0 rounded-lg p-2 text-red-500 hover:bg-red-500/10"
                   title="حذف"
                 >
-                  <Trash2 className="w-5 h-5" />
+                  <Trash2 className="h-5 w-5" />
                 </button>
               </div>
             ))}

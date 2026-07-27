@@ -1,7 +1,37 @@
 import db from "./index";
 import bcrypt from "bcryptjs";
 
+const DEFAULT_SERVICES = [
+  ["UI/UX", "طراحی تجربه و رابط کاربری حرفه‌ای برای وب و اپلیکیشن", "palette", 1],
+  ["طراحی لوگو", "طراحی هویت بصری و لوگوی اختصاصی برای برند شما", "sparkles", 2],
+  ["افزونه‌های اختصاصی وردپرس", "توسعه پلاگین‌های سفارشی متناسب با نیاز کسب‌وکار", "puzzle", 3],
+  ["نرم‌افزارهای سفارشی از صفر", "طراحی و پیاده‌سازی نرم‌افزارهای حرفه‌ای و شخصی‌سازی‌شده", "code", 4],
+  ["نرم‌افزارهای اداری", "سیستم‌های مدیریتی و نرم‌افزارهای اداری متناسب با فرایندها", "building", 5],
+  ["وبسایت وردپرس", "طراحی و راه‌اندازی وبسایت وردپرس حرفه‌ای و بهینه", "globe", 6],
+  ["طراحی کاملا رسپانسیو", "سازگاری کامل صفحات و محصولات با موبایل، تبلت و دسکتاپ", "layout", 7],
+  ["اپ موبایل", "طراحی و توسعه اپلیکیشن موبایل برای اندروید و iOS", "smartphone", 8],
+] as const;
+
+async function seedServicesIfEmpty() {
+  try {
+    const existing = await db.execute("SELECT COUNT(*) as c FROM services");
+    if (Number(existing.rows[0]?.c ?? 0) > 0) return;
+
+    for (const s of DEFAULT_SERVICES) {
+      await db.execute({
+        sql: `INSERT INTO services (title, description, icon, sort_order) VALUES (?, ?, ?, ?)`,
+        args: [...s],
+      });
+    }
+  } catch (e) {
+    console.error("seedServicesIfEmpty error:", e);
+  }
+}
+
 export async function seedDatabase() {
+  // Always ensure default services exist for existing installs
+  await seedServicesIfEmpty();
+
   // Check if already seeded
   const existing = await db.execute({ sql: "SELECT id FROM users WHERE username = ?", args: ["admin"] });
   if (existing.rows.length > 0) {
@@ -20,17 +50,17 @@ export async function seedDatabase() {
           VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     args: [
       "علی دلاور",
-      "توسعه‌دهنده فول‌استک و طراح رابط کاربری",
-      "ساختن آینده وب، پیکسل به پیکسل.",
-      "من یک توسعه‌دهنده فول‌استک با بیش از ۶ سال تجربه در ساخت اپلیکیشن‌های وب زیبا و با عملکرد بالا هستم. تخصص من در React، Next.js و TypeScript است و نگاه تیزبینی به طراحی و تجربه کاربری دارم.",
-      "خلق تجربه‌های دیجیتال در تلاقی طراحی و مهندسی.",
+      "طراح و توسعه‌دهنده محصول دیجیتال",
+      "طراحی، توسعه و رشد کسب‌وکارهای آنلاین.",
+      "من روی طراحی و ساخت محصولات دیجیتال کار می‌کنم؛ از معرفی شخصی تا خدمات کسب‌وکار، وبسایت، نرم‌افزار و اپلیکیشن.",
+      "طراحی و توسعه محصول برای کسب‌وکارها و برندهای شخصی.",
       "/images/profile.jpg",
       "تهران، ایران",
       "hello@alidelavar.dev",
       "آماده همکاری",
       "/resume.pdf",
-      JSON.stringify(["من طراحی و توسعه", "تجربه‌های دیجیتال", "الهام‌بخش می‌دهم."]),
-      "توسعه‌دهنده فول‌استک متخصص در ساخت اپلیکیشن‌های وب زیبا و با عملکرد بالا با فناوری‌های مدرن. در حال حاضر روی ساخت محصولاتی تمرکز دارم که تفاوت ایجاد می‌کنند."
+      JSON.stringify(["طراحی و توسعه", "محصولات دیجیتال", "برای رشد کسب‌وکار شما"]),
+      "طراحی UI/UX، توسعه وبسایت و نرم‌افزار، و ساخت اپلیکیشن موبایل — ترکیبی از معرفی من و خدمات کسب‌وکارم."
     ]
   });
 
@@ -52,24 +82,22 @@ export async function seedDatabase() {
   await db.execute({
     sql: `INSERT OR IGNORE INTO about_page (id, title, subtitle, content) VALUES (1, ?, ?, ?)`,
     args: [
-      "درباره من",
-      "داستان پشت کدها",
-      `## مسیر من
+      "من و کسب‌وکارم",
+      "ترکیبی از معرفی شخصی و خدمات حرفه‌ای",
+      `## معرفی
 
-من علی دلاور هستم، توسعه‌دهنده فول‌استک و طراح رابط کاربری مستقر در تهران.
+من روی طراحی و توسعه محصولات دیجیتال کار می‌کنم؛ از برندینگ و رابط کاربری تا وبسایت، نرم‌افزار و اپلیکیشن.
 
-## کار من
+## تمرکز کاری
 
-من در ساخت اپلیکیشن‌های وب مدرن با React، Next.js و TypeScript تخصص دارم.
+کمک به افراد و کسب‌وکارها برای داشتن حضور آنلاین حرفه‌ای و ابزارهای نرم‌افزاری کارآمد.
 
-## تحصیلات
+## خدمات اصلی
 
-**کارشناسی مهندسی کامپیوتر** — دانشگاه تهران — ۱۳۹۶
-
-## گواهینامه‌ها
-
-- AWS Certified Solutions Architect
-- Google Cloud Professional Developer`
+- UI/UX و طراحی لوگو
+- وبسایت و افزونه‌های وردپرس
+- نرم‌افزارهای سفارشی و اداری
+- طراحی رسپانسیو و اپ موبایل`
     ]
   });
 
@@ -87,7 +115,7 @@ export async function seedDatabase() {
     });
   }
 
-  // Seed experiences
+  // Seed experiences (legacy - kept for compatibility)
   const experiences = [
     ["اسنپ", "مهندس ارشد فرانت‌اند", "۱۴۰۲ - اکنون", "تهران، ایران", "رهبری معماری فرانت‌اند تیم داشبورد", JSON.stringify(["بازطراحی داشبورد استقرار", "معماری سیستم طراحی جدید"]), JSON.stringify(["Next.js", "React", "TypeScript"]), 1],
     ["دیجی‌کالا", "توسعه‌دهنده فول‌استک", "۱۴۰۰ - ۱۴۰۲", "تهران، ایران", "ساخت و نگهداری زیرساخت‌های پرداخت", JSON.stringify(["توسعه کامپوننت‌های پرداخت", "ابزار داخلی آنبوردینگ"]), JSON.stringify(["React", "Node.js", "PostgreSQL"]), 2],
@@ -99,6 +127,8 @@ export async function seedDatabase() {
       args: e,
     });
   }
+
+  // Services already seeded via seedServicesIfEmpty()
 
   // Seed skills
   const skills = [
