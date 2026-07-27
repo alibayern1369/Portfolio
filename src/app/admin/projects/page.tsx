@@ -71,7 +71,7 @@ export default function AdminProjectsPage() {
           {projects.map(project => (
             <div
               key={project.id}
-              className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-4 transition-all hover:border-foreground/10 sm:flex-row sm:items-center sm:gap-4"
+              className="flex w-full min-w-0 flex-col gap-3 rounded-2xl border border-border bg-card p-4 transition-all hover:border-foreground/10 sm:flex-row sm:items-center sm:gap-4"
             >
               {project.image && (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -81,17 +81,21 @@ export default function AdminProjectsPage() {
                   className="h-28 w-full shrink-0 rounded-lg object-cover sm:h-14 sm:w-20"
                 />
               )}
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2">
-                  <h3 className="truncate font-semibold">{project.title}</h3>
+              <div className="min-w-0 flex-1 overflow-hidden">
+                <div className="flex min-w-0 items-center gap-2">
+                  <h3 className="min-w-0 truncate font-semibold">{project.title}</h3>
                   {project.featured === 1 && (
                     <Star className="h-4 w-4 shrink-0 fill-yellow-500 text-yellow-500" />
                   )}
                 </div>
-                <p className="truncate text-sm text-muted-foreground">{project.description}</p>
-                <span className="text-xs text-muted-foreground">{project.category}</span>
+                <p className="mt-0.5 line-clamp-2 break-words text-sm text-muted-foreground">
+                  {project.description}
+                </p>
+                <span className="mt-1 block truncate text-xs text-muted-foreground">
+                  {project.category}
+                </span>
               </div>
-              <div className="flex shrink-0 items-center gap-2">
+              <div className="flex shrink-0 items-center gap-2 self-end sm:self-center">
                 <Link
                   href={`/projects/${project.slug}`}
                   target="_blank"

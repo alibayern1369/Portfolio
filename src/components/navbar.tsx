@@ -26,6 +26,7 @@ export function Navbar({ logo, logoText }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const pathname = usePathname();
+  const isAdmin = pathname.startsWith("/admin");
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -36,6 +37,8 @@ export function Navbar({ logo, logoText }: NavbarProps) {
   useEffect(() => {
     setIsMobileOpen(false);
   }, [pathname]);
+
+  if (isAdmin) return null;
 
   return (
     <>

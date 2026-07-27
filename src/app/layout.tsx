@@ -5,6 +5,7 @@ import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { BackToTop } from "@/components/back-to-top";
 import { ReadingProgress } from "@/components/reading-progress";
+import { HideOnAdmin } from "@/components/hide-on-admin";
 import { getSiteConfig, getProfile, getSocials } from "@/lib/content";
 import "./globals.css";
 
@@ -40,7 +41,9 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       </head>
       <body className="min-h-screen bg-background text-foreground antialiased">
         <Providers defaultTheme={site.defaultTheme}>
-          <ReadingProgress />
+          <HideOnAdmin>
+            <ReadingProgress />
+          </HideOnAdmin>
           <Navbar logo={site.logo} logoText={site.logoText} />
           <main
             className="min-h-screen"
@@ -49,8 +52,10 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           >
             {children}
           </main>
-          <Footer name={profile.name} socials={socials} logo={site.logo} logoText={site.logoText} />
-          <BackToTop />
+          <HideOnAdmin>
+            <Footer name={profile.name} socials={socials} logo={site.logo} logoText={site.logoText} />
+            <BackToTop />
+          </HideOnAdmin>
         </Providers>
       </body>
     </html>
