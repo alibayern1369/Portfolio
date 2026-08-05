@@ -1,14 +1,16 @@
 import { NextResponse } from "next/server";
 import { getSession, requireAdmin } from "@/lib/auth";
 import { queryOne, execute } from "@/lib/db-helpers";
+import { initDatabase } from "@/db";
 
 export async function GET() {
   if (!requireAdmin(await getSession())) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const settings = await queryOne("SELECT * FROM site_settings WHERE id = 1");
+  await initDatabase();
+  const settings = (await queryOne("SELECT * FROM site_settings WHERE id = 1")) ?? {};
   return NextResponse.json({
     settings: {
-      ...settings,
-      default_theme: settings?.default_theme || "system",
+      ...(settings as Record<string, unknown>),
+      default_theme: settings.default_theme || "system",
       logo: settings?.logo || "",
       logo_text: settings?.logo_text || "ع.د",
       favicon: settings?.favicon || "",
@@ -38,19 +40,12 @@ export async function GET() {
 export async function PUT(request: Request) {
   if (!requireAdmin(await getSession())) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   try {
+    await initDatabase();
     const d = await request.json();
-    let siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "";
-
-    try {
-      const currentSettings = await queryOne("SELECT site_url FROM site_settings WHERE id = 1");
-      siteUrl = currentSettings?.site_url ? String(currentSettings.site_url) : siteUrl;
-    } catch {
-      // Older versions may not have site_url column yet.
-    }
 
     await execute(
       `INSERT OR REPLACE INTO site_settings (
-        id, site_name, site_title, site_description, site_url, locale, keywords,
+        id, site_name, site_title, site_description, locale, keywords,
         default_theme, logo, logo_text, favicon, favicon_light, favicon_dark,
         home_hero_description, home_about_title, home_about_description,
         home_services_title, home_services_description,
@@ -60,12 +55,11 @@ export async function PUT(request: Request) {
         home_cta_title, home_cta_description,
         footer_tagline, footer_copyright,
         content_font_size, content_text_align, updated_at
-      ) VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
+      ) VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
       [
         d.site_name,
         d.site_title,
         d.site_description,
-        siteUrl,
         d.locale,
         JSON.stringify(d.keywords || []),
         d.default_theme || "system",
@@ -94,7 +88,11 @@ export async function PUT(request: Request) {
       ]
     );
     return NextResponse.json({ success: true });
-  } catch {
-    return NextResponse.json({ error: "خطا" }, { status: 500 });
+  } catch (error) {
+    console.error("Admin settings save error:", error);
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : "خطا در ذخیره‌سازی تنظیمات" },
+      { status: 500 }
+    );
   }
 }
