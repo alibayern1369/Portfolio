@@ -36,9 +36,9 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   return (
     <html lang="fa" dir="rtl" suppressHydrationWarning>
       <head>
-        <link rel="icon" href="/favicon.ico" sizes="any" />
-        <link rel="icon" type="image/svg+xml" href="/favicon-light.svg" media="(prefers-color-scheme: light)" />
-        <link rel="icon" type="image/svg+xml" href="/favicon-dark.svg" media="(prefers-color-scheme: dark)" />
+        <link rel="icon" href={site.favicon || "/favicon.svg"} sizes="any" />
+        {site.faviconLight ? <link rel="icon" type="image/svg+xml" href={site.faviconLight} media="(prefers-color-scheme: light)" /> : null}
+        {site.faviconDark ? <link rel="icon" type="image/svg+xml" href={site.faviconDark} media="(prefers-color-scheme: dark)" /> : null}
         <link rel="manifest" href="/manifest.json" />
       </head>
       <body className="min-h-screen bg-background text-foreground antialiased">
@@ -55,7 +55,14 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
             {children}
           </main>
           <HideOnAdmin>
-            <Footer name={profile.name} socials={socials} logo={site.logo} logoText={site.logoText} />
+            <Footer
+              name={profile.name}
+              socials={socials}
+              logo={site.logo}
+              logoText={site.logoText}
+              tagline={site.footerTagline}
+              copyright={site.footerCopyright}
+            />
             <BackToTop />
           </HideOnAdmin>
         </Providers>

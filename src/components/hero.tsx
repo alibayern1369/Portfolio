@@ -17,6 +17,7 @@ const socialIconMap: Record<string, ComponentType<SVGProps<SVGSVGElement>>> = {
 interface HeroProps {
   profile: Profile;
   socials: Social[];
+  description?: string;
 }
 
 /* ───── Floating particles ───── */

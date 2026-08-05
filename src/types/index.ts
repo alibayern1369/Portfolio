@@ -9,6 +9,24 @@ export interface SiteConfig {
   defaultTheme: "light" | "dark" | "system";
   logo: string;
   logoText: string;
+  favicon: string;
+  faviconLight: string;
+  faviconDark: string;
+  homeHeroDescription: string;
+  homeAboutTitle: string;
+  homeAboutDescription: string;
+  homeServicesTitle: string;
+  homeServicesDescription: string;
+  homeProjectsTitle: string;
+  homeProjectsDescription: string;
+  homeSkillsTitle: string;
+  homeSkillsDescription: string;
+  homeTestimonialsTitle: string;
+  homeTestimonialsDescription: string;
+  homeCtaTitle: string;
+  homeCtaDescription: string;
+  footerTagline: string;
+  footerCopyright: string;
   contentFontSize: "sm" | "base" | "lg" | "xl";
   contentTextAlign: "right" | "left" | "center" | "justify";
 }

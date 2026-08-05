@@ -6,9 +6,11 @@ import Link from "next/link";
 
 interface CTAProps {
   name: string;
+  title?: string;
+  description?: string;
 }
 
-export function CTA({ name }: CTAProps) {
+export function CTA({ name, title, description }: CTAProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -21,10 +23,10 @@ export function CTA({ name }: CTAProps) {
 
       <div className="relative px-8 py-16 text-center md:px-16 md:py-20">
         <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
-          بیایید با هم کار کنیم
+          {title || "بیایید با هم کار کنیم"}
         </h2>
         <p className="mx-auto mt-4 max-w-lg text-muted-foreground leading-relaxed">
-          اگر برای طراحی، توسعه وبسایت، نرم‌افزار یا اپ موبایل نیاز به همکاری دارید، خوشحال می‌شوم گفتگو کنیم.
+          {description || "اگر برای طراحی، توسعه وبسایت، نرم‌افزار یا اپ موبایل نیاز به همکاری دارید، خوشحال می‌شوم گفتگو کنیم."}
         </p>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
           <Link

@@ -15,9 +15,11 @@ interface FooterProps {
   socials: Social[];
   logo?: string;
   logoText?: string;
+  tagline?: string;
+  copyright?: string;
 }
 
-export function Footer({ name, socials, logo, logoText }: FooterProps) {
+export function Footer({ name, socials, logo, logoText, tagline, copyright }: FooterProps) {
   const currentYear = new Date().getFullYear();
 
   return (
@@ -27,7 +29,7 @@ export function Footer({ name, socials, logo, logoText }: FooterProps) {
           <div>
             <SiteLogo logo={logo} logoText={logoText} />
             <p className="mt-1 text-sm text-muted-foreground">
-              خلق تجربه‌های دیجیتال
+              {tagline || "خلق تجربه‌های دیجیتال"}
             </p>
           </div>
 
@@ -52,7 +54,7 @@ export function Footer({ name, socials, logo, logoText }: FooterProps) {
 
         <div className="mt-8 border-t border-border pt-8 text-center">
           <p className="text-sm text-muted-foreground">
-            © {currentYear} {name}. تمامی حقوق محفوظ است.
+            {copyright || `© ${currentYear} ${name}. تمامی حقوق محفوظ است.`}
           </p>
         </div>
       </div>

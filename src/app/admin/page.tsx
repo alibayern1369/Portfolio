@@ -56,6 +56,8 @@ export default async function AdminDashboardPage() {
             <Link href="/admin/projects" className="flex items-center gap-3 rounded-xl p-3 transition-all hover:bg-secondary">📁 مدیریت پروژه‌ها</Link>
             <Link href="/admin/services" className="flex items-center gap-3 rounded-xl p-3 transition-all hover:bg-secondary">🛠️ مدیریت خدمات</Link>
             <Link href="/admin/settings" className="flex items-center gap-3 rounded-xl p-3 transition-all hover:bg-secondary">⚙️ تنظیمات سایت</Link>
+            <Link href="/admin/settings#homepage-content" className="flex items-center gap-3 rounded-xl p-3 transition-all hover:bg-secondary">🏠 ویرایش محتوای صفحه اصلی</Link>
+            <Link href="/admin/settings#footer-content" className="flex items-center gap-3 rounded-xl p-3 transition-all hover:bg-secondary">⬇️ ویرایش فوتر</Link>
           </div>
         </div>
         <div className="rounded-2xl border border-border bg-card p-4 sm:p-6">

@@ -8,13 +8,14 @@ import { ServicesGrid } from "@/components/services-grid";
 import { SkillsGrid } from "@/components/skills-grid";
 import { Testimonials } from "@/components/testimonials";
 import { CTA } from "@/components/cta";
-import { getProfile, getSocials, getFeaturedProjects, getServices, getSkills, getTestimonials } from "@/lib/content";
+import { getProfile, getSocials, getFeaturedProjects, getServices, getSkills, getTestimonials, getSiteConfig } from "@/lib/content";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
 export default async function HomePage() {
   const profile = await getProfile();
   const socials = await getSocials();
+  const site = await getSiteConfig();
   const featuredProjects = await getFeaturedProjects();
   const services = await getServices();
   const skills = await getSkills();
@@ -22,12 +23,12 @@ export default async function HomePage() {
 
   return (
     <>
-      <Hero profile={profile} socials={socials} />
+      <Hero profile={profile} socials={socials} description={site.homeHeroDescription || profile.heroDescription} />
       <Section id="about">
         <SectionTitle
           label="معرفی"
-          title="من و کسب‌وکارم"
-          description={profile.bio}
+          title={site.homeAboutTitle || "من و کسب‌وکارم"}
+          description={site.homeAboutDescription || profile.bio}
         />
         <div className="flex justify-center">
           <Link href="/about" className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-6 py-3 text-sm font-medium transition-all hover:bg-accent hover:scale-105">
@@ -38,8 +39,8 @@ export default async function HomePage() {
       <Section id="services">
         <SectionTitle
           label="خدمات"
-          title="چی براتون انجام می‌دم"
-          description="از طراحی رابط کاربری تا توسعه وبسایت، نرم‌افزار و اپ موبایل."
+          title={site.homeServicesTitle || "چی براتون انجام می‌دم"}
+          description={site.homeServicesDescription || "از طراحی رابط کاربری تا توسعه وبسایت، نرم‌افزار و اپ موبایل."}
         />
         <ServicesGrid services={services.slice(0, 8)} />
         <div className="mt-10 flex justify-center">
@@ -51,8 +52,8 @@ export default async function HomePage() {
       <Section id="projects">
         <SectionTitle
           label="نمونه‌کارها"
-          title="پروژه‌های منتخب"
-          description="نمونه‌هایی از کارهای انجام‌شده برای مشتریان و پروژه‌های شخصی."
+          title={site.homeProjectsTitle || "پروژه‌های منتخب"}
+          description={site.homeProjectsDescription || "نمونه‌هایی از کارهای انجام‌شده برای مشتریان و پروژه‌های شخصی."}
         />
         <ProjectGrid projects={featuredProjects} />
         <div className="mt-10 flex justify-center">
@@ -64,20 +65,20 @@ export default async function HomePage() {
       <Section id="skills">
         <SectionTitle
           label="تخصص‌ها"
-          title="ابزارها و مهارت‌ها"
-          description="فناوری‌ها و ابزارهایی که برای ساخت محصول استفاده می‌کنم."
+          title={site.homeSkillsTitle || "ابزارها و مهارت‌ها"}
+          description={site.homeSkillsDescription || "فناوری‌ها و ابزارهایی که برای ساخت محصول استفاده می‌کنم."}
         />
         <SkillsGrid categories={skills.categories} />
       </Section>
       <Section id="testimonials">
         <SectionTitle
           label="نظرات"
-          title="بازخورد مشتریان"
-          description="تجربه همکاری مشتریان و همکاران."
+          title={site.homeTestimonialsTitle || "بازخورد مشتریان"}
+          description={site.homeTestimonialsDescription || "تجربه همکاری مشتریان و همکاران."}
         />
         <Testimonials testimonials={testimonials} />
       </Section>
-      <Section><CTA name={profile.name} /></Section>
+      <Section><CTA name={profile.name} title={site.homeCtaTitle} description={site.homeCtaDescription} /></Section>
     </>
   );
 }

@@ -47,8 +47,8 @@ export default function AdminTestimonialsPage() {
       </button>
 
       {editing !== null && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-card border border-border rounded-2xl p-6 w-full max-w-md">
+        <div className="fixed inset-0 bg-black/50 flex items-start sm:items-center justify-center z-50 p-4 overflow-y-auto">
+          <div className="bg-card border border-border rounded-2xl p-6 w-full max-w-md max-h-[calc(100vh-4rem)] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold">{editing === -1 ? "نظر جدید" : "ویرایش"}</h3>
               <button onClick={() => setEditing(null)} className="p-2 hover:bg-secondary rounded-lg"><X className="w-5 h-5" /></button>
