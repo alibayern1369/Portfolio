@@ -28,17 +28,56 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+function getFaviconType(path: string) {
+  const ext = path.split(".").pop()?.split(/[?#]/)[0]?.toLowerCase();
+  switch (ext) {
+    case "svg":
+      return "image/svg+xml";
+    case "png":
+      return "image/png";
+    case "jpg":
+    case "jpeg":
+      return "image/jpeg";
+    case "webp":
+      return "image/webp";
+    case "gif":
+      return "image/gif";
+    default:
+      return undefined;
+  }
+}
+
 export default async function RootLayout({ children }: { children: ReactNode }) {
   const profile = await getProfile();
   const socials = await getSocials();
   const site = await getSiteConfig();
 
+  const defaultFavicon = site.favicon || "/favicon.svg";
+  const defaultFaviconType = getFaviconType(defaultFavicon) || "image/svg+xml";
+
   return (
     <html lang="fa" dir="rtl" suppressHydrationWarning>
       <head>
-        <link rel="icon" href={site.favicon || "/favicon.svg"} sizes="any" />
-        {site.faviconLight ? <link rel="icon" type="image/svg+xml" href={site.faviconLight} media="(prefers-color-scheme: light)" /> : null}
-        {site.faviconDark ? <link rel="icon" type="image/svg+xml" href={site.faviconDark} media="(prefers-color-scheme: dark)" /> : null}
+        <link rel="icon" href={defaultFavicon} sizes="any" type={defaultFaviconType} />
+        <link rel="shortcut icon" href={defaultFavicon} type={defaultFaviconType} />
+        {site.faviconLight ? (
+          <link
+            rel="icon"
+            href={site.faviconLight}
+            sizes="any"
+            type={getFaviconType(site.faviconLight) || "image/svg+xml"}
+            media="(prefers-color-scheme: light)"
+          />
+        ) : null}
+        {site.faviconDark ? (
+          <link
+            rel="icon"
+            href={site.faviconDark}
+            sizes="any"
+            type={getFaviconType(site.faviconDark) || "image/svg+xml"}
+            media="(prefers-color-scheme: dark)"
+          />
+        ) : null}
         <link rel="manifest" href="/manifest.json" />
       </head>
       <body className="min-h-screen bg-background text-foreground antialiased">
