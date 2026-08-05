@@ -39,9 +39,18 @@ export async function PUT(request: Request) {
   if (!requireAdmin(await getSession())) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   try {
     const d = await request.json();
+    let siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "";
+
+    try {
+      const currentSettings = await queryOne("SELECT site_url FROM site_settings WHERE id = 1");
+      siteUrl = currentSettings?.site_url ? String(currentSettings.site_url) : siteUrl;
+    } catch {
+      // Older versions may not have site_url column yet.
+    }
+
     await execute(
       `INSERT OR REPLACE INTO site_settings (
-        id, site_name, site_title, site_description, locale, keywords,
+        id, site_name, site_title, site_description, site_url, locale, keywords,
         default_theme, logo, logo_text, favicon, favicon_light, favicon_dark,
         home_hero_description, home_about_title, home_about_description,
         home_services_title, home_services_description,
@@ -56,6 +65,7 @@ export async function PUT(request: Request) {
         d.site_name,
         d.site_title,
         d.site_description,
+        siteUrl,
         d.locale,
         JSON.stringify(d.keywords || []),
         d.default_theme || "system",

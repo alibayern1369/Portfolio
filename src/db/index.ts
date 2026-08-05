@@ -123,6 +123,7 @@ const TABLES = [
 ];
 
 const SETTINGS_MIGRATIONS = [
+  "ALTER TABLE site_settings ADD COLUMN site_url TEXT",
   "ALTER TABLE site_settings ADD COLUMN default_theme TEXT DEFAULT 'system'",
   "ALTER TABLE site_settings ADD COLUMN logo TEXT",
   "ALTER TABLE site_settings ADD COLUMN logo_text TEXT DEFAULT 'ع.د'",

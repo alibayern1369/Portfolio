@@ -116,13 +116,25 @@ export default function AdminSettingsPage() {
 
   const handleSave = async () => {
     setSaving(true);
-    await fetch("/api/admin/settings", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...data, keywords }),
-    });
-    setSaving(false);
-    alert("ذخیره شد!");
+    try {
+      const res = await fetch("/api/admin/settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...data, keywords }),
+      });
+      const payload = await res.json();
+      if (!res.ok || !payload.success) {
+        console.error("Settings save failed:", payload);
+        alert(payload.error || "خطا در ذخیره‌سازی تنظیمات");
+      } else {
+        alert("ذخیره شد!");
+      }
+    } catch (error) {
+      console.error("Settings save exception:", error);
+      alert("خطا در اتصال به سرور");
+    } finally {
+      setSaving(false);
+    }
   };
 
   if (loading) return <AdminShell title="تنظیمات"><div className="flex justify-center py-12"><div className="animate-spin w-8 h-8 border-2 border-foreground border-t-transparent rounded-full" /></div></AdminShell>;
