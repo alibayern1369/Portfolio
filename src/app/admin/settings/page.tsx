@@ -10,7 +10,6 @@ interface SettingsData {
   site_name: string;
   site_title: string;
   site_description: string;
-  site_url: string;
   locale: string;
   keywords: string;
   default_theme: "light" | "dark" | "system";
@@ -28,7 +27,6 @@ export default function AdminSettingsPage() {
     site_name: "",
     site_title: "",
     site_description: "",
-    site_url: "",
     locale: "fa-IR",
     keywords: "",
     default_theme: "system",
@@ -45,7 +43,11 @@ export default function AdminSettingsPage() {
       .then(res => {
         if (res?.settings) {
           setData({
-            ...res.settings,
+            site_name: res.settings.site_name || "",
+            site_title: res.settings.site_title || "",
+            site_description: res.settings.site_description || "",
+            locale: res.settings.locale || "fa-IR",
+            keywords: "",
             default_theme: res.settings.default_theme || "system",
             logo: res.settings.logo || "",
             logo_text: res.settings.logo_text || "ع.د",
@@ -122,10 +124,6 @@ export default function AdminSettingsPage() {
             <div className="sm:col-span-2">
               <label className="block text-sm font-medium mb-2">توضیحات (SEO)</label>
               <textarea value={data.site_description} onChange={e => setData({...data, site_description: e.target.value})} rows={2} className="w-full px-4 py-3 bg-background border border-border rounded-xl resize-none" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-2">آدرس سایت</label>
-              <input dir="ltr" value={data.site_url} onChange={e => setData({...data, site_url: e.target.value})} className="w-full px-4 py-3 bg-background border border-border rounded-xl text-left" />
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">زبان</label>

@@ -23,14 +23,13 @@ export async function PUT(request: Request) {
     const d = await request.json();
     await execute(
       `INSERT OR REPLACE INTO site_settings (
-        id, site_name, site_title, site_description, site_url, locale, keywords,
+        id, site_name, site_title, site_description, locale, keywords,
         default_theme, logo, logo_text, content_font_size, content_text_align, updated_at
-      ) VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
+      ) VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
       [
         d.site_name,
         d.site_title,
         d.site_description,
-        d.site_url,
         d.locale,
         JSON.stringify(d.keywords || []),
         d.default_theme || "system",

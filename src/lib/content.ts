@@ -32,6 +32,17 @@ function str(val: unknown, fallback = ""): string {
   return String(val);
 }
 
+function safeUrl(value: string, fallback: string): string {
+  const url = String(value || "").trim();
+  if (!url) return fallback;
+  try {
+    new URL(url);
+    return url;
+  } catch {
+    return fallback;
+  }
+}
+
 function json<T>(val: unknown, fallback: T): T {
   try {
     return JSON.parse(String(val)) as T;
@@ -75,7 +86,7 @@ export async function getSiteConfig(): Promise<SiteConfig> {
     name: str(row.site_name, "علی دلاور"),
     title: str(row.site_title),
     description: str(row.site_description),
-    url: str(row.site_url, "https://alidelavar.dev"),
+    url: safeUrl(str(row.site_url), process.env.NEXT_PUBLIC_SITE_URL || "https://alidelavar.dev"),
     locale: str(row.locale, "fa-IR"),
     defaultTheme: (str(row.default_theme, "system") as "light" | "dark" | "system"),
     ogImage: "/images/og.jpg",

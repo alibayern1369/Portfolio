@@ -8,6 +8,8 @@ interface TestimonialsProps {
   testimonials: Testimonial[];
 }
 
+const isImageAvatar = (value: string) => /^(https?:\/\/|\/).*|.*\.(png|jpe?g|webp|gif|svg)$/i.test(value);
+
 export function Testimonials({ testimonials }: TestimonialsProps) {
   return (
     <div className="grid gap-6 md:grid-cols-3">
@@ -27,8 +29,15 @@ export function Testimonials({ testimonials }: TestimonialsProps) {
           </p>
 
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-xs font-bold text-muted-foreground">
-              {testimonial.avatar}
+            <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full border border-border bg-secondary text-xs font-bold text-muted-foreground">
+              {isImageAvatar(testimonial.avatar) ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={testimonial.avatar} alt={testimonial.name} className="h-full w-full object-cover" />
+              ) : (
+                <span className="flex h-full w-full items-center justify-center text-xs font-bold text-muted-foreground">
+                  {testimonial.avatar || testimonial.name.slice(0, 2)}
+                </span>
+              )}
             </div>
             <div>
               <p className="text-sm font-semibold">{testimonial.name}</p>

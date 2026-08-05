@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AdminShell } from "@/components/admin/admin-shell";
+import { ImageUpload } from "@/components/admin/image-upload";
 import { Plus, Save, Trash2, X } from "lucide-react";
 
 interface Testimonial { id: number; name: string; role: string; company: string; avatar: string; text: string; sort_order: number; }
@@ -56,7 +57,14 @@ export default function AdminTestimonialsPage() {
               <input placeholder="نام" value={form.name || ""} onChange={e => setForm({...form, name: e.target.value})} className="w-full px-4 py-3 bg-background border border-border rounded-xl" />
               <input placeholder="سمت" value={form.role || ""} onChange={e => setForm({...form, role: e.target.value})} className="w-full px-4 py-3 bg-background border border-border rounded-xl" />
               <input placeholder="شرکت" value={form.company || ""} onChange={e => setForm({...form, company: e.target.value})} className="w-full px-4 py-3 bg-background border border-border rounded-xl" />
-              <input placeholder="آواتار (حروف اول)" value={form.avatar || ""} onChange={e => setForm({...form, avatar: e.target.value})} className="w-full px-4 py-3 bg-background border border-border rounded-xl" />
+              <ImageUpload
+                value={form.avatar || ""}
+                onChange={(value) => setForm({ ...form, avatar: value })}
+                folder="testimonials"
+                label="آواتار / تصویر پروفایل"
+                aspect="square"
+              />
+              <p className="text-xs text-muted-foreground">اگر عکس وارد کنید، عکس نمایش داده می‌شود؛ در غیر این صورت حروف اول نام نشان داده می‌شود.</p>
               <textarea placeholder="متن نظر" value={form.text || ""} onChange={e => setForm({...form, text: e.target.value})} rows={4} className="w-full px-4 py-3 bg-background border border-border rounded-xl resize-none" />
             </div>
             <button onClick={handleSave} className="mt-6 flex items-center gap-2 px-6 py-3 bg-foreground text-background font-medium rounded-xl hover:opacity-90">
