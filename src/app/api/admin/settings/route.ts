@@ -43,19 +43,39 @@ export async function PUT(request: Request) {
     await initDatabase();
     const d = await request.json();
 
+    await execute("INSERT OR IGNORE INTO site_settings (id) VALUES (1)");
     await execute(
-      `INSERT OR REPLACE INTO site_settings (
-        id, site_name, site_title, site_description, locale, keywords,
-        default_theme, logo, logo_text, favicon, favicon_light, favicon_dark,
-        home_hero_description, home_about_title, home_about_description,
-        home_services_title, home_services_description,
-        home_projects_title, home_projects_description,
-        home_skills_title, home_skills_description,
-        home_testimonials_title, home_testimonials_description,
-        home_cta_title, home_cta_description,
-        footer_tagline, footer_copyright,
-        content_font_size, content_text_align, updated_at
-      ) VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
+      `UPDATE site_settings SET
+        site_name = ?,
+        site_title = ?,
+        site_description = ?,
+        locale = ?,
+        keywords = ?,
+        default_theme = ?,
+        logo = ?,
+        logo_text = ?,
+        favicon = ?,
+        favicon_light = ?,
+        favicon_dark = ?,
+        home_hero_description = ?,
+        home_about_title = ?,
+        home_about_description = ?,
+        home_services_title = ?,
+        home_services_description = ?,
+        home_projects_title = ?,
+        home_projects_description = ?,
+        home_skills_title = ?,
+        home_skills_description = ?,
+        home_testimonials_title = ?,
+        home_testimonials_description = ?,
+        home_cta_title = ?,
+        home_cta_description = ?,
+        footer_tagline = ?,
+        footer_copyright = ?,
+        content_font_size = ?,
+        content_text_align = ?,
+        updated_at = CURRENT_TIMESTAMP
+      WHERE id = 1`,
       [
         d.site_name,
         d.site_title,
