@@ -109,6 +109,7 @@ export async function getSiteConfig(): Promise<SiteConfig> {
     homeTestimonialsDescription: str(row.home_testimonials_description, "تجربه همکاری مشتریان و همکاران."),
     homeCtaTitle: str(row.home_cta_title, "بیایید با هم کار کنیم"),
     homeCtaDescription: str(row.home_cta_description, "اگر برای طراحی، توسعه وبسایت، نرم‌افزار یا اپ موبایل نیاز به همکاری دارید، خوشحال می‌شوم گفتگو کنیم."),
+    homeCtaButtonText: str(row.home_cta_button_text, "تماس بگیرید"),
     footerTagline: str(row.footer_tagline, "خلق تجربه‌های دیجیتال"),
     footerCopyright: str(row.footer_copyright),
     contentFontSize: (["sm", "base", "lg", "xl"].includes(fontSize) ? fontSize : "base") as SiteConfig["contentFontSize"],

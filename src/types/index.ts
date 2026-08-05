@@ -25,6 +25,7 @@ export interface SiteConfig {
   homeTestimonialsDescription: string;
   homeCtaTitle: string;
   homeCtaDescription: string;
+  homeCtaButtonText: string;
   footerTagline: string;
   footerCopyright: string;
   contentFontSize: "sm" | "base" | "lg" | "xl";

@@ -78,7 +78,7 @@ export default async function HomePage() {
         />
         <Testimonials testimonials={testimonials} />
       </Section>
-      <Section><CTA name={profile.name} title={site.homeCtaTitle} description={site.homeCtaDescription} /></Section>
+      <Section><CTA name={profile.name} title={site.homeCtaTitle} description={site.homeCtaDescription} buttonText={site.homeCtaButtonText} /></Section>
     </>
   );
 }

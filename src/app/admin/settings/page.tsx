@@ -31,6 +31,7 @@ interface SettingsData {
   home_testimonials_description: string;
   home_cta_title: string;
   home_cta_description: string;
+  home_cta_button_text: string;
   footer_tagline: string;
   footer_copyright: string;
   content_font_size: "sm" | "base" | "lg" | "xl";
@@ -66,6 +67,7 @@ export default function AdminSettingsPage() {
     home_testimonials_description: "",
     home_cta_title: "",
     home_cta_description: "",
+    home_cta_button_text: "",
     footer_tagline: "",
     footer_copyright: "",
     content_font_size: "base",
@@ -103,6 +105,7 @@ export default function AdminSettingsPage() {
             home_testimonials_description: res.settings.home_testimonials_description || "",
             home_cta_title: res.settings.home_cta_title || "",
             home_cta_description: res.settings.home_cta_description || "",
+            home_cta_button_text: res.settings.home_cta_button_text || "",
             footer_tagline: res.settings.footer_tagline || "",
             footer_copyright: res.settings.footer_copyright || "",
             content_font_size: res.settings.content_font_size || "base",
@@ -240,6 +243,10 @@ export default function AdminSettingsPage() {
             <div>
               <label className="block text-sm font-medium mb-2">توضیحات CTA</label>
               <textarea value={data.home_cta_description} onChange={e => setData({ ...data, home_cta_description: e.target.value })} rows={2} className="w-full px-4 py-3 bg-background border border-border rounded-xl resize-none" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">متن دکمه CTA</label>
+              <input value={data.home_cta_button_text} onChange={e => setData({ ...data, home_cta_button_text: e.target.value })} className="w-full px-4 py-3 bg-background border border-border rounded-xl" />
             </div>
           </div>
         </div>

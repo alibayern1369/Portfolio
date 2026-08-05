@@ -8,9 +8,10 @@ interface CTAProps {
   name: string;
   title?: string;
   description?: string;
+  buttonText?: string;
 }
 
-export function CTA({ name, title, description }: CTAProps) {
+export function CTA({ name, title, description, buttonText }: CTAProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -33,7 +34,7 @@ export function CTA({ name, title, description }: CTAProps) {
             href="/contact"
             className="inline-flex items-center gap-2 rounded-full bg-foreground px-8 py-3.5 text-sm font-medium text-background transition-all hover:opacity-90 hover:scale-105 active:scale-95"
           >
-            تماس با {name.split(" ")[0]}
+            {buttonText || `تماس با ${name.split(" ")[0]}`}
             <ArrowLeft className="h-4 w-4" />
           </Link>
         </div>
