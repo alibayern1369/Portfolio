@@ -10,9 +10,10 @@ import type { Project } from "@/types";
 interface ProjectCardProps {
   project: Project;
   index: number;
+  imageFit?: "cover" | "contain";
 }
 
-export function ProjectCard({ project, index }: ProjectCardProps) {
+export function ProjectCard({ project, index, imageFit = "cover" }: ProjectCardProps) {
   const src = project.image || "/images/og.jpg";
   const unoptimized = src.startsWith("/api/media/") || src.startsWith("data:");
 
@@ -27,7 +28,6 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
         href={`/projects/${project.slug}`}
         className="group block overflow-hidden rounded-2xl border border-border bg-card transition-all duration-300 hover:border-foreground/10 hover:shadow-lg"
       >
-        {/* Fixed frame — image always covers (crops overflow) */}
         <div className="relative aspect-video w-full overflow-hidden bg-secondary">
           <Image
             src={src}
@@ -35,8 +35,7 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             unoptimized={unoptimized}
-            className="!h-full !w-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
-            style={{ objectFit: "cover", objectPosition: "center" }}
+            className={`!h-full !w-full object-center transition-transform duration-500 group-hover:scale-105 ${imageFit === "contain" ? "object-contain" : "object-cover"}`}
           />
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
