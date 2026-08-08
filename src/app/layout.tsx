@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import localFont from "next/font/local";
 import { Providers } from "@/components/providers";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
@@ -9,6 +10,13 @@ import { HideOnAdmin } from "@/components/hide-on-admin";
 import { JsonLd } from "@/components/json-ld";
 import { getSiteConfig, getProfile, getSocials } from "@/lib/content";
 import "./globals.css";
+
+const vazirmatn = localFont({
+  src: "../fonts/Vazirmatn-Variable.woff2",
+  variable: "--font-vazirmatn",
+  display: "swap",
+  weight: "100 900",
+});
 
 export const dynamic = "force-dynamic";
 
@@ -125,7 +133,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   const defaultFavicon = site.favicon || "/favicon.svg";
 
   return (
-    <html lang="fa" dir="rtl" suppressHydrationWarning>
+    <html lang="fa" dir="rtl" className={vazirmatn.variable} suppressHydrationWarning>
       <head>
         {renderFaviconLink(defaultFavicon)}
         {site.faviconLight ? renderFaviconLink(site.faviconLight, "(prefers-color-scheme: light)") : null}
@@ -133,7 +141,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <link rel="manifest" href="/manifest.json" />
         <JsonLd site={site} profile={profile} socials={socials} />
       </head>
-      <body className="min-h-screen bg-background text-foreground antialiased">
+      <body className={`${vazirmatn.className} min-h-screen bg-background text-foreground antialiased`}>
         <Providers defaultTheme={site.defaultTheme}>
           <HideOnAdmin>
             <ReadingProgress />
