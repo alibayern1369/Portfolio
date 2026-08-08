@@ -1,10 +1,10 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import Link from "next/link";
 import { ExternalLink, ArrowUpLeft } from "lucide-react";
 import { GitHubIcon } from "./icons";
-import { CoverImage } from "./cover-image";
 import type { Project } from "@/types";
 
 interface ProjectCardProps {
@@ -13,6 +13,9 @@ interface ProjectCardProps {
 }
 
 export function ProjectCard({ project, index }: ProjectCardProps) {
+  const src = project.image || "/images/og.jpg";
+  const unoptimized = src.startsWith("/api/media/") || src.startsWith("data:");
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -24,13 +27,16 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
         href={`/projects/${project.slug}`}
         className="group block overflow-hidden rounded-2xl border border-border bg-card transition-all duration-300 hover:border-foreground/10 hover:shadow-lg"
       >
-        <div className="relative overflow-hidden">
-          <CoverImage
-            src={project.image}
+        {/* Fixed frame — image always covers (crops overflow) */}
+        <div className="relative aspect-video w-full overflow-hidden bg-secondary">
+          <Image
+            src={src}
             alt={project.title}
-            aspectRatio="16 / 9"
-            imageClassName="transition-transform duration-500 group-hover:scale-105"
+            fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            unoptimized={unoptimized}
+            className="!h-full !w-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+            style={{ objectFit: "cover", objectPosition: "center" }}
           />
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 

@@ -71,6 +71,8 @@ const TABLES = [
     home_projects_count INTEGER DEFAULT 6,
     google_site_verification TEXT,
     og_image TEXT,
+    recaptcha_site_key TEXT,
+    recaptcha_secret_key TEXT,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`,
   `CREATE TABLE IF NOT EXISTS projects (
@@ -155,6 +157,8 @@ const SETTINGS_MIGRATIONS = [
   "ALTER TABLE site_settings ADD COLUMN home_projects_count INTEGER DEFAULT 6",
   "ALTER TABLE site_settings ADD COLUMN google_site_verification TEXT",
   "ALTER TABLE site_settings ADD COLUMN og_image TEXT",
+  "ALTER TABLE site_settings ADD COLUMN recaptcha_site_key TEXT",
+  "ALTER TABLE site_settings ADD COLUMN recaptcha_secret_key TEXT",
 ];
 
 export async function initDatabase() {

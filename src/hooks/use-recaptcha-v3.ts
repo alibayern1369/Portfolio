@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 declare global {
   interface Window {
@@ -14,7 +14,29 @@ declare global {
 const SCRIPT_ID = "recaptcha-v3-script";
 
 export function useRecaptchaV3() {
-  const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+  const envKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "";
+  const [siteKey, setSiteKey] = useState(envKey);
+
+  useEffect(() => {
+    if (envKey) {
+      setSiteKey(envKey);
+      return;
+    }
+
+    let cancelled = false;
+    fetch("/api/recaptcha/config")
+      .then((res) => res.json())
+      .then((data: { siteKey?: string | null }) => {
+        if (!cancelled && data.siteKey) setSiteKey(data.siteKey);
+      })
+      .catch(() => {
+        /* ignore */
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [envKey]);
 
   useEffect(() => {
     if (!siteKey) return;

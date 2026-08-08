@@ -16,8 +16,7 @@ interface CoverImageProps {
 }
 
 /**
- * Responsive cover image: fills its container with object-cover,
- * and by default adopts the image's own aspect ratio.
+ * Responsive cover image: always fills the box with object-fit: cover.
  */
 export function CoverImage({
   src,
@@ -31,6 +30,8 @@ export function CoverImage({
 }: CoverImageProps) {
   const [naturalRatio, setNaturalRatio] = useState<string | null>(null);
   const ratio = aspectRatio || naturalRatio || "16 / 9";
+  // Dynamic /api/media images should skip the optimizer so cover crop is reliable
+  const unoptimized = src.startsWith("/api/media/") || src.startsWith("data:");
 
   return (
     <div
@@ -38,12 +39,14 @@ export function CoverImage({
       style={{ aspectRatio: ratio }}
     >
       <Image
-        src={src}
+        src={src || "/images/og.jpg"}
         alt={alt}
         fill
         priority={priority}
         sizes={sizes}
-        className={`object-cover object-center ${imageClassName}`}
+        unoptimized={unoptimized}
+        className={`!h-full !w-full object-cover object-center ${imageClassName}`}
+        style={{ objectFit: "cover", objectPosition: "center" }}
         onLoad={(e) => {
           if (aspectRatio) return;
           const img = e.currentTarget;

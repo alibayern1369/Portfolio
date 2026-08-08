@@ -40,6 +40,8 @@ interface SettingsData {
   content_text_align: "right" | "left" | "center" | "justify";
   google_site_verification: string;
   og_image: string;
+  recaptcha_site_key: string;
+  recaptcha_secret_key: string;
 }
 
 export default function AdminSettingsPage() {
@@ -80,6 +82,8 @@ export default function AdminSettingsPage() {
     content_text_align: "right",
     google_site_verification: "",
     og_image: "",
+    recaptcha_site_key: "",
+    recaptcha_secret_key: "",
   });
   const [keywords, setKeywords] = useState<string[]>([]);
 
@@ -122,6 +126,8 @@ export default function AdminSettingsPage() {
             content_text_align: res.settings.content_text_align || "right",
             google_site_verification: res.settings.google_site_verification || "",
             og_image: res.settings.og_image || "",
+            recaptcha_site_key: res.settings.recaptcha_site_key || "",
+            recaptcha_secret_key: res.settings.recaptcha_secret_key || "",
           });
           try { setKeywords(JSON.parse(res.settings.keywords || "[]")); } catch { setKeywords([]); }
         }
@@ -394,6 +400,59 @@ export default function AdminSettingsPage() {
             <p className="text-xs text-muted-foreground">
               بعد از ذخیره، sitemap در مسیر <span dir="ltr">/sitemap.xml</span> و robots در <span dir="ltr">/robots.txt</span> در دسترس است. آن‌ها را در Search Console ثبت کنید.
             </p>
+          </div>
+        </div>
+
+        <div id="recaptcha" className="rounded-2xl border border-border bg-card p-4 sm:p-6">
+          <h2 className="mb-2 font-semibold">امنیت — Google reCAPTCHA v3</h2>
+          <p className="mb-4 text-sm text-muted-foreground">
+            کلیدها را از{" "}
+            <a
+              href="https://www.google.com/recaptcha/admin"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-2 hover:text-foreground"
+            >
+              پنل Google reCAPTCHA
+            </a>{" "}
+            بگیرید (نوع Score based / v3) و اینجا ذخیره کنید. روی ورود ادمین و فرم تماس اعمال می‌شود.
+          </p>
+          <div className="grid gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-2">Site Key</label>
+              <input
+                value={data.recaptcha_site_key}
+                onChange={e => setData({ ...data, recaptcha_site_key: e.target.value })}
+                className="w-full px-4 py-3 bg-background border border-border rounded-xl font-mono text-sm"
+                placeholder="6Lc................................"
+                dir="ltr"
+                autoComplete="off"
+              />
+              <p className="mt-2 text-xs text-muted-foreground">کلید عمومی — در مرورگر استفاده می‌شود.</p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">Secret Key</label>
+              <input
+                type="password"
+                value={data.recaptcha_secret_key}
+                onChange={e => setData({ ...data, recaptcha_secret_key: e.target.value })}
+                className="w-full px-4 py-3 bg-background border border-border rounded-xl font-mono text-sm"
+                placeholder="6Lc................................"
+                dir="ltr"
+                autoComplete="new-password"
+              />
+              <p className="mt-2 text-xs text-muted-foreground">
+                کلید خصوصی — فقط روی سرور برای تأیید استفاده می‌شود. دامنه سایت را در پنل گوگل اضافه کنید (مثلاً klandweb.com و localhost).
+              </p>
+            </div>
+            <div className="rounded-xl border border-border bg-background px-4 py-3 text-xs text-muted-foreground">
+              وضعیت:{" "}
+              {data.recaptcha_site_key && data.recaptcha_secret_key ? (
+                <span className="text-emerald-600 dark:text-emerald-400">فعال (هر دو کلید ذخیره شده)</span>
+              ) : (
+                <span className="text-amber-600 dark:text-amber-400">غیرفعال — یکی یا هر دو کلید خالی است</span>
+              )}
+            </div>
           </div>
         </div>
 

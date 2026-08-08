@@ -38,6 +38,8 @@ export async function GET() {
       site_url: settings?.site_url || "",
       google_site_verification: settings?.google_site_verification || "",
       og_image: settings?.og_image || "",
+      recaptcha_site_key: settings?.recaptcha_site_key || "",
+      recaptcha_secret_key: settings?.recaptcha_secret_key || "",
     },
   });
 }
@@ -85,6 +87,8 @@ export async function PUT(request: Request) {
         content_text_align = ?,
         google_site_verification = ?,
         og_image = ?,
+        recaptcha_site_key = ?,
+        recaptcha_secret_key = ?,
         updated_at = CURRENT_TIMESTAMP
       WHERE id = 1`,
       [
@@ -121,6 +125,8 @@ export async function PUT(request: Request) {
         d.content_text_align || "right",
         d.google_site_verification || "",
         d.og_image || "",
+        typeof d.recaptcha_site_key === "string" ? d.recaptcha_site_key.trim() : "",
+        typeof d.recaptcha_secret_key === "string" ? d.recaptcha_secret_key.trim() : "",
       ]
     );
     return NextResponse.json({ success: true });

@@ -1,14 +1,48 @@
 /**
  * Shared Google reCAPTCHA v3 helpers for login and public forms.
+ * Keys can come from admin settings (DB) or environment variables.
  */
+
+import db from "@/db";
+import { initDatabase } from "@/db";
+
+async function getRecaptchaKeysFromDb(): Promise<{ siteKey: string; secretKey: string }> {
+  try {
+    await initDatabase();
+    const result = await db.execute("SELECT recaptcha_site_key, recaptcha_secret_key FROM site_settings WHERE id = 1");
+    const row = result.rows[0] as Record<string, unknown> | undefined;
+    return {
+      siteKey: String(row?.recaptcha_site_key || "").trim(),
+      secretKey: String(row?.recaptcha_secret_key || "").trim(),
+    };
+  } catch {
+    return { siteKey: "", secretKey: "" };
+  }
+}
+
+export async function getRecaptchaSiteKey(): Promise<string> {
+  const fromDb = await getRecaptchaKeysFromDb();
+  return fromDb.siteKey || process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "";
+}
+
+export async function getRecaptchaSecretKey(): Promise<string> {
+  const fromDb = await getRecaptchaKeysFromDb();
+  return fromDb.secretKey || process.env.RECAPTCHA_SECRET_KEY || "";
+}
+
+export async function isRecaptchaConfigured(): Promise<boolean> {
+  const [siteKey, secretKey] = await Promise.all([getRecaptchaSiteKey(), getRecaptchaSecretKey()]);
+  return Boolean(siteKey && secretKey);
+}
 
 export async function verifyRecaptcha(
   token: string | undefined | null,
   expectedAction?: string
 ): Promise<{ ok: boolean; score?: number; error?: string }> {
-  const secretKey = process.env.RECAPTCHA_SECRET_KEY;
-  if (!secretKey) {
-    // Not configured — allow in development; block in production if keys expected
+  const secretKey = await getRecaptchaSecretKey();
+  const siteKey = await getRecaptchaSiteKey();
+
+  if (!secretKey || !siteKey) {
     if (process.env.NODE_ENV === "production" && process.env.RECAPTCHA_REQUIRED === "true") {
       return { ok: false, error: "reCAPTCHA پیکربندی نشده است" };
     }
@@ -49,8 +83,4 @@ export async function verifyRecaptcha(
   } catch {
     return { ok: false, error: "خطا در بررسی امنیتی" };
   }
-}
-
-export function isRecaptchaConfigured(): boolean {
-  return Boolean(process.env.RECAPTCHA_SECRET_KEY && process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY);
 }
