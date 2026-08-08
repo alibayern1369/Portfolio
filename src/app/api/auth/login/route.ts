@@ -73,6 +73,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Login error:", error);
+    const message = error instanceof Error ? error.message : "";
+    if (message.includes("JWT_SECRET")) {
+      return NextResponse.json(
+        { error: "پیکربندی سرور ناقص است (JWT_SECRET). متغیر را در محیط استقرار تنظیم کنید." },
+        { status: 500 }
+      );
+    }
     return NextResponse.json({ error: "خطا در ورود" }, { status: 500 });
   }
 }
