@@ -7,16 +7,24 @@ export async function POST(request: Request) {
   if (!requireAdmin(user)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
-    const { currentPassword, newPassword } = await request.json();
+    const body = await request.json();
+    const currentPassword = typeof body.currentPassword === "string" ? body.currentPassword : "";
+    const newPassword = typeof body.newPassword === "string" ? body.newPassword : "";
+    const confirmPassword = typeof body.confirmPassword === "string" ? body.confirmPassword : "";
 
-    if (!currentPassword || !newPassword) {
+    if (!currentPassword || !newPassword || !confirmPassword) {
       return NextResponse.json({ error: "تمام فیلدها الزامی است" }, { status: 400 });
     }
     if (newPassword.length < 6) {
       return NextResponse.json({ error: "رمز عبور جدید باید حداقل ۶ کاراکتر باشد" }, { status: 400 });
     }
+    if (newPassword !== confirmPassword) {
+      return NextResponse.json({ error: "رمز عبور جدید و تکرار آن یکسان نیستند" }, { status: 400 });
+    }
+    if (currentPassword === newPassword) {
+      return NextResponse.json({ error: "رمز جدید باید با رمز فعلی متفاوت باشد" }, { status: 400 });
+    }
 
-    // Verify current password
     const dbUser = await queryOne("SELECT password FROM users WHERE id = ?", [user!.id]);
     if (!dbUser) {
       return NextResponse.json({ error: "کاربر یافت نشد" }, { status: 404 });

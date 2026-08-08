@@ -29,8 +29,10 @@ export default function AdminUsersPage() {
   const [showChangePass, setShowChangePass] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPass, setNewPass] = useState("");
+  const [confirmPass, setConfirmPass] = useState("");
   const [showCurrentPass, setShowCurrentPass] = useState(false);
   const [showNewPassField, setShowNewPassField] = useState(false);
+  const [showConfirmPassField, setShowConfirmPassField] = useState(false);
   const [changePassError, setChangePassError] = useState("");
   const [changePassSuccess, setChangePassSuccess] = useState(false);
   const [changePassSaving, setChangePassSaving] = useState(false);
@@ -75,23 +77,44 @@ export default function AdminUsersPage() {
   const handleChangePassword = async () => {
     setChangePassError("");
     setChangePassSuccess(false);
-    if (!currentPassword || !newPass) { setChangePassError("تمام فیلدها الزامی است"); return; }
-    if (newPass.length < 6) { setChangePassError("رمز عبور جدید باید حداقل ۶ کاراکتر باشد"); return; }
+    if (!currentPassword || !newPass || !confirmPass) {
+      setChangePassError("تمام فیلدها الزامی است");
+      return;
+    }
+    if (newPass.length < 6) {
+      setChangePassError("رمز عبور جدید باید حداقل ۶ کاراکتر باشد");
+      return;
+    }
+    if (newPass !== confirmPass) {
+      setChangePassError("رمز عبور جدید و تکرار آن یکسان نیستند");
+      return;
+    }
 
     setChangePassSaving(true);
     const res = await fetch("/api/admin/change-password", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ currentPassword, newPassword: newPass })
+      body: JSON.stringify({
+        currentPassword,
+        newPassword: newPass,
+        confirmPassword: confirmPass,
+      }),
     });
     const data = await res.json();
     setChangePassSaving(false);
 
-    if (!res.ok) { setChangePassError(data.error); return; }
+    if (!res.ok) {
+      setChangePassError(data.error);
+      return;
+    }
     setChangePassSuccess(true);
     setCurrentPassword("");
     setNewPass("");
-    setTimeout(() => { setChangePassSuccess(false); setShowChangePass(false); }, 2000);
+    setConfirmPass("");
+    setTimeout(() => {
+      setChangePassSuccess(false);
+      setShowChangePass(false);
+    }, 2000);
   };
 
   if (loading) return <AdminShell title="کاربران"><div className="flex justify-center py-20"><div className="animate-spin w-8 h-8 border-2 border-foreground border-t-transparent rounded-full" /></div></AdminShell>;
@@ -142,9 +165,25 @@ export default function AdminUsersPage() {
                   value={newPass}
                   onChange={(e) => setNewPass(e.target.value)}
                   className="w-full px-4 py-3 pl-11 bg-background border border-border rounded-xl focus:outline-none focus:border-foreground/20 text-left"
+                  autoComplete="new-password"
                 />
                 <button type="button" onClick={() => setShowNewPassField(!showNewPassField)} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
                   {showNewPassField ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              </div>
+
+              <div className="relative">
+                <input
+                  type={showConfirmPassField ? "text" : "password"}
+                  dir="ltr"
+                  placeholder="تکرار رمز عبور جدید"
+                  value={confirmPass}
+                  onChange={(e) => setConfirmPass(e.target.value)}
+                  className="w-full px-4 py-3 pl-11 bg-background border border-border rounded-xl focus:outline-none focus:border-foreground/20 text-left"
+                  autoComplete="new-password"
+                />
+                <button type="button" onClick={() => setShowConfirmPassField(!showConfirmPassField)} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                  {showConfirmPassField ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
 
@@ -156,7 +195,16 @@ export default function AdminUsersPage() {
                 >
                   {changePassSaving ? "..." : "ذخیره"}
                 </button>
-                <button onClick={() => { setShowChangePass(false); setChangePassError(""); }} className="px-5 py-2.5 border border-border rounded-xl hover:bg-secondary text-sm">
+                <button
+                  onClick={() => {
+                    setShowChangePass(false);
+                    setChangePassError("");
+                    setCurrentPassword("");
+                    setNewPass("");
+                    setConfirmPass("");
+                  }}
+                  className="px-5 py-2.5 border border-border rounded-xl hover:bg-secondary text-sm"
+                >
                   انصراف
                 </button>
               </div>

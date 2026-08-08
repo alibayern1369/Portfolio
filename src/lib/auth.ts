@@ -2,10 +2,7 @@ import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import bcrypt from "bcryptjs";
 import db from "@/db";
-
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "your-secret-key-change-in-production"
-);
+import { getJwtSecret } from "@/lib/jwt-secret";
 
 export interface User {
   id: number;
@@ -14,7 +11,7 @@ export interface User {
 }
 
 export async function hashPassword(password: string): Promise<string> {
-  return bcrypt.hash(password, 10);
+  return bcrypt.hash(password, 12);
 }
 
 export async function verifyPassword(password: string, hash: string): Promise<boolean> {
@@ -26,13 +23,17 @@ export async function createToken(user: User): Promise<string> {
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime("8h")
-    .sign(JWT_SECRET);
+    .sign(getJwtSecret());
 }
 
 export async function verifyToken(token: string): Promise<User | null> {
   try {
-    const { payload } = await jwtVerify(token, JWT_SECRET);
-    return payload as unknown as User;
+    const { payload } = await jwtVerify(token, getJwtSecret());
+    const id = Number(payload.id);
+    const username = typeof payload.username === "string" ? payload.username : "";
+    const role = typeof payload.role === "string" ? payload.role : "";
+    if (!id || !username || !role) return null;
+    return { id, username, role };
   } catch {
     return null;
   }

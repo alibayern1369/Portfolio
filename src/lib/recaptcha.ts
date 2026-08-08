@@ -43,6 +43,8 @@ export async function verifyRecaptcha(
   const siteKey = await getRecaptchaSiteKey();
 
   if (!secretKey || !siteKey) {
+    // In production, skip only when captcha is not configured at all.
+    // Prefer setting keys in Admin → Settings so login/contact stay protected.
     if (process.env.NODE_ENV === "production" && process.env.RECAPTCHA_REQUIRED === "true") {
       return { ok: false, error: "reCAPTCHA پیکربندی نشده است" };
     }
