@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, Check, Copy, Mail, MapPin } from "lucide-react";
+import { Send, Check, Copy, Mail, MapPin, ShieldCheck } from "lucide-react";
 import { GitHubIcon, LinkedInIcon, TwitterIcon, DribbbleIcon } from "./icons";
+import { useRecaptchaV3 } from "@/hooks/use-recaptcha-v3";
 import type { Profile, Social } from "@/types";
 import type { ComponentType, SVGProps } from "react";
 
@@ -20,21 +21,56 @@ interface ContactFormProps {
 }
 
 export function ContactForm({ profile, socials }: ContactFormProps) {
+  const { enabled: recaptchaEnabled, getToken } = useRecaptchaV3();
   const [formState, setFormState] = useState({
     name: "",
     email: "",
     message: "",
+    website: "",
   });
   const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
+  const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
     setStatus("sending");
-    await new Promise((r) => setTimeout(r, 1500));
-    setStatus("sent");
-    setFormState({ name: "", email: "", message: "" });
-    setTimeout(() => setStatus("idle"), 3000);
+
+    try {
+      const recaptchaToken = recaptchaEnabled ? await getToken("contact") : null;
+      if (recaptchaEnabled && !recaptchaToken) {
+        setError("بارگذاری تأیید امنیتی ناموفق بود. صفحه را تازه کنید.");
+        setStatus("idle");
+        return;
+      }
+
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formState.name,
+          email: formState.email,
+          message: formState.message,
+          website: formState.website,
+          recaptchaToken,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "خطا در ارسال پیام");
+        setStatus("idle");
+        return;
+      }
+
+      setStatus("sent");
+      setFormState({ name: "", email: "", message: "", website: "" });
+      setTimeout(() => setStatus("idle"), 3000);
+    } catch {
+      setError("خطا در اتصال به سرور");
+      setStatus("idle");
+    }
   };
 
   const copyEmail = async () => {
@@ -45,7 +81,6 @@ export function ContactForm({ profile, socials }: ContactFormProps) {
 
   return (
     <div className="grid gap-12 lg:grid-cols-2">
-      {/* Info */}
       <div>
         <h2 className="text-3xl font-bold tracking-tight">
           بیایید چیز شگفت‌انگیزی بسازیم
@@ -111,7 +146,6 @@ export function ContactForm({ profile, socials }: ContactFormProps) {
         </div>
       </div>
 
-      {/* Form */}
       <div>
         <AnimatePresence mode="wait">
           {status === "sent" ? (
@@ -137,64 +171,64 @@ export function ContactForm({ profile, socials }: ContactFormProps) {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onSubmit={handleSubmit}
-              className="space-y-4 rounded-2xl border border-border bg-card p-6 md:p-8"
+              className="relative space-y-4 rounded-2xl border border-border bg-card p-6 md:p-8"
             >
+              {error && (
+                <div className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-500" role="alert">
+                  {error}
+                </div>
+              )}
+
+              <div className="absolute -left-[9999px] opacity-0" aria-hidden="true">
+                <label htmlFor="website">Website</label>
+                <input
+                  id="website"
+                  type="text"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  value={formState.website}
+                  onChange={(e) => setFormState({ ...formState, website: e.target.value })}
+                />
+              </div>
+
               <div>
-                <label
-                  htmlFor="name"
-                  className="mb-2 block text-sm font-medium"
-                >
-                  نام
-                </label>
+                <label htmlFor="name" className="mb-2 block text-sm font-medium">نام</label>
                 <input
                   id="name"
                   type="text"
                   required
+                  maxLength={100}
                   value={formState.name}
-                  onChange={(e) =>
-                    setFormState({ ...formState, name: e.target.value })
-                  }
+                  onChange={(e) => setFormState({ ...formState, name: e.target.value })}
                   className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm transition-colors placeholder:text-muted-foreground focus:border-foreground/20 focus:outline-none"
                   placeholder="نام شما"
                 />
               </div>
 
               <div>
-                <label
-                  htmlFor="email"
-                  className="mb-2 block text-sm font-medium"
-                >
-                  ایمیل
-                </label>
+                <label htmlFor="email" className="mb-2 block text-sm font-medium">ایمیل</label>
                 <input
                   id="email"
                   type="email"
                   required
+                  maxLength={200}
                   dir="ltr"
                   value={formState.email}
-                  onChange={(e) =>
-                    setFormState({ ...formState, email: e.target.value })
-                  }
+                  onChange={(e) => setFormState({ ...formState, email: e.target.value })}
                   className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm transition-colors placeholder:text-muted-foreground focus:border-foreground/20 focus:outline-none text-left"
                   placeholder="your@email.com"
                 />
               </div>
 
               <div>
-                <label
-                  htmlFor="message"
-                  className="mb-2 block text-sm font-medium"
-                >
-                  پیام
-                </label>
+                <label htmlFor="message" className="mb-2 block text-sm font-medium">پیام</label>
                 <textarea
                   id="message"
                   required
                   rows={5}
+                  maxLength={5000}
                   value={formState.message}
-                  onChange={(e) =>
-                    setFormState({ ...formState, message: e.target.value })
-                  }
+                  onChange={(e) => setFormState({ ...formState, message: e.target.value })}
                   className="w-full resize-none rounded-xl border border-border bg-background px-4 py-3 text-sm transition-colors placeholder:text-muted-foreground focus:border-foreground/20 focus:outline-none"
                   placeholder="درباره پروژه‌تان بگویید..."
                 />
@@ -214,6 +248,13 @@ export function ContactForm({ profile, socials }: ContactFormProps) {
                   </>
                 )}
               </button>
+
+              {recaptchaEnabled && (
+                <p className="flex items-center justify-center gap-1.5 text-[10px] text-muted-foreground/50">
+                  <ShieldCheck className="h-3 w-3" />
+                  محافظت شده با reCAPTCHA v3
+                </p>
+              )}
             </motion.form>
           )}
         </AnimatePresence>

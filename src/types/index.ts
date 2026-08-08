@@ -30,6 +30,8 @@ export interface SiteConfig {
   footerCopyright: string;
   contentFontSize: "sm" | "base" | "lg" | "xl";
   contentTextAlign: "right" | "left" | "center" | "justify";
+  homeProjectsCount: number;
+  googleSiteVerification: string;
 }
 
 export interface Profile {

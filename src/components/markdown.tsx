@@ -16,7 +16,7 @@ function simpleMarkdownToHtml(md: string): string {
   html = html.replace(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+"([^"]*)")?\)/g, (_match, alt, src) => {
     const safeAlt = escapeHtml(alt || "تصویر پروژه");
     const safeSrc = escapeHtml(src);
-    return `<figure class="prose-image"><img src="${safeSrc}" alt="${safeAlt}" loading="lazy" decoding="async" /><figcaption>${safeAlt}</figcaption></figure>`;
+    return `<figure class="prose-image"><img src="${safeSrc}" alt="${safeAlt}" loading="lazy" decoding="async" sizes="(max-width: 768px) 100vw, 768px" style="width:100%;height:auto;object-fit:cover;object-position:center" /><figcaption>${safeAlt}</figcaption></figure>`;
   });
 
   // Headers

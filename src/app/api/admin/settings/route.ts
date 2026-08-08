@@ -23,6 +23,7 @@ export async function GET() {
       home_services_description: settings?.home_services_description || "",
       home_projects_title: settings?.home_projects_title || "",
       home_projects_description: settings?.home_projects_description || "",
+      home_projects_count: Number(settings?.home_projects_count ?? 6) || 6,
       home_skills_title: settings?.home_skills_title || "",
       home_skills_description: settings?.home_skills_description || "",
       home_testimonials_title: settings?.home_testimonials_title || "",
@@ -34,6 +35,9 @@ export async function GET() {
       footer_copyright: settings?.footer_copyright || "",
       content_font_size: settings?.content_font_size || "base",
       content_text_align: settings?.content_text_align || "right",
+      site_url: settings?.site_url || "",
+      google_site_verification: settings?.google_site_verification || "",
+      og_image: settings?.og_image || "",
     },
   });
 }
@@ -43,6 +47,7 @@ export async function PUT(request: Request) {
   try {
     await initDatabase();
     const d = await request.json();
+    const projectsCount = Math.max(1, Math.min(24, Number(d.home_projects_count ?? 6) || 6));
 
     await execute("INSERT OR IGNORE INTO site_settings (id) VALUES (1)");
     await execute(
@@ -50,6 +55,7 @@ export async function PUT(request: Request) {
         site_name = ?,
         site_title = ?,
         site_description = ?,
+        site_url = ?,
         locale = ?,
         keywords = ?,
         default_theme = ?,
@@ -65,6 +71,7 @@ export async function PUT(request: Request) {
         home_services_description = ?,
         home_projects_title = ?,
         home_projects_description = ?,
+        home_projects_count = ?,
         home_skills_title = ?,
         home_skills_description = ?,
         home_testimonials_title = ?,
@@ -76,12 +83,15 @@ export async function PUT(request: Request) {
         footer_copyright = ?,
         content_font_size = ?,
         content_text_align = ?,
+        google_site_verification = ?,
+        og_image = ?,
         updated_at = CURRENT_TIMESTAMP
       WHERE id = 1`,
       [
         d.site_name,
         d.site_title,
         d.site_description,
+        d.site_url || "",
         d.locale,
         JSON.stringify(d.keywords || []),
         d.default_theme || "system",
@@ -97,6 +107,7 @@ export async function PUT(request: Request) {
         d.home_services_description || "",
         d.home_projects_title || "",
         d.home_projects_description || "",
+        projectsCount,
         d.home_skills_title || "",
         d.home_skills_description || "",
         d.home_testimonials_title || "",
@@ -108,6 +119,8 @@ export async function PUT(request: Request) {
         d.footer_copyright || "",
         d.content_font_size || "base",
         d.content_text_align || "right",
+        d.google_site_verification || "",
+        d.og_image || "",
       ]
     );
     return NextResponse.json({ success: true });

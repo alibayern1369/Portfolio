@@ -319,7 +319,7 @@ export function Hero({ profile, socials }: HeroProps) {
                     src={profile.avatar}
                     alt={profile.name}
                     fill
-                    className="object-cover"
+                    className="object-cover object-center"
                     priority
                     sizes="(max-width: 640px) 200px, 256px"
                   />

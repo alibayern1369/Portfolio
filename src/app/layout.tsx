@@ -6,6 +6,7 @@ import { Footer } from "@/components/footer";
 import { BackToTop } from "@/components/back-to-top";
 import { ReadingProgress } from "@/components/reading-progress";
 import { HideOnAdmin } from "@/components/hide-on-admin";
+import { JsonLd } from "@/components/json-ld";
 import { getSiteConfig, getProfile, getSocials } from "@/lib/content";
 import "./globals.css";
 
@@ -21,21 +22,68 @@ export async function generateMetadata(): Promise<Metadata> {
     ...(site.faviconDark ? [{ url: site.faviconDark, type: getFaviconType(site.faviconDark), media: "(prefers-color-scheme: dark)" }] : []),
   ];
 
+  const titleDefault = site.title
+    ? `${profile.name} — ${site.title}`
+    : `${profile.name} — ${profile.role}`;
+
+  const keywords = Array.from(
+    new Set([
+      ...site.keywords,
+      "klandweb",
+      "کیش لند وب",
+      "علی دلاور",
+      profile.name,
+      "طراحی سایت",
+      "توسعه وب",
+    ].filter(Boolean))
+  );
+
+  const ogImage = site.ogImage || "/images/og.jpg";
+
   return {
-    title: { default: `${profile.name} — ${profile.role}`, template: `%s — ${profile.name}` },
+    title: { default: titleDefault, template: `%s — ${profile.name}` },
     description: site.description,
-    keywords: site.keywords,
-    authors: [{ name: profile.name }],
+    keywords,
+    authors: [{ name: profile.name, url: site.url }],
     creator: profile.name,
+    publisher: site.name || "کیش لند وب",
     metadataBase: new URL(site.url),
-    openGraph: { type: "website", locale: site.locale, url: site.url, title: `${profile.name} — ${profile.role}`, description: site.description, siteName: profile.name },
-    twitter: { card: "summary_large_image", title: `${profile.name} — ${profile.role}`, description: site.description },
+    alternates: { canonical: "/" },
+    openGraph: {
+      type: "website",
+      locale: site.locale,
+      url: site.url,
+      title: titleDefault,
+      description: site.description,
+      siteName: site.name || profile.name,
+      images: [{ url: ogImage, width: 1200, height: 630, alt: titleDefault }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: titleDefault,
+      description: site.description,
+      images: [ogImage],
+    },
     icons: {
       icon: iconList,
       shortcut: site.favicon || "/favicon.svg",
       apple: site.favicon || "/favicon.svg",
     },
-    robots: { index: true, follow: true },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+        "max-video-preview": -1,
+      },
+    },
+    verification: site.googleSiteVerification
+      ? { google: site.googleSiteVerification }
+      : undefined,
+    category: "technology",
   };
 }
 
@@ -83,6 +131,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         {site.faviconLight ? renderFaviconLink(site.faviconLight, "(prefers-color-scheme: light)") : null}
         {site.faviconDark ? renderFaviconLink(site.faviconDark, "(prefers-color-scheme: dark)") : null}
         <link rel="manifest" href="/manifest.json" />
+        <JsonLd site={site} profile={profile} socials={socials} />
       </head>
       <body className="min-h-screen bg-background text-foreground antialiased">
         <Providers defaultTheme={site.defaultTheme}>

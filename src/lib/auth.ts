@@ -24,7 +24,8 @@ export async function verifyPassword(password: string, hash: string): Promise<bo
 export async function createToken(user: User): Promise<string> {
   return new SignJWT({ id: user.id, username: user.username, role: user.role })
     .setProtectedHeader({ alg: "HS256" })
-    .setExpirationTime("7d")
+    .setIssuedAt()
+    .setExpirationTime("8h")
     .sign(JWT_SECRET);
 }
 

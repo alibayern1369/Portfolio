@@ -68,6 +68,9 @@ const TABLES = [
     footer_copyright TEXT,
     content_font_size TEXT DEFAULT 'base',
     content_text_align TEXT DEFAULT 'right',
+    home_projects_count INTEGER DEFAULT 6,
+    google_site_verification TEXT,
+    og_image TEXT,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`,
   `CREATE TABLE IF NOT EXISTS projects (
@@ -149,6 +152,9 @@ const SETTINGS_MIGRATIONS = [
   "ALTER TABLE site_settings ADD COLUMN footer_copyright TEXT",
   "ALTER TABLE site_settings ADD COLUMN content_font_size TEXT DEFAULT 'base'",
   "ALTER TABLE site_settings ADD COLUMN content_text_align TEXT DEFAULT 'right'",
+  "ALTER TABLE site_settings ADD COLUMN home_projects_count INTEGER DEFAULT 6",
+  "ALTER TABLE site_settings ADD COLUMN google_site_verification TEXT",
+  "ALTER TABLE site_settings ADD COLUMN og_image TEXT",
 ];
 
 export async function initDatabase() {

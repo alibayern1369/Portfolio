@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ExternalLink, Calendar } from "lucide-react";
 import { GitHubIcon } from "@/components/icons";
+import { CoverImage } from "@/components/cover-image";
 import { Section } from "@/components/section";
 import { Markdown } from "@/components/markdown";
 import { ProjectGrid } from "@/components/project-grid";
@@ -18,7 +18,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params;
   const project = await getProjectBySlug(slug);
   if (!project) return {};
-  return { title: project.title, description: project.description };
+  return {
+    title: project.title,
+    description: project.description,
+    alternates: { canonical: `/projects/${project.slug}` },
+    openGraph: {
+      title: project.title,
+      description: project.description,
+      type: "article",
+      images: project.image ? [{ url: project.image, alt: project.title }] : undefined,
+    },
+  };
 }
 
 export default async function ProjectDetailPage({ params }: PageProps) {
@@ -67,8 +77,13 @@ export default async function ProjectDetailPage({ params }: PageProps) {
           </div>
         </div>
 
-        <div className="relative mb-12 aspect-video overflow-hidden rounded-2xl border border-border">
-          <Image src={project.image} alt={project.title} fill className="object-cover" priority sizes="(max-width: 1200px) 100vw, 1200px" />
+        <div className="mb-12 overflow-hidden rounded-2xl border border-border">
+          <CoverImage
+            src={project.image}
+            alt={project.title}
+            priority
+            sizes="(max-width: 1200px) 100vw, 1200px"
+          />
         </div>
 
         <div className="mx-auto max-w-3xl"><Markdown content={project.content} /></div>

@@ -81,16 +81,17 @@ export async function getSiteConfig(): Promise<SiteConfig> {
 
   const fontSize = str(row.content_font_size, "base");
   const textAlign = str(row.content_text_align, "right");
+  const projectsCount = Math.max(1, Math.min(24, Number(row.home_projects_count ?? 6) || 6));
 
   return {
     name: str(row.site_name, "علی دلاور"),
     title: str(row.site_title),
     description: str(row.site_description),
-    url: safeUrl(str(row.site_url), process.env.NEXT_PUBLIC_SITE_URL || "https://alidelavar.dev"),
+    url: safeUrl(str(row.site_url), process.env.NEXT_PUBLIC_SITE_URL || "https://klandweb.com"),
     locale: str(row.locale, "fa-IR"),
     defaultTheme: (str(row.default_theme, "system") as "light" | "dark" | "system"),
-    ogImage: "/images/og.jpg",
-    keywords: json<string[]>(row.keywords, []),
+    ogImage: str(row.og_image, "/images/og.jpg"),
+    keywords: json<string[]>(row.keywords, ["klandweb", "کیش لند وب", "علی دلاور"]),
     logo: str(row.logo),
     logoText: str(row.logo_text, "ع.د"),
     favicon: str(row.favicon),
@@ -114,6 +115,8 @@ export async function getSiteConfig(): Promise<SiteConfig> {
     footerCopyright: str(row.footer_copyright),
     contentFontSize: (["sm", "base", "lg", "xl"].includes(fontSize) ? fontSize : "base") as SiteConfig["contentFontSize"],
     contentTextAlign: (["right", "left", "center", "justify"].includes(textAlign) ? textAlign : "right") as SiteConfig["contentTextAlign"],
+    homeProjectsCount: projectsCount,
+    googleSiteVerification: str(row.google_site_verification),
   };
 }
 
@@ -220,9 +223,11 @@ export async function getProjectBySlug(slug: string): Promise<Project | undefine
   };
 }
 
-export async function getFeaturedProjects(): Promise<Project[]> {
+export async function getFeaturedProjects(limit?: number): Promise<Project[]> {
   const projects = await getAllProjects();
-  return projects.filter((p) => p.featured);
+  const featured = projects.filter((p) => p.featured);
+  if (limit === undefined) return featured;
+  return featured.slice(0, Math.max(0, limit));
 }
 
 export async function getProjectCategories(): Promise<string[]> {

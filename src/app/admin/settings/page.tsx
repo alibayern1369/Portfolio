@@ -10,6 +10,7 @@ interface SettingsData {
   site_name: string;
   site_title: string;
   site_description: string;
+  site_url: string;
   locale: string;
   keywords: string;
   default_theme: "light" | "dark" | "system";
@@ -25,6 +26,7 @@ interface SettingsData {
   home_services_description: string;
   home_projects_title: string;
   home_projects_description: string;
+  home_projects_count: number;
   home_skills_title: string;
   home_skills_description: string;
   home_testimonials_title: string;
@@ -36,6 +38,8 @@ interface SettingsData {
   footer_copyright: string;
   content_font_size: "sm" | "base" | "lg" | "xl";
   content_text_align: "right" | "left" | "center" | "justify";
+  google_site_verification: string;
+  og_image: string;
 }
 
 export default function AdminSettingsPage() {
@@ -46,6 +50,7 @@ export default function AdminSettingsPage() {
     site_name: "",
     site_title: "",
     site_description: "",
+    site_url: "",
     locale: "fa-IR",
     keywords: "",
     default_theme: "system",
@@ -61,6 +66,7 @@ export default function AdminSettingsPage() {
     home_services_description: "",
     home_projects_title: "",
     home_projects_description: "",
+    home_projects_count: 6,
     home_skills_title: "",
     home_skills_description: "",
     home_testimonials_title: "",
@@ -72,6 +78,8 @@ export default function AdminSettingsPage() {
     footer_copyright: "",
     content_font_size: "base",
     content_text_align: "right",
+    google_site_verification: "",
+    og_image: "",
   });
   const [keywords, setKeywords] = useState<string[]>([]);
 
@@ -84,6 +92,7 @@ export default function AdminSettingsPage() {
             site_name: res.settings.site_name || "",
             site_title: res.settings.site_title || "",
             site_description: res.settings.site_description || "",
+            site_url: res.settings.site_url || "",
             locale: res.settings.locale || "fa-IR",
             keywords: "",
             default_theme: res.settings.default_theme || "system",
@@ -99,6 +108,7 @@ export default function AdminSettingsPage() {
             home_services_description: res.settings.home_services_description || "",
             home_projects_title: res.settings.home_projects_title || "",
             home_projects_description: res.settings.home_projects_description || "",
+            home_projects_count: Number(res.settings.home_projects_count ?? 6) || 6,
             home_skills_title: res.settings.home_skills_title || "",
             home_skills_description: res.settings.home_skills_description || "",
             home_testimonials_title: res.settings.home_testimonials_title || "",
@@ -110,6 +120,8 @@ export default function AdminSettingsPage() {
             footer_copyright: res.settings.footer_copyright || "",
             content_font_size: res.settings.content_font_size || "base",
             content_text_align: res.settings.content_text_align || "right",
+            google_site_verification: res.settings.google_site_verification || "",
+            og_image: res.settings.og_image || "",
           });
           try { setKeywords(JSON.parse(res.settings.keywords || "[]")); } catch { setKeywords([]); }
         }
@@ -216,6 +228,21 @@ export default function AdminSettingsPage() {
                 <textarea value={data.home_projects_description} onChange={e => setData({ ...data, home_projects_description: e.target.value })} rows={2} className="w-full px-4 py-3 bg-background border border-border rounded-xl resize-none" />
               </div>
             </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">تعداد پروژه‌های نمایش‌داده‌شده در صفحه اصلی</label>
+              <input
+                type="number"
+                min={1}
+                max={24}
+                value={data.home_projects_count}
+                onChange={e => setData({ ...data, home_projects_count: Math.max(1, Math.min(24, Number(e.target.value) || 1)) })}
+                className="w-full max-w-xs px-4 py-3 bg-background border border-border rounded-xl"
+                dir="ltr"
+              />
+              <p className="mt-2 text-xs text-muted-foreground">
+                فقط پروژه‌های «ویژه» نمایش داده می‌شوند؛ این عدد سقف نمایش در صفحه اصلی است (۱ تا ۲۴).
+              </p>
+            </div>
             <div className="grid gap-4 md:grid-cols-2">
               <div>
                 <label className="block text-sm font-medium mb-2">عنوان مهارت‌ها</label>
@@ -304,6 +331,17 @@ export default function AdminSettingsPage() {
               <input value={data.site_title} onChange={e => setData({...data, site_title: e.target.value})} className="w-full px-4 py-3 bg-background border border-border rounded-xl" />
             </div>
             <div className="sm:col-span-2">
+              <label className="block text-sm font-medium mb-2">آدرس سایت (Canonical URL)</label>
+              <input
+                value={data.site_url}
+                onChange={e => setData({ ...data, site_url: e.target.value })}
+                className="w-full px-4 py-3 bg-background border border-border rounded-xl"
+                placeholder="https://klandweb.com"
+                dir="ltr"
+              />
+              <p className="mt-2 text-xs text-muted-foreground">برای sitemap، Open Graph و اتصال Search Console ضروری است.</p>
+            </div>
+            <div className="sm:col-span-2">
               <label className="block text-sm font-medium mb-2">توضیحات (SEO)</label>
               <textarea value={data.site_description} onChange={e => setData({...data, site_description: e.target.value})} rows={2} className="w-full px-4 py-3 bg-background border border-border rounded-xl resize-none" />
             </div>
@@ -316,7 +354,7 @@ export default function AdminSettingsPage() {
             </div>
             <div className="sm:col-span-2">
               <label className="block text-sm font-medium mb-2">کلمات کلیدی (با کاما جدا کنید)</label>
-              <input value={keywords.join(", ")} onChange={e => setKeywords(e.target.value.split(",").map(k => k.trim()).filter(Boolean))} className="w-full px-4 py-3 bg-background border border-border rounded-xl" />
+              <input value={keywords.join(", ")} onChange={e => setKeywords(e.target.value.split(",").map(k => k.trim()).filter(Boolean))} className="w-full px-4 py-3 bg-background border border-border rounded-xl" placeholder="klandweb, کیش لند وب, علی دلاور" />
             </div>
             <div className="sm:col-span-2">
               <label className="block text-sm font-medium mb-2">تم پیش‌فرض</label>
@@ -327,6 +365,35 @@ export default function AdminSettingsPage() {
               </select>
               <p className="mt-2 text-xs text-muted-foreground">این گزینه تعیین می‌کند وب‌سایت هنگام بارگذاری اولیه از کدام تم استفاده کند.</p>
             </div>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-border bg-card p-4 sm:p-6">
+          <h2 className="mb-4 font-semibold">سئو و Google Search Console</h2>
+          <div className="grid gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-2">کد تأیید Search Console (google-site-verification)</label>
+              <input
+                value={data.google_site_verification}
+                onChange={e => setData({ ...data, google_site_verification: e.target.value })}
+                className="w-full px-4 py-3 bg-background border border-border rounded-xl"
+                placeholder="محتوای attribute محتوا در تگ meta"
+                dir="ltr"
+              />
+              <p className="mt-2 text-xs text-muted-foreground">
+                در Search Console روش «تگ HTML» را انتخاب کنید و فقط مقدار content را اینجا بگذارید — نه کل تگ.
+              </p>
+            </div>
+            <ImageUpload
+              value={data.og_image}
+              onChange={(path) => setData({ ...data, og_image: path })}
+              folder="seo"
+              label="تصویر Open Graph (اشتراک‌گذاری در شبکه‌های اجتماعی)"
+              aspect="video"
+            />
+            <p className="text-xs text-muted-foreground">
+              بعد از ذخیره، sitemap در مسیر <span dir="ltr">/sitemap.xml</span> و robots در <span dir="ltr">/robots.txt</span> در دسترس است. آن‌ها را در Search Console ثبت کنید.
+            </p>
           </div>
         </div>
 

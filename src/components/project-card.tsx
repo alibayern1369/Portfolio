@@ -1,10 +1,10 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Image from "next/image";
 import Link from "next/link";
 import { ExternalLink, ArrowUpLeft } from "lucide-react";
 import { GitHubIcon } from "./icons";
+import { CoverImage } from "./cover-image";
 import type { Project } from "@/types";
 
 interface ProjectCardProps {
@@ -24,19 +24,17 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
         href={`/projects/${project.slug}`}
         className="group block overflow-hidden rounded-2xl border border-border bg-card transition-all duration-300 hover:border-foreground/10 hover:shadow-lg"
       >
-        {/* Image */}
-        <div className="relative aspect-video overflow-hidden bg-secondary">
-          <Image
+        <div className="relative overflow-hidden">
+          <CoverImage
             src={project.image}
             alt={project.title}
-            fill
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            aspectRatio="16 / 9"
+            imageClassName="transition-transform duration-500 group-hover:scale-105"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
-          {/* Hover overlay with links */}
-          <div className="absolute left-4 top-4 flex gap-2 opacity-0 transition-all duration-300 group-hover:opacity-100">
+          <div className="absolute left-4 top-4 z-10 flex gap-2 opacity-0 transition-all duration-300 group-hover:opacity-100">
             {project.liveUrl && (
               <span
                 onClick={(e) => {
@@ -64,7 +62,6 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
           </div>
         </div>
 
-        {/* Content */}
         <div className="p-6">
           <div className="mb-3 flex items-center gap-2">
             <span className="rounded-full bg-secondary px-3 py-1 text-xs font-medium text-muted-foreground">

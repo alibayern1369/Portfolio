@@ -1,27 +1,36 @@
 import { NextResponse } from "next/server";
 import { login } from "@/lib/auth";
 import { cookies } from "next/headers";
-
-async function verifyRecaptcha(token: string): Promise<boolean> {
-  const secretKey = process.env.RECAPTCHA_SECRET_KEY;
-  if (!secretKey) return true; // Skip if not configured
-
-  try {
-    const res = await fetch("https://www.google.com/recaptcha/api/siteverify", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: `secret=${secretKey}&response=${token}`,
-    });
-    const data = await res.json();
-    return data.success && data.score >= 0.5;
-  } catch {
-    return false;
-  }
-}
+import { verifyRecaptcha } from "@/lib/recaptcha";
+import {
+  checkLoginRateLimit,
+  clearLoginFailures,
+  getClientIp,
+  recordLoginFailure,
+} from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
   try {
-    const { username, password, recaptchaToken } = await request.json();
+    const ip = getClientIp(request);
+    const rateKey = `login:${ip}`;
+
+    const rate = checkLoginRateLimit(rateKey);
+    if (!rate.allowed) {
+      return NextResponse.json(
+        {
+          error: `تعداد تلاش‌ها زیاد است. ${rate.retryAfterSec || 900} ثانیه دیگر دوباره تلاش کنید.`,
+        },
+        {
+          status: 429,
+          headers: rate.retryAfterSec ? { "Retry-After": String(rate.retryAfterSec) } : undefined,
+        }
+      );
+    }
+
+    const body = await request.json();
+    const username = typeof body.username === "string" ? body.username.trim() : "";
+    const password = typeof body.password === "string" ? body.password : "";
+    const recaptchaToken = typeof body.recaptchaToken === "string" ? body.recaptchaToken : "";
 
     if (!username || !password) {
       return NextResponse.json(
@@ -30,30 +39,34 @@ export async function POST(request: Request) {
       );
     }
 
-    // Verify reCAPTCHA if configured
-    const recaptchaSecretKey = process.env.RECAPTCHA_SECRET_KEY;
-    if (recaptchaSecretKey) {
-      if (!recaptchaToken) {
-        return NextResponse.json({ error: "تأیید امنیتی ناموفق بود" }, { status: 400 });
-      }
-      const isHuman = await verifyRecaptcha(recaptchaToken);
-      if (!isHuman) {
-        return NextResponse.json({ error: "تأیید امنیتی ناموفق بود. دوباره تلاش کنید." }, { status: 403 });
-      }
+    if (username.length > 64 || password.length > 128) {
+      recordLoginFailure(rateKey);
+      return NextResponse.json({ error: "نام کاربری یا رمز عبور اشتباه است" }, { status: 401 });
+    }
+
+    const captcha = await verifyRecaptcha(recaptchaToken, "login");
+    if (!captcha.ok) {
+      recordLoginFailure(rateKey);
+      return NextResponse.json({ error: captcha.error || "تأیید امنیتی ناموفق بود" }, { status: 403 });
     }
 
     const result = await login(username, password);
 
     if (!result.success) {
+      recordLoginFailure(rateKey);
+      // Constant-ish delay to slow credential stuffing
+      await new Promise((r) => setTimeout(r, 400 + Math.floor(Math.random() * 400)));
       return NextResponse.json({ error: result.error }, { status: 401 });
     }
+
+    clearLoginFailures(rateKey);
 
     const cookieStore = await cookies();
     cookieStore.set("auth_token", result.token!, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 7,
+      sameSite: "strict",
+      maxAge: 60 * 60 * 8, // 8 hours
       path: "/",
     });
 

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { Download } from "lucide-react";
+import { CoverImage } from "@/components/cover-image";
 import { Section } from "@/components/section";
 import { SectionTitle } from "@/components/section-title";
 import { SkillsGrid } from "@/components/skills-grid";
@@ -28,7 +28,13 @@ export default async function AboutPage() {
           <div className="lg:col-span-1">
             <div className="sticky top-28">
               <div className="overflow-hidden rounded-2xl border border-border">
-                <Image src={profile.avatar} alt={profile.name} width={400} height={400} className="aspect-square w-full object-cover" />
+                <CoverImage
+                  src={profile.avatar}
+                  alt={profile.name}
+                  aspectRatio="1 / 1"
+                  sizes="(max-width: 1024px) 100vw, 400px"
+                  priority
+                />
               </div>
               <div className="mt-6">
                 <h3 className="text-lg font-semibold">{profile.name}</h3>

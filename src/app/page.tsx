@@ -1,5 +1,6 @@
 export const dynamic = "force-dynamic";
 
+import type { Metadata } from "next";
 import { Hero } from "@/components/hero";
 import { Section } from "@/components/section";
 import { SectionTitle } from "@/components/section-title";
@@ -12,11 +13,33 @@ import { getProfile, getSocials, getFeaturedProjects, getServices, getSkills, ge
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
+export async function generateMetadata(): Promise<Metadata> {
+  const site = await getSiteConfig();
+  const profile = await getProfile();
+  const title = site.title
+    ? `${profile.name} | ${site.title} | klandweb | کیش لند وب`
+    : `${profile.name} | klandweb | کیش لند وب`;
+
+  return {
+    title: { absolute: title },
+    description:
+      site.description ||
+      `${profile.name} (علی دلاور) — کیش لند وب (klandweb). طراحی و توسعه وبسایت، نرم‌افزار و اپلیکیشن.`,
+    alternates: { canonical: "/" },
+    openGraph: {
+      title,
+      description: site.description,
+      url: site.url,
+      type: "website",
+    },
+  };
+}
+
 export default async function HomePage() {
   const profile = await getProfile();
   const socials = await getSocials();
   const site = await getSiteConfig();
-  const featuredProjects = await getFeaturedProjects();
+  const featuredProjects = await getFeaturedProjects(site.homeProjectsCount);
   const services = await getServices();
   const skills = await getSkills();
   const testimonials = await getTestimonials();

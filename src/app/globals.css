@@ -284,8 +284,11 @@ body {
 .prose-content .prose-image img {
   display: block;
   width: 100%;
-  max-height: 420px;
+  height: auto;
+  max-width: 100%;
+  max-height: min(70vh, 640px);
   object-fit: cover;
+  object-position: center;
   border-radius: 0.9rem;
 }
 
