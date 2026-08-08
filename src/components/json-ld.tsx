@@ -30,7 +30,7 @@ export function JsonLd({ site, profile, socials }: JsonLdProps) {
     "@type": "Person",
     "@id": `${site.url}/#person`,
     name: profile.name,
-    alternateName: ["علی دلاور", "Ali Delavar", "klandweb", "کیش لند وب"],
+    alternateName: ["علی دلاور", "Ali Delavar"],
     url: site.url,
     image: absoluteUrl(site.url, profile.avatar),
     jobTitle: profile.role,
@@ -46,8 +46,8 @@ export function JsonLd({ site, profile, socials }: JsonLdProps) {
   const organization = {
     "@type": "Organization",
     "@id": `${site.url}/#organization`,
-    name: site.name || "کیش لند وب",
-    alternateName: ["klandweb", "کیش لند وب", "Kland Web"],
+    name: "کیش لند وب",
+    alternateName: ["klandweb", "Kland Web", site.name].filter(Boolean),
     url: site.url,
     logo: site.logo ? absoluteUrl(site.url, site.logo) : ogImage,
     founder: { "@id": `${site.url}/#person` },
@@ -58,24 +58,27 @@ export function JsonLd({ site, profile, socials }: JsonLdProps) {
     "@type": "WebSite",
     "@id": `${site.url}/#website`,
     url: site.url,
-    name: site.name,
-    alternateName: ["klandweb", "کیش لند وب", profile.name],
+    name: "کیش لند وب",
+    alternateName: ["klandweb", site.name, profile.name].filter(Boolean),
     description: site.description,
     inLanguage: site.locale || "fa-IR",
     publisher: { "@id": `${site.url}/#organization` },
-    potentialAction: {
-      "@type": "SearchAction",
-      target: {
-        "@type": "EntryPoint",
-        urlTemplate: `${site.url}/projects?q={search_term_string}`,
-      },
-      "query-input": "required name=search_term_string",
-    },
+  };
+
+  const webPage = {
+    "@type": "WebPage",
+    "@id": `${site.url}/#webpage`,
+    url: site.url,
+    name: "کیش لند وب | طراحی و توسعه وبسایت — klandweb",
+    description: site.description,
+    isPartOf: { "@id": `${site.url}/#website` },
+    about: { "@id": `${site.url}/#organization` },
+    inLanguage: site.locale || "fa-IR",
   };
 
   const graph = {
     "@context": "https://schema.org",
-    "@graph": [website, organization, person],
+    "@graph": [website, organization, person, webPage],
   };
 
   return (

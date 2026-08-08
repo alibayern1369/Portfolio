@@ -147,7 +147,7 @@ const itemVariants = {
   },
 };
 
-export function Hero({ profile, socials }: HeroProps) {
+export function Hero({ profile, socials, description }: HeroProps) {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
@@ -220,13 +220,24 @@ export function Hero({ profile, socials }: HeroProps) {
             {/* Headline */}
             <motion.div variants={itemVariants}>
               <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-[4.2rem] leading-[1.15]">
-                <span className="block text-foreground/90">
-                  {profile.heroHeadline[0]}
-                </span>
+                <span className="block text-foreground/90">کیش لند وب</span>
                 <span className="block mt-2">
-                  <TypeWriter words={profile.heroHeadline.slice(1)} />
+                  {profile.heroHeadline[0] || "طراحی و توسعه محصول دیجیتال"}
                 </span>
+                {profile.heroHeadline.length > 1 && (
+                  <span className="sr-only">
+                    {profile.heroHeadline.slice(1).join("، ")}
+                  </span>
+                )}
               </h1>
+              {profile.heroHeadline.length > 1 && (
+                <p
+                  className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl md:text-5xl leading-[1.15]"
+                  aria-hidden="true"
+                >
+                  <TypeWriter words={profile.heroHeadline.slice(1)} />
+                </p>
+              )}
             </motion.div>
 
             {/* Description */}
@@ -234,7 +245,9 @@ export function Hero({ profile, socials }: HeroProps) {
               variants={itemVariants}
               className="mx-auto mt-6 max-w-xl text-base text-muted-foreground md:text-lg leading-relaxed lg:mx-0"
             >
-              {profile.heroDescription}
+              {description ||
+                profile.heroDescription ||
+                "کیش لند وب (klandweb) — طراحی UI/UX، توسعه وبسایت، نرم‌افزار و اپلیکیشن برای رشد کسب‌وکار شما."}
             </motion.p>
 
             {/* CTA Buttons */}

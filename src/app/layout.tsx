@@ -30,9 +30,10 @@ export async function generateMetadata(): Promise<Metadata> {
     ...(site.faviconDark ? [{ url: site.faviconDark, type: getFaviconType(site.faviconDark), media: "(prefers-color-scheme: dark)" }] : []),
   ];
 
-  const titleDefault = site.title
-    ? `${profile.name} — ${site.title}`
-    : `${profile.name} — ${profile.role}`;
+  const titleDefault = "کیش لند وب | طراحی و توسعه وبسایت — klandweb";
+  const description =
+    site.description ||
+    `کیش لند وب (klandweb) — طراحی UI/UX، توسعه وبسایت، نرم‌افزار و اپلیکیشن. خدمات دیجیتال ${profile.name} برای کسب‌وکارها.`;
 
   const keywords = Array.from(
     new Set([
@@ -50,11 +51,11 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     title: { default: titleDefault, template: `%s — ${profile.name}` },
-    description: site.description,
+    description,
     keywords,
     authors: [{ name: profile.name, url: site.url }],
     creator: profile.name,
-    publisher: site.name || "کیش لند وب",
+    publisher: "کیش لند وب",
     metadataBase: new URL(site.url),
     alternates: { canonical: "/" },
     openGraph: {
@@ -62,14 +63,14 @@ export async function generateMetadata(): Promise<Metadata> {
       locale: site.locale,
       url: site.url,
       title: titleDefault,
-      description: site.description,
-      siteName: site.name || profile.name,
-      images: [{ url: ogImage, width: 1200, height: 630, alt: titleDefault }],
+      description,
+      siteName: "کیش لند وب",
+      images: [{ url: ogImage, width: 1200, height: 630, alt: "کیش لند وب — klandweb" }],
     },
     twitter: {
       card: "summary_large_image",
       title: titleDefault,
-      description: site.description,
+      description,
       images: [ogImage],
     },
     icons: {

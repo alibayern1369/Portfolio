@@ -1,7 +1,15 @@
+import Link from "next/link";
 import { GitHubIcon, LinkedInIcon, TwitterIcon, DribbbleIcon } from "./icons";
 import { SiteLogo } from "./site-logo";
 import type { Social } from "@/types";
 import type { ComponentType, SVGProps } from "react";
+
+const footerLinks = [
+  { href: "/services", label: "خدمات کیش لند وب" },
+  { href: "/projects", label: "نمونه کارها" },
+  { href: "/about", label: "درباره ما" },
+  { href: "/contact", label: "تماس" },
+];
 
 const iconMap: Record<string, ComponentType<SVGProps<SVGSVGElement>>> = {
   github: GitHubIcon,
@@ -29,9 +37,21 @@ export function Footer({ name, socials, logo, logoText, tagline, copyright }: Fo
           <div>
             <SiteLogo logo={logo} logoText={logoText} />
             <p className="mt-1 text-sm text-muted-foreground">
-              {tagline || "خلق تجربه‌های دیجیتال"}
+              {tagline || "کیش لند وب (klandweb) — طراحی و توسعه محصول دیجیتال"}
             </p>
           </div>
+
+          <nav className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+            {footerLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
 
           <div className="flex items-center gap-4">
             {socials.map((social) => {
@@ -54,7 +74,7 @@ export function Footer({ name, socials, logo, logoText, tagline, copyright }: Fo
 
         <div className="mt-8 border-t border-border pt-8 text-center">
           <p className="text-sm text-muted-foreground">
-            {copyright || `© ${currentYear} ${name}. تمامی حقوق محفوظ است.`}
+            {copyright || `© ${currentYear} کیش لند وب (klandweb). تمامی حقوق محفوظ است.`}
           </p>
         </div>
       </div>

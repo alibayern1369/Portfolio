@@ -16,21 +16,28 @@ import { ArrowLeft } from "lucide-react";
 export async function generateMetadata(): Promise<Metadata> {
   const site = await getSiteConfig();
   const profile = await getProfile();
-  const title = site.title
-    ? `${profile.name} | ${site.title} | klandweb | کیش لند وب`
-    : `${profile.name} | klandweb | کیش لند وب`;
+  const title = "کیش لند وب | طراحی و توسعه وبسایت — klandweb";
+  const description =
+    site.description ||
+    `کیش لند وب (klandweb) — طراحی UI/UX، توسعه وبسایت، نرم‌افزار و اپلیکیشن. خدمات دیجیتال ${profile.name} برای کسب‌وکارها.`;
+  const ogImage = site.ogImage || "/images/og.jpg";
 
   return {
     title: { absolute: title },
-    description:
-      site.description ||
-      `${profile.name} (علی دلاور) — کیش لند وب (klandweb). طراحی و توسعه وبسایت، نرم‌افزار و اپلیکیشن.`,
+    description,
     alternates: { canonical: "/" },
     openGraph: {
       title,
-      description: site.description,
+      description,
       url: site.url,
       type: "website",
+      images: [{ url: ogImage, width: 1200, height: 630, alt: "کیش لند وب — klandweb" }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [ogImage],
     },
   };
 }
@@ -50,8 +57,8 @@ export default async function HomePage() {
       <Section id="about">
         <SectionTitle
           label="معرفی"
-          title={site.homeAboutTitle || "من و کسب‌وکارم"}
-          description={site.homeAboutDescription || profile.bio}
+          title={site.homeAboutTitle || "کیش لند وب؛ معرفی و خدمات"}
+          description={site.homeAboutDescription || profile.bio || "کیش لند وب (klandweb) طراحی و توسعه محصولات دیجیتال برای کسب‌وکارها و برندهای شخصی."}
         />
         <div className="flex justify-center">
           <Link href="/about" className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-6 py-3 text-sm font-medium transition-all hover:bg-accent hover:scale-105">
@@ -62,8 +69,8 @@ export default async function HomePage() {
       <Section id="services">
         <SectionTitle
           label="خدمات"
-          title={site.homeServicesTitle || "چی براتون انجام می‌دم"}
-          description={site.homeServicesDescription || "از طراحی رابط کاربری تا توسعه وبسایت، نرم‌افزار و اپ موبایل."}
+          title={site.homeServicesTitle || "خدمات طراحی و توسعه کیش لند وب"}
+          description={site.homeServicesDescription || "کیش لند وب (klandweb) — از طراحی رابط کاربری تا توسعه وبسایت، نرم‌افزار و اپ موبایل."}
         />
         <ServicesGrid services={services.slice(0, 8)} />
         <div className="mt-10 flex justify-center">
@@ -75,8 +82,8 @@ export default async function HomePage() {
       <Section id="projects">
         <SectionTitle
           label="نمونه‌کارها"
-          title={site.homeProjectsTitle || "پروژه‌های منتخب"}
-          description={site.homeProjectsDescription || "نمونه‌هایی از کارهای انجام‌شده برای مشتریان و پروژه‌های شخصی."}
+          title={site.homeProjectsTitle || "نمونه کارهای klandweb"}
+          description={site.homeProjectsDescription || "نمونه‌هایی از پروژه‌های انجام‌شده توسط کیش لند وب برای مشتریان و پروژه‌های شخصی."}
         />
         <ProjectGrid projects={featuredProjects} />
         <div className="mt-10 flex justify-center">
