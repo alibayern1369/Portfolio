@@ -40,6 +40,12 @@ export async function GET() {
       og_image: settings?.og_image || "",
       recaptcha_site_key: settings?.recaptcha_site_key || "",
       recaptcha_secret_key: settings?.recaptcha_secret_key || "",
+      contact_email: settings?.contact_email || "",
+      contact_whatsapp: settings?.contact_whatsapp || "",
+      contact_whatsapp_message: settings?.contact_whatsapp_message || "",
+      contact_telegram: settings?.contact_telegram || "",
+      contact_telegram_message: settings?.contact_telegram_message || "",
+      web3forms_access_key: settings?.web3forms_access_key || "",
     },
   });
 }
@@ -89,6 +95,12 @@ export async function PUT(request: Request) {
         og_image = ?,
         recaptcha_site_key = ?,
         recaptcha_secret_key = ?,
+        contact_email = ?,
+        contact_whatsapp = ?,
+        contact_whatsapp_message = ?,
+        contact_telegram = ?,
+        contact_telegram_message = ?,
+        web3forms_access_key = ?,
         updated_at = CURRENT_TIMESTAMP
       WHERE id = 1`,
       [
@@ -127,6 +139,12 @@ export async function PUT(request: Request) {
         d.og_image || "",
         typeof d.recaptcha_site_key === "string" ? d.recaptcha_site_key.trim() : "",
         typeof d.recaptcha_secret_key === "string" ? d.recaptcha_secret_key.trim() : "",
+        typeof d.contact_email === "string" ? d.contact_email.trim() : "",
+        typeof d.contact_whatsapp === "string" ? d.contact_whatsapp.trim() : "",
+        typeof d.contact_whatsapp_message === "string" ? d.contact_whatsapp_message.trim() : "",
+        typeof d.contact_telegram === "string" ? d.contact_telegram.trim().replace(/^@/, "") : "",
+        typeof d.contact_telegram_message === "string" ? d.contact_telegram_message.trim() : "",
+        typeof d.web3forms_access_key === "string" ? d.web3forms_access_key.trim() : "",
       ]
     );
     return NextResponse.json({ success: true });

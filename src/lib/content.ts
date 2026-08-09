@@ -3,8 +3,9 @@ import { initDatabase } from "@/db";
 import { seedDatabase } from "@/db/seed";
 import type {
   SiteConfig, Profile, Social, SkillsData, SkillCategory,
-  Experience, Service, Testimonial, Project, AboutData,
+  Experience, Service, Testimonial, Project, AboutData, ContactPublicConfig,
 } from "@/types";
+import { DEFAULT_CONTACT_CONFIG } from "@/lib/contact-config";
 
 let initPromise: Promise<void> | null = null;
 
@@ -234,4 +235,43 @@ export async function getProjectCategories(): Promise<string[]> {
   const projects = await getAllProjects();
   const categories = new Set(projects.map((p) => p.category));
   return ["همه", ...Array.from(categories)];
+}
+
+/** Public contact channels (WhatsApp / Telegram / display email). */
+export async function getContactConfig(): Promise<ContactPublicConfig> {
+  await ensureDb();
+  const result = await db.execute(
+    `SELECT contact_email, contact_whatsapp, contact_whatsapp_message,
+            contact_telegram, contact_telegram_message
+     FROM site_settings WHERE id = 1`
+  );
+  const row = r(result.rows[0]);
+
+  return {
+    email: str(row.contact_email).trim() || DEFAULT_CONTACT_CONFIG.email,
+    whatsapp: str(row.contact_whatsapp).trim() || DEFAULT_CONTACT_CONFIG.whatsapp,
+    whatsappMessage:
+      str(row.contact_whatsapp_message).trim() ||
+      DEFAULT_CONTACT_CONFIG.whatsappMessage,
+    telegram: str(row.contact_telegram).trim() || DEFAULT_CONTACT_CONFIG.telegram,
+    telegramMessage:
+      str(row.contact_telegram_message).trim() ||
+      DEFAULT_CONTACT_CONFIG.telegramMessage,
+  };
+}
+
+/** Server-only Web3Forms key: DB first, then env. */
+export async function getWeb3FormsAccessKey(): Promise<string> {
+  await ensureDb();
+  try {
+    const result = await db.execute(
+      "SELECT web3forms_access_key FROM site_settings WHERE id = 1"
+    );
+    const row = r(result.rows[0]);
+    const fromDb = str(row.web3forms_access_key).trim();
+    if (fromDb) return fromDb;
+  } catch {
+    // ignore
+  }
+  return (process.env.WEB3FORMS_ACCESS_KEY || "").trim();
 }

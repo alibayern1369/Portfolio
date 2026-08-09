@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Section } from "@/components/section";
 import { SectionTitle } from "@/components/section-title";
 import { ContactForm } from "@/components/contact-form";
-import { getProfile, getSocials } from "@/lib/content";
+import { getContactConfig, getProfile, getSocials } from "@/lib/content";
 
 export const dynamic = "force-dynamic";
 
@@ -12,14 +12,21 @@ export const metadata: Metadata = {
 };
 
 export default async function ContactPage() {
-  const profile = await getProfile();
-  const socials = await getSocials();
+  const [profile, socials, contact] = await Promise.all([
+    getProfile(),
+    getSocials(),
+    getContactConfig(),
+  ]);
 
   return (
     <div className="pt-24">
       <Section>
-        <SectionTitle label="تماس" title="ارتباط با من" description="پروژه‌ای در ذهن دارید یا فقط می‌خواهید گپ بزنیم؟" />
-        <ContactForm profile={profile} socials={socials} />
+        <SectionTitle
+          label="تماس"
+          title="ارتباط با من"
+          description="پروژه‌ای در ذهن دارید یا فقط می‌خواهید گپ بزنیم؟"
+        />
+        <ContactForm profile={profile} socials={socials} contact={contact} />
       </Section>
     </div>
   );

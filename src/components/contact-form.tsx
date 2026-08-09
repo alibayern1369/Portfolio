@@ -12,12 +12,8 @@ import {
   TelegramIcon,
 } from "./icons";
 import { useRecaptchaV3 } from "@/hooks/use-recaptcha-v3";
-import {
-  contactConfig,
-  getTelegramUrl,
-  getWhatsAppUrl,
-} from "@/lib/contact-config";
-import type { Profile, Social } from "@/types";
+import { getTelegramUrl, getWhatsAppUrl } from "@/lib/contact-config";
+import type { ContactPublicConfig, Profile, Social } from "@/types";
 import type { ComponentType, SVGProps } from "react";
 
 const socialIconMap: Record<string, ComponentType<SVGProps<SVGSVGElement>>> = {
@@ -32,9 +28,10 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 interface ContactFormProps {
   profile: Profile;
   socials: Social[];
+  contact: ContactPublicConfig;
 }
 
-export function ContactForm({ profile, socials }: ContactFormProps) {
+export function ContactForm({ profile, socials, contact }: ContactFormProps) {
   const { enabled: recaptchaEnabled, getToken } = useRecaptchaV3();
   const [formState, setFormState] = useState({
     name: "",
@@ -127,7 +124,7 @@ export function ContactForm({ profile, socials }: ContactFormProps) {
   };
 
   const copyEmail = async () => {
-    await navigator.clipboard.writeText(contactConfig.email);
+    await navigator.clipboard.writeText(contact.email);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -150,7 +147,7 @@ export function ContactForm({ profile, socials }: ContactFormProps) {
             </div>
             <div>
               <p className="text-sm font-medium" dir="ltr">
-                {contactConfig.email}
+                {contact.email}
               </p>
               <button
                 type="button"
@@ -180,7 +177,7 @@ export function ContactForm({ profile, socials }: ContactFormProps) {
 
         <div className="mt-8 flex flex-wrap gap-3">
           <a
-            href={getWhatsAppUrl()}
+            href={getWhatsAppUrl(contact.whatsapp, contact.whatsappMessage)}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 rounded-xl border border-border bg-background px-4 py-2.5 text-sm font-medium text-foreground transition-all hover:border-foreground/20 hover:bg-secondary"
@@ -189,7 +186,7 @@ export function ContactForm({ profile, socials }: ContactFormProps) {
             واتساپ
           </a>
           <a
-            href={getTelegramUrl()}
+            href={getTelegramUrl(contact.telegram)}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 rounded-xl border border-border bg-background px-4 py-2.5 text-sm font-medium text-foreground transition-all hover:border-foreground/20 hover:bg-secondary"

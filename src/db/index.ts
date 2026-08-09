@@ -73,6 +73,12 @@ const TABLES = [
     og_image TEXT,
     recaptcha_site_key TEXT,
     recaptcha_secret_key TEXT,
+    contact_email TEXT,
+    contact_whatsapp TEXT,
+    contact_whatsapp_message TEXT,
+    contact_telegram TEXT,
+    contact_telegram_message TEXT,
+    web3forms_access_key TEXT,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`,
   `CREATE TABLE IF NOT EXISTS projects (
@@ -159,6 +165,12 @@ const SETTINGS_MIGRATIONS = [
   "ALTER TABLE site_settings ADD COLUMN og_image TEXT",
   "ALTER TABLE site_settings ADD COLUMN recaptcha_site_key TEXT",
   "ALTER TABLE site_settings ADD COLUMN recaptcha_secret_key TEXT",
+  "ALTER TABLE site_settings ADD COLUMN contact_email TEXT",
+  "ALTER TABLE site_settings ADD COLUMN contact_whatsapp TEXT",
+  "ALTER TABLE site_settings ADD COLUMN contact_whatsapp_message TEXT",
+  "ALTER TABLE site_settings ADD COLUMN contact_telegram TEXT",
+  "ALTER TABLE site_settings ADD COLUMN contact_telegram_message TEXT",
+  "ALTER TABLE site_settings ADD COLUMN web3forms_access_key TEXT",
 ];
 
 export async function initDatabase() {

@@ -110,3 +110,11 @@ export interface AboutData {
   subtitle: string;
   content: string;
 }
+
+export interface ContactPublicConfig {
+  email: string;
+  whatsapp: string;
+  whatsappMessage: string;
+  telegram: string;
+  telegramMessage: string;
+}

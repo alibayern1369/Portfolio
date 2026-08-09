@@ -42,6 +42,12 @@ interface SettingsData {
   og_image: string;
   recaptcha_site_key: string;
   recaptcha_secret_key: string;
+  contact_email: string;
+  contact_whatsapp: string;
+  contact_whatsapp_message: string;
+  contact_telegram: string;
+  contact_telegram_message: string;
+  web3forms_access_key: string;
 }
 
 export default function AdminSettingsPage() {
@@ -84,6 +90,12 @@ export default function AdminSettingsPage() {
     og_image: "",
     recaptcha_site_key: "",
     recaptcha_secret_key: "",
+    contact_email: "",
+    contact_whatsapp: "",
+    contact_whatsapp_message: "",
+    contact_telegram: "",
+    contact_telegram_message: "",
+    web3forms_access_key: "",
   });
   const [keywords, setKeywords] = useState<string[]>([]);
 
@@ -128,6 +140,12 @@ export default function AdminSettingsPage() {
             og_image: res.settings.og_image || "",
             recaptcha_site_key: res.settings.recaptcha_site_key || "",
             recaptcha_secret_key: res.settings.recaptcha_secret_key || "",
+            contact_email: res.settings.contact_email || "",
+            contact_whatsapp: res.settings.contact_whatsapp || "",
+            contact_whatsapp_message: res.settings.contact_whatsapp_message || "",
+            contact_telegram: res.settings.contact_telegram || "",
+            contact_telegram_message: res.settings.contact_telegram_message || "",
+            web3forms_access_key: res.settings.web3forms_access_key || "",
           });
           try { setKeywords(JSON.parse(res.settings.keywords || "[]")); } catch { setKeywords([]); }
         }
@@ -400,6 +418,107 @@ export default function AdminSettingsPage() {
             <p className="text-xs text-muted-foreground">
               بعد از ذخیره، sitemap در مسیر <span dir="ltr">/sitemap.xml</span> و robots در <span dir="ltr">/robots.txt</span> در دسترس است. آن‌ها را در Search Console ثبت کنید.
             </p>
+          </div>
+        </div>
+
+        <div id="contact" className="rounded-2xl border border-border bg-card p-4 sm:p-6">
+          <h2 className="mb-2 font-semibold">تماس — واتساپ، تلگرام و فرم ایمیل</h2>
+          <p className="mb-4 text-sm text-muted-foreground">
+            این مقادیر در صفحه تماس سایت استفاده می‌شوند. برای ارسال فرم به ایمیل، یک Access Key رایگان از{" "}
+            <a
+              href="https://web3forms.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-2 hover:text-foreground"
+            >
+              Web3Forms
+            </a>{" "}
+            بسازید (با همان ایمیلی که اینجا می‌گذارید) و کلید را پایین ذخیره کنید.
+          </p>
+          <div className="grid gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-2">ایمیل تماس (نمایش + مقصد پیام‌ها)</label>
+              <input
+                type="email"
+                value={data.contact_email}
+                onChange={e => setData({ ...data, contact_email: e.target.value })}
+                className="w-full px-4 py-3 bg-background border border-border rounded-xl"
+                placeholder="hello@alidelavar.dev"
+                dir="ltr"
+              />
+              <p className="mt-2 text-xs text-muted-foreground">
+                هنگام ساخت Access Key در Web3Forms همین ایمیل را وارد کنید تا پیام‌ها به همین اینباکس برسند.
+              </p>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label className="block text-sm font-medium mb-2">شماره واتساپ</label>
+                <input
+                  value={data.contact_whatsapp}
+                  onChange={e => setData({ ...data, contact_whatsapp: e.target.value })}
+                  className="w-full px-4 py-3 bg-background border border-border rounded-xl"
+                  placeholder="+989120695355"
+                  dir="ltr"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">یوزرنیم تلگرام (بدون @)</label>
+                <input
+                  value={data.contact_telegram}
+                  onChange={e => setData({ ...data, contact_telegram: e.target.value })}
+                  className="w-full px-4 py-3 bg-background border border-border rounded-xl"
+                  placeholder="alidelavar"
+                  dir="ltr"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">پیام پیش‌فرض واتساپ</label>
+              <textarea
+                value={data.contact_whatsapp_message}
+                onChange={e => setData({ ...data, contact_whatsapp_message: e.target.value })}
+                rows={2}
+                className="w-full px-4 py-3 bg-background border border-border rounded-xl resize-none"
+                placeholder="سلام، از طریق وب‌سایت شما..."
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">پیام پیش‌فرض تلگرام (اختیاری / برای آینده)</label>
+              <textarea
+                value={data.contact_telegram_message}
+                onChange={e => setData({ ...data, contact_telegram_message: e.target.value })}
+                rows={2}
+                className="w-full px-4 py-3 bg-background border border-border rounded-xl resize-none"
+                placeholder="سلام، از طریق وب‌سایت شما..."
+              />
+              <p className="mt-2 text-xs text-muted-foreground">
+                لینک تلگرام فقط چت را باز می‌کند؛ پیام از پیش‌پرشده روی لینک کاربر معمولاً پشتیبانی نمی‌شود.
+              </p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">Web3Forms Access Key</label>
+              <input
+                type="password"
+                value={data.web3forms_access_key}
+                onChange={e => setData({ ...data, web3forms_access_key: e.target.value })}
+                className="w-full px-4 py-3 bg-background border border-border rounded-xl font-mono text-sm"
+                placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+                dir="ltr"
+                autoComplete="new-password"
+              />
+              <p className="mt-2 text-xs text-muted-foreground">
+                کلید خصوصی — فقط روی سرور برای ارسال ایمیل فرم تماس استفاده می‌شود. می‌توانید به‌جای این، متغیر محیطی{" "}
+                <span dir="ltr">WEB3FORMS_ACCESS_KEY</span> را در Vercel بگذارید.
+              </p>
+            </div>
+            <div className="rounded-xl border border-border bg-background px-4 py-3 text-xs text-muted-foreground">
+              وضعیت فرم ایمیل:{" "}
+              {data.web3forms_access_key ? (
+                <span className="text-emerald-600 dark:text-emerald-400">کلید ذخیره شده</span>
+              ) : (
+                <span className="text-amber-600 dark:text-amber-400">کلید خالی — فرم تا زمان تنظیم کلید ایمیل ارسال نمی‌کند</span>
+              )}
+            </div>
           </div>
         </div>
 

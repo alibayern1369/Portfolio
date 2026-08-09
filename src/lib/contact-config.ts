@@ -1,9 +1,18 @@
 /**
- * Central contact settings — change phone, Telegram, messages, and inbox here.
- * Form emails are delivered via Web3Forms to the address tied to WEB3FORMS_ACCESS_KEY
- * (should match `email` below).
+ * Contact defaults + helpers.
+ * Editable values live in Admin → Settings (site_settings).
+ * WEB3FORMS_ACCESS_KEY may also come from env as a fallback.
  */
-export const contactConfig = {
+
+export type ContactPublicConfig = {
+  email: string;
+  whatsapp: string;
+  whatsappMessage: string;
+  telegram: string;
+  telegramMessage: string;
+};
+
+export const DEFAULT_CONTACT_CONFIG: ContactPublicConfig = {
   email: "hello@alidelavar.dev",
   whatsapp: "+989120695355",
   whatsappMessage:
@@ -11,20 +20,22 @@ export const contactConfig = {
   telegram: "YOUR_TELEGRAM_USERNAME",
   telegramMessage:
     "سلام، از طریق وب‌سایت شما با شما آشنا شدم و مایل هستم درباره همکاری بیشتر صحبت کنیم.",
-} as const;
+};
 
 /** wa.me link with URL-encoded default message */
-export function getWhatsAppUrl(): string {
-  const phone = contactConfig.whatsapp.replace(/\D/g, "");
-  return `https://wa.me/${phone}?text=${encodeURIComponent(contactConfig.whatsappMessage)}`;
+export function getWhatsAppUrl(
+  whatsapp: string,
+  message: string
+): string {
+  const phone = whatsapp.replace(/\D/g, "");
+  return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
 }
 
 /**
  * Opens Telegram chat/profile.
- * User deep links do not reliably support a pre-filled message, so we open the chat only.
- * `telegramMessage` stays in config for easy reuse / future changes.
+ * User deep links do not reliably support a pre-filled message.
  */
-export function getTelegramUrl(): string {
-  const username = contactConfig.telegram.replace(/^@/, "");
+export function getTelegramUrl(telegram: string): string {
+  const username = telegram.replace(/^@/, "").trim();
   return `https://t.me/${username}`;
 }

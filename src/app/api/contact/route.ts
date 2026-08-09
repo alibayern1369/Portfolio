@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { contactConfig } from "@/lib/contact-config";
+import { getContactConfig, getWeb3FormsAccessKey } from "@/lib/content";
 import { verifyRecaptcha } from "@/lib/recaptcha";
 import {
   checkLoginRateLimit,
@@ -65,16 +65,18 @@ export async function POST(request: Request) {
       );
     }
 
-    const accessKey = process.env.WEB3FORMS_ACCESS_KEY;
+    const accessKey = await getWeb3FormsAccessKey();
     if (!accessKey) {
       console.error(
-        "[contact] WEB3FORMS_ACCESS_KEY is not set — form cannot deliver email"
+        "[contact] Web3Forms access key is not set (admin settings or WEB3FORMS_ACCESS_KEY)"
       );
       return NextResponse.json(
         { error: "سرویس ارسال ایمیل پیکربندی نشده است." },
         { status: 503 }
       );
     }
+
+    const contact = await getContactConfig();
 
     const mailRes = await fetch("https://api.web3forms.com/submit", {
       method: "POST",
@@ -89,8 +91,7 @@ export async function POST(request: Request) {
         email,
         replyto: email,
         message,
-        // Documented destination; Web3Forms delivers to the inbox bound to the access key
-        to: contactConfig.email,
+        to: contact.email,
       }),
     });
 
