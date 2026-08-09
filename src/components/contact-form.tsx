@@ -3,8 +3,20 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, Check, Copy, Mail, MapPin, ShieldCheck } from "lucide-react";
-import { GitHubIcon, LinkedInIcon, TwitterIcon, DribbbleIcon } from "./icons";
+import {
+  GitHubIcon,
+  LinkedInIcon,
+  TwitterIcon,
+  DribbbleIcon,
+  WhatsAppIcon,
+  TelegramIcon,
+} from "./icons";
 import { useRecaptchaV3 } from "@/hooks/use-recaptcha-v3";
+import {
+  contactConfig,
+  getTelegramUrl,
+  getWhatsAppUrl,
+} from "@/lib/contact-config";
 import type { Profile, Social } from "@/types";
 import type { ComponentType, SVGProps } from "react";
 
@@ -14,6 +26,8 @@ const socialIconMap: Record<string, ComponentType<SVGProps<SVGSVGElement>>> = {
   twitter: TwitterIcon,
   dribbble: DribbbleIcon,
 };
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 interface ContactFormProps {
   profile: Profile;
@@ -32,8 +46,39 @@ export function ContactForm({ profile, socials }: ContactFormProps) {
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
 
+  const validate = (): string | null => {
+    const name = formState.name.trim();
+    const email = formState.email.trim();
+    const message = formState.message.trim();
+
+    if (!name || !email || !message) {
+      return "تمام فیلدها الزامی است";
+    }
+    if (name.length > 100) {
+      return "نام خیلی طولانی است";
+    }
+    if (!EMAIL_RE.test(email)) {
+      return "ایمیل معتبر نیست";
+    }
+    if (message.length < 5) {
+      return "پیام خیلی کوتاه است";
+    }
+    if (message.length > 5000) {
+      return "پیام خیلی طولانی است";
+    }
+    return null;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (status === "sending") return;
+
+    const validationError = validate();
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
     setError("");
     setStatus("sending");
 
@@ -49,24 +94,32 @@ export function ContactForm({ profile, socials }: ContactFormProps) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: formState.name,
-          email: formState.email,
-          message: formState.message,
+          name: formState.name.trim(),
+          email: formState.email.trim(),
+          message: formState.message.trim(),
           website: formState.website,
           recaptchaToken,
         }),
       });
 
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setError(data.error || "خطا در ارسال پیام");
+        setError(
+          typeof data.error === "string" ? data.error : "خطا در ارسال پیام"
+        );
+        setStatus("idle");
+        return;
+      }
+
+      if (!data.success) {
+        setError("خطا در ارسال پیام");
         setStatus("idle");
         return;
       }
 
       setStatus("sent");
       setFormState({ name: "", email: "", message: "", website: "" });
-      setTimeout(() => setStatus("idle"), 3000);
+      setTimeout(() => setStatus("idle"), 4000);
     } catch {
       setError("خطا در اتصال به سرور");
       setStatus("idle");
@@ -74,7 +127,7 @@ export function ContactForm({ profile, socials }: ContactFormProps) {
   };
 
   const copyEmail = async () => {
-    await navigator.clipboard.writeText(profile.email);
+    await navigator.clipboard.writeText(contactConfig.email);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -96,8 +149,11 @@ export function ContactForm({ profile, socials }: ContactFormProps) {
               <Mail className="h-4 w-4 text-muted-foreground" />
             </div>
             <div>
-              <p className="text-sm font-medium" dir="ltr">{profile.email}</p>
+              <p className="text-sm font-medium" dir="ltr">
+                {contactConfig.email}
+              </p>
               <button
+                type="button"
                 onClick={copyEmail}
                 className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
               >
@@ -120,6 +176,27 @@ export function ContactForm({ profile, socials }: ContactFormProps) {
             </div>
             <p className="text-sm font-medium">{profile.location}</p>
           </div>
+        </div>
+
+        <div className="mt-8 flex flex-wrap gap-3">
+          <a
+            href={getWhatsAppUrl()}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-xl border border-border bg-background px-4 py-2.5 text-sm font-medium text-foreground transition-all hover:border-foreground/20 hover:bg-secondary"
+          >
+            <WhatsAppIcon className="h-4 w-4" />
+            واتساپ
+          </a>
+          <a
+            href={getTelegramUrl()}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-xl border border-border bg-background px-4 py-2.5 text-sm font-medium text-foreground transition-all hover:border-foreground/20 hover:bg-secondary"
+          >
+            <TelegramIcon className="h-4 w-4" />
+            تلگرام
+          </a>
         </div>
 
         <div className="mt-8">
@@ -171,10 +248,14 @@ export function ContactForm({ profile, socials }: ContactFormProps) {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onSubmit={handleSubmit}
+              noValidate
               className="relative space-y-4 rounded-2xl border border-border bg-card p-6 md:p-8"
             >
               {error && (
-                <div className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-500" role="alert">
+                <div
+                  className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-500"
+                  role="alert"
+                >
                   {error}
                 </div>
               )}
@@ -187,49 +268,69 @@ export function ContactForm({ profile, socials }: ContactFormProps) {
                   tabIndex={-1}
                   autoComplete="off"
                   value={formState.website}
-                  onChange={(e) => setFormState({ ...formState, website: e.target.value })}
+                  onChange={(e) =>
+                    setFormState({ ...formState, website: e.target.value })
+                  }
                 />
               </div>
 
               <div>
-                <label htmlFor="name" className="mb-2 block text-sm font-medium">نام</label>
+                <label htmlFor="name" className="mb-2 block text-sm font-medium">
+                  نام
+                </label>
                 <input
                   id="name"
                   type="text"
                   required
                   maxLength={100}
+                  disabled={status === "sending"}
                   value={formState.name}
-                  onChange={(e) => setFormState({ ...formState, name: e.target.value })}
-                  className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm transition-colors placeholder:text-muted-foreground focus:border-foreground/20 focus:outline-none"
+                  onChange={(e) =>
+                    setFormState({ ...formState, name: e.target.value })
+                  }
+                  className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm transition-colors placeholder:text-muted-foreground focus:border-foreground/20 focus:outline-none disabled:opacity-60"
                   placeholder="نام شما"
                 />
               </div>
 
               <div>
-                <label htmlFor="email" className="mb-2 block text-sm font-medium">ایمیل</label>
+                <label htmlFor="email" className="mb-2 block text-sm font-medium">
+                  ایمیل
+                </label>
                 <input
                   id="email"
                   type="email"
                   required
                   maxLength={200}
                   dir="ltr"
+                  disabled={status === "sending"}
                   value={formState.email}
-                  onChange={(e) => setFormState({ ...formState, email: e.target.value })}
-                  className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm transition-colors placeholder:text-muted-foreground focus:border-foreground/20 focus:outline-none text-left"
+                  onChange={(e) =>
+                    setFormState({ ...formState, email: e.target.value })
+                  }
+                  className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm transition-colors placeholder:text-muted-foreground focus:border-foreground/20 focus:outline-none text-left disabled:opacity-60"
                   placeholder="your@email.com"
                 />
               </div>
 
               <div>
-                <label htmlFor="message" className="mb-2 block text-sm font-medium">پیام</label>
+                <label
+                  htmlFor="message"
+                  className="mb-2 block text-sm font-medium"
+                >
+                  پیام
+                </label>
                 <textarea
                   id="message"
                   required
                   rows={5}
                   maxLength={5000}
+                  disabled={status === "sending"}
                   value={formState.message}
-                  onChange={(e) => setFormState({ ...formState, message: e.target.value })}
-                  className="w-full resize-none rounded-xl border border-border bg-background px-4 py-3 text-sm transition-colors placeholder:text-muted-foreground focus:border-foreground/20 focus:outline-none"
+                  onChange={(e) =>
+                    setFormState({ ...formState, message: e.target.value })
+                  }
+                  className="w-full resize-none rounded-xl border border-border bg-background px-4 py-3 text-sm transition-colors placeholder:text-muted-foreground focus:border-foreground/20 focus:outline-none disabled:opacity-60"
                   placeholder="درباره پروژه‌تان بگویید..."
                 />
               </div>
