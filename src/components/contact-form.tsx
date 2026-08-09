@@ -87,13 +87,17 @@ export function ContactForm({ profile, socials, contact }: ContactFormProps) {
         return;
       }
 
+      const name = formState.name.trim();
+      const email = formState.email.trim();
+      const message = formState.message.trim();
+
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: formState.name.trim(),
-          email: formState.email.trim(),
-          message: formState.message.trim(),
+          name,
+          email,
+          message,
           website: formState.website,
           recaptchaToken,
         }),
@@ -112,6 +116,45 @@ export function ContactForm({ profile, socials, contact }: ContactFormProps) {
         setError("خطا در ارسال پیام");
         setStatus("idle");
         return;
+      }
+
+      // Honeypot bots get a silent success without email delivery.
+      if (!data.skipSend) {
+        const accessKey =
+          typeof data.accessKey === "string" ? data.accessKey.trim() : "";
+        if (!accessKey) {
+          setError("سرویس ارسال ایمیل پیکربندی نشده است.");
+          setStatus("idle");
+          return;
+        }
+
+        // Web3Forms must be called from the browser on the free plan.
+        const mailRes = await fetch("https://api.web3forms.com/submit", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
+            access_key: accessKey,
+            subject: `پیام جدید از ${name}`,
+            from_name: name,
+            name,
+            email,
+            replyto: email,
+            message,
+          }),
+        });
+
+        const mailData = (await mailRes.json().catch(() => null)) as {
+          success?: boolean;
+        } | null;
+
+        if (!mailRes.ok || !mailData?.success) {
+          setError("ارسال ایمیل ناموفق بود. لطفاً دوباره تلاش کنید.");
+          setStatus("idle");
+          return;
+        }
       }
 
       setStatus("sent");

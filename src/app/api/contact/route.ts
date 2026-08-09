@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getContactConfig, getWeb3FormsAccessKey } from "@/lib/content";
+import { getWeb3FormsAccessKey } from "@/lib/content";
 import { verifyRecaptcha } from "@/lib/recaptcha";
 import {
   checkLoginRateLimit,
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
 
     // Silent success for bots filling honeypot (do not send email)
     if (honeypot) {
-      return NextResponse.json({ success: true });
+      return NextResponse.json({ success: true, skipSend: true });
     }
 
     if (!name || !email || !message) {
@@ -65,6 +65,8 @@ export async function POST(request: Request) {
       );
     }
 
+    // Web3Forms free plan only allows browser-side submits (server needs paid + IP allowlist).
+    // After validation, hand the access key back so the client can deliver the email.
     const accessKey = await getWeb3FormsAccessKey();
     if (!accessKey) {
       console.error(
@@ -76,45 +78,9 @@ export async function POST(request: Request) {
       );
     }
 
-    const contact = await getContactConfig();
-
-    const mailRes = await fetch("https://api.web3forms.com/submit", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify({
-        access_key: accessKey,
-        subject: `پیام جدید از ${name}`,
-        from_name: name,
-        email,
-        replyto: email,
-        message,
-        to: contact.email,
-      }),
-    });
-
-    const mailData = (await mailRes.json().catch(() => null)) as {
-      success?: boolean;
-      message?: string;
-    } | null;
-
-    if (!mailRes.ok || !mailData?.success) {
-      console.error("[contact] Web3Forms failed", {
-        status: mailRes.status,
-        mailData,
-      });
-      recordLoginFailure(rateKey);
-      return NextResponse.json(
-        { error: "ارسال ایمیل ناموفق بود. لطفاً دوباره تلاش کنید." },
-        { status: 502 }
-      );
-    }
-
     clearLoginFailures(rateKey);
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, accessKey });
   } catch (error) {
     console.error("Contact error:", error);
     return NextResponse.json({ error: "خطا در ارسال پیام" }, { status: 500 });
