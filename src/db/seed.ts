@@ -1,5 +1,6 @@
 import db from "./index";
 import bcrypt from "bcryptjs";
+import { GAHAN_PROJECT } from "@/data/gahan/content";
 
 const DEFAULT_SERVICES = [
   ["UI/UX", "طراحی تجربه و رابط کاربری حرفه‌ای برای وب و اپلیکیشن", "palette", 1],
@@ -28,9 +29,68 @@ async function seedServicesIfEmpty() {
   }
 }
 
+/** Idempotent: inserts or refreshes the Gahan portfolio project on every ensureDb. */
+export async function ensureGahanProject() {
+  try {
+    const p = GAHAN_PROJECT;
+    const existing = await db.execute({
+      sql: "SELECT id FROM projects WHERE slug = ?",
+      args: [p.slug],
+    });
+
+    const args = [
+      p.title,
+      p.description,
+      p.content,
+      p.image,
+      JSON.stringify([...p.tags]),
+      p.category,
+      p.featured ? 1 : 0,
+      p.liveUrl,
+      p.githubUrl,
+      p.sortOrder,
+      p.slug,
+    ];
+
+    if (existing.rows.length > 0) {
+      await db.execute({
+        sql: `UPDATE projects SET
+          title = ?, description = ?, content = ?, image = ?, tags = ?,
+          category = ?, featured = ?, live_url = ?, github_url = ?, sort_order = ?,
+          updated_at = CURRENT_TIMESTAMP
+          WHERE slug = ?`,
+        args,
+      });
+      return;
+    }
+
+    await db.execute({
+      sql: `INSERT INTO projects
+        (slug, title, description, content, image, tags, category, featured, live_url, github_url, sort_order)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      args: [
+        p.slug,
+        p.title,
+        p.description,
+        p.content,
+        p.image,
+        JSON.stringify([...p.tags]),
+        p.category,
+        p.featured ? 1 : 0,
+        p.liveUrl,
+        p.githubUrl,
+        p.sortOrder,
+      ],
+    });
+  } catch (e) {
+    console.error("ensureGahanProject error:", e);
+  }
+}
+
 export async function seedDatabase() {
   // Always ensure default services exist for existing installs
   await seedServicesIfEmpty();
+  await ensureGahanProject();
 
   // Check if already seeded
   const existing = await db.execute({ sql: "SELECT id FROM users WHERE username = ?", args: ["admin"] });

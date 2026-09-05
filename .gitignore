@@ -41,5 +41,5 @@ next-env.d.ts
 # Testing
 coverage/
 
-# Database
-data/
+# Database (local SQLite only — do not ignore src/data)
+/data/
