@@ -43,3 +43,7 @@ coverage/
 
 # Database (local SQLite only — do not ignore src/data)
 /data/
+
+# Local screenshot helper secrets
+.tmp-gahan-creds.json
+

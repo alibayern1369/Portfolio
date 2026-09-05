@@ -3,7 +3,7 @@ export const GAHAN_PROJECT = {
   title: "سامانه حضور و غیاب گاهان",
   description:
     "سامانه تحت‌وب حضور و غیاب پرسنل با ثبت ورود و خروج، تأیید موقعیت مکانی، مدرک سلفی، گزارش‌های مدیریتی و تجربه موبایلی فارسی.",
-  image: "/assets/projects/gahan/cover.svg",
+  image: "/assets/projects/gahan/admin-dashboard.png",
   tags: ["Next.js", "TypeScript", "Supabase", "Tailwind CSS", "PWA"],
   category: "نرم‌افزار اداری",
   featured: true,
@@ -12,42 +12,54 @@ export const GAHAN_PROJECT = {
   sortOrder: 0,
   content: `## نمای کلی
 
-گاهان یک سامانه حضور و غیاب تحت‌وب است که برای تیم‌های اداری و سازمان‌های فارسی‌زبان طراحی شده. کارمند می‌تواند ورود و خروج را با موقعیت مکانی و عکس سلفی ثبت کند و مدیر وضعیت روزانه، گزارش‌ها و تنظیمات محل کار را از پنل مدیریت دنبال کند.
-
-## مسئله
-
-ثبت دستی حضور، نبود مدرک قابل‌اتکا و پراکندگی گزارش‌ها باعث خطای انسانی و اتلاف زمان منابع انسانی می‌شود. گاهان این فرایند را در یک جریان واحد وب‌محور جمع می‌کند.
-
-## مخاطب
-
-سازمان‌ها، دفاتر اداری، فروشگاه‌ها و تیم‌هایی که به حضور مکانی پرسنل و گزارش قابل‌خروج نیاز دارند.`,
+گاهان یک سامانه حضور و غیاب تحت‌وب است که برای تیم‌های اداری و سازمان‌های فارسی‌زبان طراحی شده. کارمند می‌تواند ورود و خروج را با موقعیت مکانی و عکس سلفی ثبت کند و مدیر وضعیت روزانه، گزارش‌ها و تنظیمات محل کار را از پنل مدیریت دنبال کند.`,
 } as const;
 
 export const GAHAN_GALLERY = [
   {
-    src: "/assets/projects/gahan/admin-dashboard.svg",
-    alt: "داشبورد مدیریت گاهان با شاخص‌های حضور و نمودار هفتگی",
-    caption: "داشبورد مدیر",
+    src: "/assets/projects/gahan/admin-dashboard.png",
+    alt: "اسکرین‌شات واقعی داشبورد مدیریت گاهان",
+    caption: "داشبورد مدیریت",
   },
   {
-    src: "/assets/projects/gahan/employee-home.svg",
-    alt: "صفحه اصلی کارمند گاهان با وضعیت حضور و دکمه ثبت",
+    src: "/assets/projects/gahan/admin-today.png",
+    alt: "اسکرین‌شات واقعی صفحه حضور امروز گاهان",
+    caption: "حضور امروز",
+  },
+  {
+    src: "/assets/projects/gahan/admin-employees.png",
+    alt: "اسکرین‌شات واقعی مدیریت کارمندان گاهان",
+    caption: "کارمندان",
+  },
+  {
+    src: "/assets/projects/gahan/admin-reports.png",
+    alt: "اسکرین‌شات واقعی گزارش‌های گاهان",
+    caption: "گزارش‌ها",
+  },
+  {
+    src: "/assets/projects/gahan/admin-workplaces.png",
+    alt: "اسکرین‌شات واقعی موقعیت‌های کاری گاهان",
+    caption: "موقعیت‌های کاری",
+  },
+  {
+    src: "/assets/projects/gahan/employee-home.png",
+    alt: "اسکرین‌شات واقعی خانه کارمند گاهان در موبایل",
     caption: "خانه کارمند",
   },
   {
-    src: "/assets/projects/gahan/checkin-flow.svg",
-    alt: "جریان سه‌مرحله‌ای ثبت ورود شامل موقعیت، سلفی و موفقیت",
-    caption: "جریان ورود و خروج",
+    src: "/assets/projects/gahan/employee-history.png",
+    alt: "اسکرین‌شات واقعی سوابق حضور کارمند",
+    caption: "سوابق کارمند",
   },
   {
-    src: "/assets/projects/gahan/today-board.svg",
-    alt: "تابلوی وضعیت امروز پرسنل در پنل مدیریت",
-    caption: "وضعیت امروز",
+    src: "/assets/projects/gahan/employee-leave.png",
+    alt: "اسکرین‌شات واقعی مرخصی کارمند",
+    caption: "مرخصی",
   },
   {
-    src: "/assets/projects/gahan/mobile.svg",
-    alt: "نمای موبایلی ثبت حضور گاهان",
-    caption: "تجربه موبایل",
+    src: "/assets/projects/gahan/login.png",
+    alt: "اسکرین‌شات واقعی صفحه ورود گاهان",
+    caption: "ورود",
   },
 ] as const;
 

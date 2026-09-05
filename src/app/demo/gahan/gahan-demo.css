@@ -1,0 +1,92 @@
+/* Scoped Gahan visual language for the public demo only */
+.gahan-demo {
+  --g-bg: #f2f4fa;
+  --g-accent-a: rgba(108, 99, 241, 0.09);
+  --g-accent-b: rgba(20, 184, 166, 0.07);
+  --g-surface: rgba(255, 255, 255, 0.66);
+  --g-surface-strong: rgba(255, 255, 255, 0.86);
+  --g-border-soft: rgba(255, 255, 255, 0.75);
+  --g-border-line: rgba(15, 23, 42, 0.08);
+  --g-text: #101426;
+  --g-secondary: #4b5570;
+  --g-faint: #8791ad;
+  --g-brand: #6c63f1;
+  --g-brand-600: #5d47e4;
+  --g-mint: #14b8a6;
+  --g-shadow: 0 8px 32px rgba(15, 23, 42, 0.08);
+  --g-shadow-lg: 0 16px 48px rgba(15, 23, 42, 0.12);
+  color: var(--g-text);
+  background-color: var(--g-bg);
+  background-image:
+    radial-gradient(42rem 42rem at 88% -10%, var(--g-accent-a), transparent 60%),
+    radial-gradient(36rem 36rem at -8% 108%, var(--g-accent-b), transparent 62%);
+  min-height: 100dvh;
+}
+
+.dark .gahan-demo {
+  --g-bg: #07090f;
+  --g-accent-a: rgba(108, 99, 241, 0.14);
+  --g-accent-b: rgba(20, 184, 166, 0.1);
+  --g-surface: rgba(21, 26, 43, 0.62);
+  --g-surface-strong: rgba(24, 29, 48, 0.85);
+  --g-border-soft: rgba(255, 255, 255, 0.08);
+  --g-border-line: rgba(255, 255, 255, 0.09);
+  --g-text: #eef1f9;
+  --g-secondary: #a7b0c8;
+  --g-faint: #66718f;
+}
+
+.gahan-demo .g-glass {
+  background: var(--g-surface);
+  border: 1px solid var(--g-border-soft);
+  box-shadow: var(--g-shadow);
+  backdrop-filter: blur(18px) saturate(1.35);
+  -webkit-backdrop-filter: blur(18px) saturate(1.35);
+}
+
+.gahan-demo .g-glass-strong {
+  background: var(--g-surface-strong);
+  border: 1px solid var(--g-border-soft);
+  box-shadow: var(--g-shadow-lg);
+  backdrop-filter: blur(22px) saturate(1.4);
+  -webkit-backdrop-filter: blur(22px) saturate(1.4);
+}
+
+.gahan-demo .g-text-secondary {
+  color: var(--g-secondary);
+}
+
+.gahan-demo .g-text-faint {
+  color: var(--g-faint);
+}
+
+.gahan-demo .g-phone {
+  width: min(100%, 390px);
+  border-radius: 2.4rem;
+  border: 10px solid #151826;
+  box-shadow: 0 30px 80px rgba(15, 23, 42, 0.28);
+  overflow: hidden;
+  background: var(--g-bg);
+  min-height: 720px;
+  max-height: 844px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.gahan-demo .g-phone-notch {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 118px;
+  height: 28px;
+  border-radius: 999px;
+  background: #151826;
+  z-index: 30;
+}
+
+.gahan-demo .g-phone-body {
+  flex: 1;
+  overflow: auto;
+}

@@ -1,80 +1,89 @@
 "use client";
 
-import { DEMO_EMPLOYEE_USER, DEMO_WORKPLACE, faDigits, formatMinutes } from "@/data/gahan/demo-data";
+import { CalendarDays, Clock3, MapPin, Timer } from "lucide-react";
+import {
+  DEMO_EMPLOYEE_USER,
+  DEMO_WORKPLACE,
+  faDigits,
+  formatMinutes,
+} from "@/data/gahan/demo-data";
 import { useGahanDemo } from "@/data/gahan/demo-store";
 import { AttendanceFlowDemo } from "./attendance-flow";
-import { DemoShell, GlassCard, StatusPill } from "./shell";
+import { EmployeePhoneShell, GlassCard, StatusBadge } from "./shell";
 
 export function EmployeeDemoApp() {
-  const { checkedIn, checkInTime, checkOutTime, workedBonusMinutes, sessions } = useGahanDemo();
-  const todaySessions = sessions.filter((s) => s.employeeId === DEMO_EMPLOYEE_USER.id).slice(0, 4);
+  const { checkedIn, checkInTime, checkOutTime, workedBonusMinutes } = useGahanDemo();
   const worked = DEMO_EMPLOYEE_USER.workedMinutes + workedBonusMinutes;
 
   return (
-    <DemoShell role="employee">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold">سلام، {DEMO_EMPLOYEE_USER.name}</h1>
-        <p className="mt-1 text-sm text-[#4b5570] dark:text-[#a7b0c8]">
-          دموی کارمند · {DEMO_WORKPLACE.name}
-        </p>
-      </div>
+    <EmployeePhoneShell>
+      <div className="space-y-5 pb-4">
+        <section>
+          <p className="text-xs g-text-secondary">شنبه ۱۴ شهریور ۱۴۰۴</p>
+          <h1 className="mt-1 text-xl font-extrabold">سلام، {DEMO_EMPLOYEE_USER.name} 👋</h1>
+        </section>
 
-      <div className="grid gap-4 md:grid-cols-3">
-        <GlassCard className="md:col-span-2">
-          <div className="flex flex-wrap items-center gap-3">
-            <StatusPill status={checkedIn ? "working" : checkOutTime ? "checked_out" : "absent"} />
-            <span className="text-sm text-[#4b5570] dark:text-[#a7b0c8]">کد پرسنلی {faDigits(DEMO_EMPLOYEE_USER.code)}</span>
+        <GlassCard strong className="p-5">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-xs font-medium g-text-secondary">وضعیت فعلی شما</span>
+            {checkedIn ? (
+              <StatusBadge tone="success">در محل کار</StatusBadge>
+            ) : checkOutTime ? (
+              <StatusBadge tone="info">خروج ثبت شد</StatusBadge>
+            ) : (
+              <StatusBadge>ثبت نشده</StatusBadge>
+            )}
           </div>
-          <div className="mt-4 grid gap-3 sm:grid-cols-3 text-sm">
-            <div>
-              <div className="text-[#8791ad]">ورود</div>
-              <div className="mt-1 text-lg font-semibold">{checkInTime ?? "—"}</div>
+
+          <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
+            <div className="rounded-2xl bg-black/[0.03] p-3 dark:bg-white/[0.04]">
+              <div className="flex items-center gap-1.5 text-[10px] font-semibold text-teal-700 dark:text-teal-300">
+                <Clock3 className="size-3.5" /> آخرین ورود
+              </div>
+              <p className="mt-1.5 font-bold tabular-nums" dir="ltr">
+                {checkInTime ?? "—"}
+              </p>
             </div>
-            <div>
-              <div className="text-[#8791ad]">خروج</div>
-              <div className="mt-1 text-lg font-semibold">{checkOutTime ?? "—"}</div>
+            <div className="rounded-2xl bg-black/[0.03] p-3 dark:bg-white/[0.04]">
+              <div className="flex items-center gap-1.5 text-[10px] font-semibold text-rose-500">
+                <Clock3 className="size-3.5 rotate-180" /> آخرین خروج
+              </div>
+              <p className="mt-1.5 font-bold tabular-nums" dir="ltr">
+                {checkOutTime ?? "—"}
+              </p>
             </div>
-            <div>
-              <div className="text-[#8791ad]">مدت حضور تقریبی</div>
-              <div className="mt-1 text-lg font-semibold">{formatMinutes(worked)}</div>
-            </div>
+          </div>
+
+          <div className="mt-3 flex items-center justify-between rounded-2xl bg-[#6c63f1]/10 px-4 py-3">
+            <span className="flex items-center gap-1.5 text-[11px] font-semibold text-[#5d47e4] dark:text-[#a3aaff]">
+              <Timer className="size-4" />
+              {checkedIn ? "مدت حضور امروز (زنده)" : "مجموع کار امروز"}
+            </span>
+            <span className="text-sm font-extrabold tabular-nums">{formatMinutes(worked)}</span>
           </div>
         </GlassCard>
 
-        <GlassCard>
-          <div className="text-sm text-[#8791ad]">تأخیر ماه (نمونه)</div>
-          <div className="mt-2 text-3xl font-bold">{formatMinutes(DEMO_EMPLOYEE_USER.lateMinutes || 24)}</div>
-          <p className="mt-2 text-xs text-[#4b5570] dark:text-[#a7b0c8]">اعداد دمو ساختگی هستند</p>
-        </GlassCard>
-      </div>
-
-      <div className="mt-4">
         <AttendanceFlowDemo mode={checkedIn ? "out" : "in"} />
-      </div>
 
-      <GlassCard className="mt-4">
-        <h2 className="font-semibold">سوابق اخیر</h2>
-        <div className="mt-3 space-y-2">
-          {todaySessions.map((s) => (
-            <div
-              key={s.id}
-              className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-white/60 px-3 py-3 text-sm dark:bg-white/5"
-            >
-              <div>
-                <div className="font-medium">{s.dateLabel}</div>
-                <div className="text-[#8791ad]">
-                  {s.checkIn}
-                  {s.checkOut ? ` تا ${s.checkOut}` : " · هنوز باز"}
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <StatusPill status={s.status} />
-                <span className="text-[#4b5570] dark:text-[#a7b0c8]">{formatMinutes(s.workedMinutes)}</span>
-              </div>
+        <div className="grid grid-cols-2 gap-3">
+          <GlassCard className="p-4">
+            <div className="flex items-start justify-between gap-2">
+              <span className="text-xs font-medium g-text-secondary">محل کاری من</span>
+              <MapPin className="size-4 text-[#6c63f1]" />
             </div>
-          ))}
+            <div className="mt-2 text-base font-extrabold">{DEMO_WORKPLACE.name}</div>
+          </GlassCard>
+          <GlassCard className="p-4">
+            <div className="flex items-start justify-between gap-2">
+              <span className="text-xs font-medium g-text-secondary">تأخیر امروز</span>
+              <CalendarDays className="size-4 text-teal-500" />
+            </div>
+            <div className="mt-2 text-base font-extrabold">ندارم</div>
+          </GlassCard>
         </div>
-      </GlassCard>
-    </DemoShell>
+
+        <p className="text-center text-[10px] g-text-faint">کد پرسنلی {faDigits(DEMO_EMPLOYEE_USER.code)} · داده ساختگی</p>
+      </div>
+    </EmployeePhoneShell>
   );
 }

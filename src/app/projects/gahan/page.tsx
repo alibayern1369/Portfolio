@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
 import {
   ArrowRight,
   ExternalLink,
@@ -99,22 +98,6 @@ export default async function GahanProjectPage() {
               {tag}
             </span>
           ))}
-        </div>
-      </Section>
-
-      <Section className="!pt-0">
-        <div className="overflow-hidden rounded-2xl border border-border">
-          <div className="relative aspect-[16/9] w-full">
-            <Image
-              src={GAHAN_PROJECT.image}
-              alt="گاهان — سامانه هوشمند حضور و غیاب"
-              fill
-              priority
-              unoptimized
-              className="object-cover"
-              sizes="(max-width: 1200px) 100vw, 1200px"
-            />
-          </div>
         </div>
       </Section>
 
@@ -229,7 +212,7 @@ export default async function GahanProjectPage() {
       </Section>
 
       <Section>
-        <SectionTitle label="گالری" title="نمایی از رابط گاهان" />
+        <SectionTitle label="گالری" title="اسکرین‌شات واقعی از گاهان" description="تصاویر مستقیماً از رابط واقعی گاهان با Playwright گرفته شده‌اند." />
         <GahanGallery />
       </Section>
 

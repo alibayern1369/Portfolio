@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { GahanDemoProvider } from "@/data/gahan/demo-store";
+import "./gahan-demo.css";
 
 export const metadata: Metadata = {
   title: "دموی گاهان",
