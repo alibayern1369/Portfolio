@@ -15,7 +15,8 @@ interface ProjectCardProps {
 
 export function ProjectCard({ project, index, imageFit = "cover" }: ProjectCardProps) {
   const src = project.image || "/images/og.jpg";
-  const unoptimized = src.startsWith("/api/media/") || src.startsWith("data:");
+  const unoptimized =
+    src.startsWith("/api/media/") || src.startsWith("data:") || src.endsWith(".svg");
 
   return (
     <motion.div
