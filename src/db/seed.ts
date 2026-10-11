@@ -29,7 +29,10 @@ async function seedServicesIfEmpty() {
   }
 }
 
-/** Idempotent: inserts or refreshes the Gahan portfolio project on every ensureDb. */
+/**
+ * Insert Gahan into the portfolio only if missing.
+ * Never overwrite existing fields — admin edits (especially image) must stick.
+ */
 export async function ensureGahanProject() {
   try {
     const p = GAHAN_PROJECT;
@@ -38,29 +41,7 @@ export async function ensureGahanProject() {
       args: [p.slug],
     });
 
-    const args = [
-      p.title,
-      p.description,
-      p.content,
-      p.image,
-      JSON.stringify([...p.tags]),
-      p.category,
-      p.featured ? 1 : 0,
-      p.liveUrl,
-      p.githubUrl,
-      p.sortOrder,
-      p.slug,
-    ];
-
     if (existing.rows.length > 0) {
-      await db.execute({
-        sql: `UPDATE projects SET
-          title = ?, description = ?, content = ?, image = ?, tags = ?,
-          category = ?, featured = ?, live_url = ?, github_url = ?, sort_order = ?,
-          updated_at = CURRENT_TIMESTAMP
-          WHERE slug = ?`,
-        args,
-      });
       return;
     }
 
