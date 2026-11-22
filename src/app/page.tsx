@@ -104,7 +104,11 @@ export default async function HomePage() {
           title={site.homeTestimonialsTitle || "بازخورد مشتریان"}
           description={site.homeTestimonialsDescription || "تجربه همکاری مشتریان و همکاران."}
         />
-        <Testimonials testimonials={testimonials} />
+        {testimonials.length > 0 ? <Testimonials testimonials={testimonials} /> : (
+          <div className="mx-auto max-w-2xl rounded-3xl border border-border bg-card p-8 text-center text-muted-foreground">
+            بازخوردهای همکاری پس از انتشار در این بخش نمایش داده می‌شوند.
+          </div>
+        )}
       </Section>
       <Section><CTA name={profile.name} title={site.homeCtaTitle} description={site.homeCtaDescription} buttonText={site.homeCtaButtonText} /></Section>
     </>

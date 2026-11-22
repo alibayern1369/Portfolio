@@ -185,15 +185,6 @@ export async function seedDatabase() {
   }
 
   // Seed testimonials
-  const testimonials = [
-    ["سارا احمدی", "مدیر فنی", "فناوران آینده", "سا", "علی یکی از با استعدادترین توسعه‌دهندگانی است که تا به حال با او کار کرده‌ام.", 1],
-    ["محمد رضایی", "مدیر محصول", "استارتاپ نوآوری", "مر", "همکاری با علی یک تجربه فوق‌العاده بود.", 2],
-  ];
-
-  for (const t of testimonials) {
-    await db.execute({ sql: `INSERT OR IGNORE INTO testimonials (name, role, company, avatar, text, sort_order) VALUES (?, ?, ?, ?, ?, ?)`, args: t });
-  }
-
   await migrateTeamIdentity();
   console.log("Database seeded successfully!");
 }
@@ -233,5 +224,8 @@ async function migrateTeamIdentity() {
     ]
   });
   await db.execute("DELETE FROM socials WHERE url IN ('https://github.com/alidelavar', 'https://linkedin.com/in/alidelavar', 'https://twitter.com/alidelavar', 'https://dribbble.com/alidelavar')");
+  await db.execute({ sql: "DELETE FROM testimonials WHERE text IN (?, ?)", args: ["علی یکی از با استعدادترین توسعه‌دهندگانی است که تا به حال با او کار کرده‌ام.", "همکاری با علی یک تجربه فوق‌العاده بود."] });
+  await db.execute({ sql: "UPDATE site_settings SET home_services_title = ? WHERE home_services_title = ?", args: ["خدمات تیم کیش لند وب", "چی براتون انجام می‌دم"] });
+  await db.execute({ sql: "UPDATE site_settings SET home_projects_description = ? WHERE home_projects_description = ?", args: ["نمونه‌هایی از پروژه‌های طراحی و توسعه محصولات دیجیتال.", "نمونه‌هایی از کارهای انجام‌شده برای مشتریان و پروژه‌های شخصی."] });
   await db.execute("UPDATE site_settings SET default_theme = 'light', contact_email = '' WHERE id = 1 AND contact_email = 'hello@alidelavar.dev'");
 }
