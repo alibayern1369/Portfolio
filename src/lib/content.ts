@@ -1,3 +1,4 @@
+import { parseFooterConfig } from "@/lib/footer-config";
 import db from "@/db";
 import { initDatabase } from "@/db";
 import { seedDatabase } from "@/db/seed";
@@ -114,6 +115,7 @@ export async function getSiteConfig(): Promise<SiteConfig> {
     homeCtaButtonText: str(row.home_cta_button_text, "تماس بگیرید"),
     footerTagline: str(row.footer_tagline, "خلق تجربه‌های دیجیتال"),
     footerCopyright: str(row.footer_copyright),
+    footerConfig: parseFooterConfig(row.footer_config),
     contentFontSize: (["sm", "base", "lg", "xl"].includes(fontSize) ? fontSize : "base") as SiteConfig["contentFontSize"],
     contentTextAlign: (["right", "left", "center", "justify"].includes(textAlign) ? textAlign : "right") as SiteConfig["contentTextAlign"],
     homeProjectsCount: projectsCount,

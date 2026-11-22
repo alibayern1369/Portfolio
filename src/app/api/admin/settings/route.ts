@@ -1,3 +1,4 @@
+import { parseFooterConfig } from "@/lib/footer-config";
 import { NextResponse } from "next/server";
 import { getSession, requireAdmin } from "@/lib/auth";
 import { queryOne, execute } from "@/lib/db-helpers";
@@ -33,6 +34,7 @@ export async function GET() {
       home_cta_button_text: settings?.home_cta_button_text || "تماس بگیرید",
       footer_tagline: settings?.footer_tagline || "",
       footer_copyright: settings?.footer_copyright || "",
+      footer_config: parseFooterConfig(settings?.footer_config),
       content_font_size: settings?.content_font_size || "base",
       content_text_align: settings?.content_text_align || "right",
       site_url: settings?.site_url || "",
@@ -89,6 +91,7 @@ export async function PUT(request: Request) {
         home_cta_button_text = ?,
         footer_tagline = ?,
         footer_copyright = ?,
+        footer_config = ?,
         content_font_size = ?,
         content_text_align = ?,
         google_site_verification = ?,
@@ -133,6 +136,7 @@ export async function PUT(request: Request) {
         d.home_cta_button_text || "تماس بگیرید",
         d.footer_tagline || "",
         d.footer_copyright || "",
+        JSON.stringify(parseFooterConfig(d.footer_config ?? (await queryOne("SELECT footer_config FROM site_settings WHERE id = 1"))?.footer_config)),
         d.content_font_size || "base",
         d.content_text_align || "right",
         d.google_site_verification || "",

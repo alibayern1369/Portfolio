@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { AdminShell } from "@/components/admin/admin-shell";
 import { ImageUpload } from "@/components/admin/image-upload";
 import { Save } from "lucide-react";
+import { FooterEditor } from "@/components/admin/footer-editor";
+import { defaultFooterConfig, parseFooterConfig, type FooterConfig } from "@/lib/footer-config";
 
 interface SettingsData {
   site_name: string;
@@ -36,6 +38,7 @@ interface SettingsData {
   home_cta_button_text: string;
   footer_tagline: string;
   footer_copyright: string;
+  footer_config: FooterConfig;
   content_font_size: "sm" | "base" | "lg" | "xl";
   content_text_align: "right" | "left" | "center" | "justify";
   google_site_verification: string;
@@ -84,6 +87,7 @@ export default function AdminSettingsPage() {
     home_cta_button_text: "",
     footer_tagline: "",
     footer_copyright: "",
+    footer_config: defaultFooterConfig,
     content_font_size: "base",
     content_text_align: "right",
     google_site_verification: "",
@@ -134,6 +138,7 @@ export default function AdminSettingsPage() {
             home_cta_button_text: res.settings.home_cta_button_text || "",
             footer_tagline: res.settings.footer_tagline || "",
             footer_copyright: res.settings.footer_copyright || "",
+            footer_config: parseFooterConfig(res.settings.footer_config),
             content_font_size: res.settings.content_font_size || "base",
             content_text_align: res.settings.content_text_align || "right",
             google_site_verification: res.settings.google_site_verification || "",
@@ -303,7 +308,8 @@ export default function AdminSettingsPage() {
         </div>
 
         <div id="footer-content" className="rounded-2xl border border-border bg-card p-4 sm:p-6">
-          <h2 className="mb-4 font-semibold">متن فوتر</h2>
+          <h2 className="mb-4 font-semibold">تنظیمات فوتر</h2>
+          <FooterEditor value={data.footer_config} onChange={footer_config => setData({ ...data, footer_config })} />
           <div className="grid gap-4">
             <div>
               <label className="block text-sm font-medium mb-2">متن ذیل لوگو</label>

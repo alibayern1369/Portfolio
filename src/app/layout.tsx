@@ -163,6 +163,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
               logoText={site.logoText}
               tagline={site.footerTagline}
               copyright={site.footerCopyright}
+              config={site.footerConfig}
             />
             <BackToTop />
           </HideOnAdmin>

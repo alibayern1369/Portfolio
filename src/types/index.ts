@@ -1,3 +1,5 @@
+import type { FooterConfig } from "@/lib/footer-config";
+
 export interface SiteConfig {
   name: string;
   title: string;
@@ -28,6 +30,7 @@ export interface SiteConfig {
   homeCtaButtonText: string;
   footerTagline: string;
   footerCopyright: string;
+  footerConfig: FooterConfig;
   contentFontSize: "sm" | "base" | "lg" | "xl";
   contentTextAlign: "right" | "left" | "center" | "justify";
   homeProjectsCount: number;
