@@ -27,7 +27,7 @@ export function Footer({ name, socials, logo, logoText, tagline, copyright, conf
           <p className={styles.description}>{tagline || "کیش لند وب؛ طراحی و توسعه محصول دیجیتال"}</p>
           <Link href={safeFooterLink(config.buttonHref)} className={styles.cta}>{config.buttonText} <span aria-hidden="true">←</span></Link>
           <p className={styles.copyright}>{copyright || `© ${year} ${brand}؛ تمامی حقوق محفوظ است.`}</p>
-          {(config.credit || name) && <p className={styles.credit}>{config.credit || `با همراهی ${name}`}</p>}
+          {config.credit && <p className={styles.credit}>{config.credit}</p>}
         </div>
         <nav className={styles.column} aria-label={config.navigationTitle}>
           <h3>{config.navigationTitle}</h3>

@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "پروژه‌ها",
-  description: "نمونه‌کارهای من در زمینه اپلیکیشن‌های وب و طراحی.",
+  description: "نمونه‌کارهای تیم کیش لند وب در طراحی سایت، نرم‌افزار و اپلیکیشن.",
 };
 
 export default async function ProjectsPage() {
@@ -18,7 +18,7 @@ export default async function ProjectsPage() {
   return (
     <div className="pt-24">
       <Section>
-        <SectionTitle label="نمونه‌کارها" title="پروژه‌های من" description="مجموعه‌ای از پروژه‌ها." />
+        <SectionTitle label="نمونه‌کارها" title="پروژه‌های ما" description="مجموعه‌ای از پروژه‌های طراحی و توسعه تیم کیش لند وب." />
         <ProjectFilters projects={projects} categories={categories} />
       </Section>
     </div>

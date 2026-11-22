@@ -13,7 +13,7 @@ export type ContactPublicConfig = {
 };
 
 export const DEFAULT_CONTACT_CONFIG: ContactPublicConfig = {
-  email: "hello@alidelavar.dev",
+  email: "",
   whatsapp: "+989120695355",
   whatsappMessage:
     "سلام، از طریق وب‌سایت شما با شما آشنا شدم و مایل هستم درباره همکاری بیشتر صحبت کنیم.",

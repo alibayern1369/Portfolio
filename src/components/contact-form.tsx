@@ -179,12 +179,11 @@ export function ContactForm({ profile, socials, contact }: ContactFormProps) {
           بیایید چیز شگفت‌انگیزی بسازیم
         </h2>
         <p className="mt-4 text-muted-foreground leading-relaxed">
-          من همیشه مشتاق بحث درباره پروژه‌های جدید، ایده‌های خلاقانه یا
-          فرصت‌هایی هستم که بتوانم بخشی از چشم‌انداز شما باشم.
+          ما مشتاق شنیدن ایده‌ها و نیازهای پروژه شما هستیم و برای طراحی و توسعه راهکار مناسب همراهتان خواهیم بود.
         </p>
 
         <div className="mt-8 space-y-4">
-          <div className="flex items-center gap-3">
+          {contact.email && <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-secondary">
               <Mail className="h-4 w-4 text-muted-foreground" />
             </div>
@@ -208,7 +207,7 @@ export function ContactForm({ profile, socials, contact }: ContactFormProps) {
                 )}
               </button>
             </div>
-          </div>
+          </div>}
 
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-secondary">
@@ -241,7 +240,7 @@ export function ContactForm({ profile, socials, contact }: ContactFormProps) {
 
         <div className="mt-8">
           <p className="mb-3 text-sm font-medium text-muted-foreground">
-            من را دنبال کنید
+            ما را دنبال کنید
           </p>
           <div className="flex gap-3">
             {socials.map((social) => {
@@ -278,7 +277,7 @@ export function ContactForm({ profile, socials, contact }: ContactFormProps) {
               </div>
               <h3 className="text-xl font-semibold">پیام ارسال شد!</h3>
               <p className="mt-2 text-sm text-muted-foreground">
-                ممنون که با من تماس گرفتید. به زودی پاسخ خواهم داد.
+                ممنون که با ما تماس گرفتید. به زودی پاسخ می‌دهیم.
               </p>
             </motion.div>
           ) : (

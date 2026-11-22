@@ -11,7 +11,7 @@ export async function GET() {
   return NextResponse.json({
     settings: {
       ...(settings as Record<string, unknown>),
-      default_theme: settings.default_theme || "system",
+      default_theme: "light",
       logo: settings?.logo || "",
       logo_text: settings?.logo_text || "ع.د",
       favicon: settings?.favicon || "",
@@ -113,7 +113,7 @@ export async function PUT(request: Request) {
         d.site_url || "",
         d.locale,
         JSON.stringify(d.keywords || []),
-        d.default_theme || "system",
+        "light",
         d.logo || "",
         d.logo_text || "ع.د",
         d.favicon || "",

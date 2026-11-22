@@ -1,7 +1,6 @@
 "use client";
 
 import { AdminSidebar } from "./sidebar";
-import { ThemeToggle } from "../theme-toggle";
 import type { ReactNode } from "react";
 
 interface AdminShellProps {
@@ -23,9 +22,6 @@ export function AdminShell({ children, title, description }: AdminShellProps) {
               {description && (
                 <p className="mt-0.5 break-words text-sm text-muted-foreground">{description}</p>
               )}
-            </div>
-            <div className="shrink-0">
-              <ThemeToggle />
             </div>
           </div>
         </header>

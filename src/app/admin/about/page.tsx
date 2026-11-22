@@ -27,10 +27,10 @@ export default function AdminAboutPage() {
     alert("ذخیره شد!");
   };
 
-  if (loading) return <AdminShell title="درباره من"><div className="flex justify-center py-12"><div className="animate-spin w-8 h-8 border-2 border-foreground border-t-transparent rounded-full" /></div></AdminShell>;
+  if (loading) return <AdminShell title="درباره ما"><div className="flex justify-center py-12"><div className="animate-spin w-8 h-8 border-2 border-foreground border-t-transparent rounded-full" /></div></AdminShell>;
 
   return (
-    <AdminShell title="درباره من" description="صفحه درباره من">
+    <AdminShell title="درباره ما" description="صفحه درباره ما">
       <div className="mx-auto max-w-4xl min-w-0 space-y-6">
         <div className="rounded-2xl border border-border bg-card p-4 sm:p-6">
           <div className="grid gap-4 sm:grid-cols-2">

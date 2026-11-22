@@ -60,8 +60,8 @@ export async function getProfile(): Promise<Profile> {
   const row = r(result.rows[0]);
 
   return {
-    name: str(row.name, "علی دلاور"),
-    role: str(row.role, "توسعه‌دهنده"),
+    name: str(row.name, "تیم کیش لند وب"),
+    role: str(row.role, "تیم طراحی و توسعه محصولات دیجیتال"),
     tagline: str(row.tagline),
     bio: str(row.bio),
     shortBio: str(row.short_bio),
@@ -70,7 +70,7 @@ export async function getProfile(): Promise<Profile> {
     email: str(row.email),
     availability: str(row.availability),
     resumeUrl: str(row.resume_url),
-    heroHeadline: json<string[]>(row.hero_headline, ["سلام", "من علی هستم"]),
+    heroHeadline: json<string[]>(row.hero_headline, ["طراحی سایت و محصول دیجیتال", "برای رشد کسب‌وکار شما"]),
     heroDescription: str(row.hero_description),
   };
 }
@@ -86,28 +86,28 @@ export async function getSiteConfig(): Promise<SiteConfig> {
   const projectsCount = Math.max(1, Math.min(24, Number(row.home_projects_count ?? 6) || 6));
 
   return {
-    name: str(row.site_name, "علی دلاور"),
+    name: str(row.site_name, "کیش لند وب"),
     title: str(row.site_title),
     description: str(row.site_description),
     url: safeUrl(str(row.site_url), process.env.NEXT_PUBLIC_SITE_URL || "https://klandweb.com"),
     locale: str(row.locale, "fa-IR"),
-    defaultTheme: (str(row.default_theme, "system") as "light" | "dark" | "system"),
+    defaultTheme: "light",
     ogImage: str(row.og_image, "/images/og.jpg"),
-    keywords: json<string[]>(row.keywords, ["klandweb", "کیش لند وب", "علی دلاور"]),
+    keywords: json<string[]>(row.keywords, ["klandweb", "کیش لند وب", "طراحی سایت"]),
     logo: str(row.logo),
-    logoText: str(row.logo_text, "ع.د"),
+    logoText: str(row.logo_text, "کیش لند وب"),
     favicon: str(row.favicon),
     faviconLight: str(row.favicon_light),
     faviconDark: str(row.favicon_dark),
     homeHeroDescription: str(row.home_hero_description),
-    homeAboutTitle: str(row.home_about_title, "من و کسب‌وکارم"),
+    homeAboutTitle: str(row.home_about_title, "درباره تیم کیش لند وب"),
     homeAboutDescription: str(row.home_about_description),
     homeServicesTitle: str(row.home_services_title, "چی براتون انجام می‌دم"),
     homeServicesDescription: str(row.home_services_description, "از طراحی رابط کاربری تا توسعه وبسایت، نرم‌افزار و اپ موبایل."),
     homeProjectsTitle: str(row.home_projects_title, "پروژه‌های منتخب"),
     homeProjectsDescription: str(row.home_projects_description, "نمونه‌هایی از کارهای انجام‌شده برای مشتریان و پروژه‌های شخصی."),
     homeSkillsTitle: str(row.home_skills_title, "ابزارها و مهارت‌ها"),
-    homeSkillsDescription: str(row.home_skills_description, "فناوری‌ها و ابزارهایی که برای ساخت محصول استفاده می‌کنم."),
+    homeSkillsDescription: str(row.home_skills_description, "فناوری‌ها و ابزارهایی که تیم ما برای ساخت محصول استفاده می‌کند."),
     homeTestimonialsTitle: str(row.home_testimonials_title, "بازخورد مشتریان"),
     homeTestimonialsDescription: str(row.home_testimonials_description, "تجربه همکاری مشتریان و همکاران."),
     homeCtaTitle: str(row.home_cta_title, "بیایید با هم کار کنیم"),
@@ -193,7 +193,7 @@ export async function getAbout(): Promise<AboutData> {
   await ensureDb();
   const result = await db.execute("SELECT * FROM about_page WHERE id = 1");
   const row = r(result.rows[0]);
-  return { title: str(row.title, "درباره من"), subtitle: str(row.subtitle), content: str(row.content) };
+  return { title: str(row.title, "درباره ما"), subtitle: str(row.subtitle), content: str(row.content) };
 }
 
 // Projects

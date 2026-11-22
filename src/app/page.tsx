@@ -9,17 +9,16 @@ import { ServicesGrid } from "@/components/services-grid";
 import { SkillsGrid } from "@/components/skills-grid";
 import { Testimonials } from "@/components/testimonials";
 import { CTA } from "@/components/cta";
-import { getProfile, getSocials, getFeaturedProjects, getServices, getSkills, getTestimonials, getSiteConfig } from "@/lib/content";
+import { getProfile, getFeaturedProjects, getServices, getSkills, getTestimonials, getSiteConfig } from "@/lib/content";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
 export async function generateMetadata(): Promise<Metadata> {
   const site = await getSiteConfig();
-  const profile = await getProfile();
-  const title = "کیش لند وب | طراحی و توسعه وبسایت — klandweb";
+  const title = "کیش لند وب | طراحی سایت، نرم‌افزار و اپلیکیشن";
   const description =
     site.description ||
-    `کیش لند وب (klandweb) — طراحی UI/UX، توسعه وبسایت، نرم‌افزار و اپلیکیشن. خدمات دیجیتال ${profile.name} برای کسب‌وکارها.`;
+    "تیم کیش لند وب؛ طراحی سایت، رابط کاربری، نرم‌افزار اختصاصی و اپلیکیشن موبایل برای رشد کسب‌وکارها.";
   const ogImage = site.ogImage || "/images/og.jpg";
 
   return {
@@ -44,7 +43,6 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function HomePage() {
   const profile = await getProfile();
-  const socials = await getSocials();
   const site = await getSiteConfig();
   const featuredProjects = await getFeaturedProjects(site.homeProjectsCount);
   const services = await getServices();
@@ -53,7 +51,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <Hero profile={profile} socials={socials} description={site.homeHeroDescription || profile.heroDescription} />
+      <Hero />
       <Section id="about">
         <SectionTitle
           label="معرفی"
@@ -96,7 +94,7 @@ export default async function HomePage() {
         <SectionTitle
           label="تخصص‌ها"
           title={site.homeSkillsTitle || "ابزارها و مهارت‌ها"}
-          description={site.homeSkillsDescription || "فناوری‌ها و ابزارهایی که برای ساخت محصول استفاده می‌کنم."}
+          description={site.homeSkillsDescription || "فناوری‌ها و ابزارهایی که تیم ما برای ساخت محصول استفاده می‌کند."}
         />
         <SkillsGrid categories={skills.categories} />
       </Section>

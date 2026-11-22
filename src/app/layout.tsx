@@ -26,21 +26,18 @@ export async function generateMetadata(): Promise<Metadata> {
 
   const iconList = [
     { url: site.favicon || "/favicon.svg", type: getFaviconType(site.favicon || "/favicon.svg") },
-    ...(site.faviconLight ? [{ url: site.faviconLight, type: getFaviconType(site.faviconLight), media: "(prefers-color-scheme: light)" }] : []),
-    ...(site.faviconDark ? [{ url: site.faviconDark, type: getFaviconType(site.faviconDark), media: "(prefers-color-scheme: dark)" }] : []),
   ];
 
-  const titleDefault = "کیش لند وب | طراحی و توسعه وبسایت — klandweb";
+  const titleDefault = "کیش لند وب | طراحی سایت، نرم‌افزار و اپلیکیشن";
   const description =
     site.description ||
-    `کیش لند وب (klandweb) — طراحی UI/UX، توسعه وبسایت، نرم‌افزار و اپلیکیشن. خدمات دیجیتال ${profile.name} برای کسب‌وکارها.`;
+    "کیش لند وب؛ طراحی سایت، تجربه کاربری، نرم‌افزار اختصاصی و اپلیکیشن موبایل برای کسب‌وکارها.";
 
   const keywords = Array.from(
     new Set([
       ...site.keywords,
       "klandweb",
       "کیش لند وب",
-      "علی دلاور",
       profile.name,
       "طراحی سایت",
       "توسعه وب",
@@ -50,11 +47,11 @@ export async function generateMetadata(): Promise<Metadata> {
   const ogImage = site.ogImage || "/images/og.jpg";
 
   return {
-    title: { default: titleDefault, template: `%s — ${profile.name}` },
+    title: { default: titleDefault, template: `%s — کیش لند وب` },
     description,
     keywords,
-    authors: [{ name: profile.name, url: site.url }],
-    creator: profile.name,
+    authors: [{ name: "تیم کیش لند وب", url: site.url }],
+    creator: "تیم کیش لند وب",
     publisher: "کیش لند وب",
     metadataBase: new URL(site.url),
     alternates: { canonical: "/" },
@@ -137,13 +134,12 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
     <html lang="fa" dir="rtl" className={vazirmatn.variable} suppressHydrationWarning>
       <head>
         {renderFaviconLink(defaultFavicon)}
-        {site.faviconLight ? renderFaviconLink(site.faviconLight, "(prefers-color-scheme: light)") : null}
-        {site.faviconDark ? renderFaviconLink(site.faviconDark, "(prefers-color-scheme: dark)") : null}
+        <meta name="color-scheme" content="light" />
         <link rel="manifest" href="/manifest.json" />
         <JsonLd site={site} profile={profile} socials={socials} />
       </head>
       <body className={`${vazirmatn.className} min-h-screen bg-background text-foreground antialiased`}>
-        <Providers defaultTheme={site.defaultTheme}>
+        <Providers>
           <HideOnAdmin>
             <ReadingProgress />
           </HideOnAdmin>

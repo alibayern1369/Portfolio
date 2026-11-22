@@ -28,7 +28,7 @@ const menuItems = [
   { href: "/admin/skills", label: "مهارت‌ها", icon: Wrench },
   { href: "/admin/testimonials", label: "نظرات", icon: MessageSquareQuote },
   { href: "/admin/socials", label: "شبکه‌های اجتماعی", icon: Share2 },
-  { href: "/admin/about", label: "درباره من", icon: FileText },
+  { href: "/admin/about", label: "درباره ما", icon: FileText },
   { href: "/admin/users", label: "کاربران", icon: Users },
   { href: "/admin/settings", label: "تنظیمات", icon: Settings },
 ];

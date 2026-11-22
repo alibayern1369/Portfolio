@@ -69,6 +69,7 @@ export async function ensureGahanProject() {
 }
 
 export async function seedDatabase() {
+  await migrateTeamIdentity();
   // Always ensure default services exist for existing installs
   await seedServicesIfEmpty();
   await ensureGahanProject();
@@ -193,16 +194,44 @@ export async function seedDatabase() {
     await db.execute({ sql: `INSERT OR IGNORE INTO testimonials (name, role, company, avatar, text, sort_order) VALUES (?, ?, ?, ?, ?, ?)`, args: t });
   }
 
-  // Seed socials
-  const socials = [
-    ["گیت‌هاب", "https://github.com/alidelavar", "github", 1],
-    ["لینکدین", "https://linkedin.com/in/alidelavar", "linkedin", 2],
-    ["توییتر", "https://twitter.com/alidelavar", "twitter", 3],
-  ];
-
-  for (const s of socials) {
-    await db.execute({ sql: `INSERT OR IGNORE INTO socials (name, url, icon, sort_order) VALUES (?, ?, ?, ?)`, args: s });
-  }
-
+  await migrateTeamIdentity();
   console.log("Database seeded successfully!");
+}
+
+async function migrateTeamIdentity() {
+  await db.execute({
+    sql: `UPDATE profile SET name = ?, role = ?, tagline = ?, bio = ?, short_bio = ?, avatar = ?, email = ?, availability = ?, resume_url = ?, hero_headline = ?, hero_description = ? WHERE id = 1 AND name = ?`,
+    args: [
+      "تیم کیش لند وب", "تیم طراحی و توسعه محصولات دیجیتال",
+      "طراحی و توسعه دیجیتال برای رشد کسب‌وکارها",
+      "ما در کیش لند وب با ترکیب طراحی تجربه کاربری و توسعه فنی، وب‌سایت، نرم‌افزار اختصاصی و اپلیکیشن موبایل می‌سازیم.",
+      "تیم کیش لند وب؛ طراحی سایت، نرم‌افزار و اپلیکیشن برای کسب‌وکارها.",
+      "/favicon.svg", "", "آماده همکاری با کسب‌وکارها", "",
+      JSON.stringify(["طراحی سایت و محصول دیجیتال", "برای رشد کسب‌وکار شما"]),
+      "ما در تیم کیش لند وب وب‌سایت، رابط کاربری، نرم‌افزار و اپلیکیشن موبایل طراحی و توسعه می‌دهیم.",
+      "علی دلاور"
+    ]
+  });
+  await db.execute({
+    sql: `UPDATE site_settings SET site_name = ?, site_title = ?, site_description = ?, keywords = ?, default_theme = 'light', logo_text = ?, home_about_title = ?, home_about_description = ?, home_skills_description = ?, home_cta_description = ? WHERE id = 1 AND site_name = ?`,
+    args: [
+      "کیش لند وب", "طراحی سایت، نرم‌افزار و اپلیکیشن | کیش لند وب",
+      "تیم کیش لند وب خدمات طراحی سایت، طراحی رابط و تجربه کاربری، توسعه نرم‌افزار اختصاصی و اپلیکیشن موبایل برای کسب‌وکارها ارائه می‌دهد.",
+      JSON.stringify(["کیش لند وب", "طراحی سایت", "طراحی وب‌سایت", "توسعه نرم‌افزار", "طراحی اپلیکیشن موبایل", "طراحی رابط کاربری"]),
+      "کیش لند وب", "درباره تیم کیش لند وب", "ما با طراحی و توسعه محصولات دیجیتال به کسب‌وکارها کمک می‌کنیم تجربه‌ای بهتر برای کاربران خود بسازند.",
+      "فناوری‌ها و ابزارهایی که تیم ما برای ساخت محصولات دیجیتال استفاده می‌کند.",
+      "برای طراحی سایت، نرم‌افزار اختصاصی یا اپلیکیشن موبایل، با تیم ما در ارتباط باشید.",
+      "علی دلاور"
+    ]
+  });
+  await db.execute({
+    sql: `UPDATE about_page SET title = ?, subtitle = ?, content = ? WHERE id = 1 AND title IN (?, ?)`,
+    args: [
+      "درباره تیم کیش لند وب", "تیمی برای طراحی، توسعه و رشد محصولات دیجیتال",
+      "## ما چه می‌کنیم\n\nما در کیش لند وب، طراحی و توسعه محصولات دیجیتال را برای نیازهای واقعی کسب‌وکارها انجام می‌دهیم.\n\n## خدمات ما\n\n- طراحی سایت و فروشگاه اینترنتی\n- طراحی رابط و تجربه کاربری\n- توسعه نرم‌افزار اختصاصی و سامانه‌های مدیریتی\n- طراحی و توسعه اپلیکیشن موبایل\n\n## رویکرد ما\n\nما از شناخت نیاز شما شروع می‌کنیم و محصولی کاربردی، سریع و قابل توسعه می‌سازیم.",
+      "من و کسب‌وکارم", "درباره من"
+    ]
+  });
+  await db.execute("DELETE FROM socials WHERE url IN ('https://github.com/alidelavar', 'https://linkedin.com/in/alidelavar', 'https://twitter.com/alidelavar', 'https://dribbble.com/alidelavar')");
+  await db.execute("UPDATE site_settings SET default_theme = 'light', contact_email = '' WHERE id = 1 AND contact_email = 'hello@alidelavar.dev'");
 }

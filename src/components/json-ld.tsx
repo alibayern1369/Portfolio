@@ -20,28 +20,10 @@ export function JsonLd({ site, profile, socials }: JsonLdProps) {
       ...site.keywords,
       "klandweb",
       "کیش لند وب",
-      "علی دلاور",
       profile.name,
       site.name,
     ].filter(Boolean))
   );
-
-  const person = {
-    "@type": "Person",
-    "@id": `${site.url}/#person`,
-    name: profile.name,
-    alternateName: ["علی دلاور", "Ali Delavar"],
-    url: site.url,
-    image: absoluteUrl(site.url, profile.avatar),
-    jobTitle: profile.role,
-    description: profile.bio || site.description,
-    email: profile.email || undefined,
-    address: profile.location
-      ? { "@type": "PostalAddress", addressLocality: profile.location }
-      : undefined,
-    sameAs: sameAs.length ? sameAs : undefined,
-    knowsAbout: keywords,
-  };
 
   const organization = {
     "@type": "Organization",
@@ -50,7 +32,8 @@ export function JsonLd({ site, profile, socials }: JsonLdProps) {
     alternateName: ["klandweb", "Kland Web", site.name].filter(Boolean),
     url: site.url,
     logo: site.logo ? absoluteUrl(site.url, site.logo) : ogImage,
-    founder: { "@id": `${site.url}/#person` },
+    description: site.description,
+    knowsAbout: keywords,
     sameAs: sameAs.length ? sameAs : undefined,
   };
 
@@ -69,7 +52,7 @@ export function JsonLd({ site, profile, socials }: JsonLdProps) {
     "@type": "WebPage",
     "@id": `${site.url}/#webpage`,
     url: site.url,
-    name: "کیش لند وب | طراحی و توسعه وبسایت — klandweb",
+    name: "کیش لند وب | طراحی سایت، نرم‌افزار و اپلیکیشن",
     description: site.description,
     isPartOf: { "@id": `${site.url}/#website` },
     about: { "@id": `${site.url}/#organization` },
@@ -78,7 +61,7 @@ export function JsonLd({ site, profile, socials }: JsonLdProps) {
 
   const graph = {
     "@context": "https://schema.org",
-    "@graph": [website, organization, person, webPage],
+    "@graph": [website, organization, webPage],
   };
 
   return (

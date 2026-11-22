@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "تماس",
-  description: "برای پرسش‌های پروژه یا همکاری با من در تماس باشید.",
+  description: "برای طراحی سایت، نرم‌افزار و اپلیکیشن با تیم کیش لند وب در تماس باشید.",
 };
 
 export default async function ContactPage() {
@@ -23,7 +23,7 @@ export default async function ContactPage() {
       <Section>
         <SectionTitle
           label="تماس"
-          title="ارتباط با من"
+          title="ارتباط با ما"
           description="پروژه‌ای در ذهن دارید یا فقط می‌خواهید گپ بزنیم؟"
         />
         <ContactForm profile={profile} socials={socials} contact={contact} />

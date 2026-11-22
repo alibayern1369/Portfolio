@@ -64,9 +64,9 @@ export default function AdminSettingsPage() {
     site_url: "",
     locale: "fa-IR",
     keywords: "",
-    default_theme: "system",
+    default_theme: "light",
     logo: "",
-    logo_text: "ع.د",
+    logo_text: "کیش لند وب",
     favicon: "",
     favicon_light: "",
     favicon_dark: "",
@@ -115,9 +115,9 @@ export default function AdminSettingsPage() {
             site_url: res.settings.site_url || "",
             locale: res.settings.locale || "fa-IR",
             keywords: "",
-            default_theme: res.settings.default_theme || "system",
+            default_theme: "light",
             logo: res.settings.logo || "",
-            logo_text: res.settings.logo_text || "ع.د",
+            logo_text: res.settings.logo_text || "کیش لند وب",
             favicon: res.settings.favicon || "",
             favicon_light: res.settings.favicon_light || "",
             favicon_dark: res.settings.favicon_dark || "",
@@ -384,16 +384,7 @@ export default function AdminSettingsPage() {
             </div>
             <div className="sm:col-span-2">
               <label className="block text-sm font-medium mb-2">کلمات کلیدی (با کاما جدا کنید)</label>
-              <input value={keywords.join(", ")} onChange={e => setKeywords(e.target.value.split(",").map(k => k.trim()).filter(Boolean))} className="w-full px-4 py-3 bg-background border border-border rounded-xl" placeholder="klandweb, کیش لند وب, علی دلاور" />
-            </div>
-            <div className="sm:col-span-2">
-              <label className="block text-sm font-medium mb-2">تم پیش‌فرض</label>
-              <select value={data.default_theme} onChange={e => setData({...data, default_theme: e.target.value as "light" | "dark" | "system"})} className="w-full px-4 py-3 bg-background border border-border rounded-xl">
-                <option value="system">استفاده از تنظیمات سیستم</option>
-                <option value="light">روشن</option>
-                <option value="dark">تاریک</option>
-              </select>
-              <p className="mt-2 text-xs text-muted-foreground">این گزینه تعیین می‌کند وب‌سایت هنگام بارگذاری اولیه از کدام تم استفاده کند.</p>
+              <input value={keywords.join(", ")} onChange={e => setKeywords(e.target.value.split(",").map(k => k.trim()).filter(Boolean))} className="w-full px-4 py-3 bg-background border border-border rounded-xl" placeholder="کیش لند وب, طراحی سایت, توسعه نرم‌افزار" />
             </div>
           </div>
         </div>
@@ -449,7 +440,7 @@ export default function AdminSettingsPage() {
                 value={data.contact_email}
                 onChange={e => setData({ ...data, contact_email: e.target.value })}
                 className="w-full px-4 py-3 bg-background border border-border rounded-xl"
-                placeholder="hello@alidelavar.dev"
+                  placeholder="ایمیل تیم"
                 dir="ltr"
               />
               <p className="mt-2 text-xs text-muted-foreground">
@@ -473,7 +464,7 @@ export default function AdminSettingsPage() {
                   value={data.contact_telegram}
                   onChange={e => setData({ ...data, contact_telegram: e.target.value })}
                   className="w-full px-4 py-3 bg-background border border-border rounded-xl"
-                  placeholder="alidelavar"
+                  placeholder="شناسه تیم"
                   dir="ltr"
                 />
               </div>
@@ -584,7 +575,7 @@ export default function AdminSettingsPage() {
         <div className="rounded-2xl border border-border bg-card p-4 sm:p-6">
           <h2 className="mb-4 font-semibold">تایپوگرافی محتوا</h2>
           <p className="mb-4 text-sm text-muted-foreground">
-            این تنظیمات روی متن‌های طولانی مثل صفحه پروژه و درباره من اعمال می‌شود.
+            این تنظیمات روی متن‌های طولانی مثل صفحه پروژه و درباره ما اعمال می‌شود.
           </p>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
@@ -620,7 +611,7 @@ export default function AdminSettingsPage() {
             data-text-align={data.content_text_align}
           >
             <p>
-              این یک پیش‌نمایش از متن محتواست. با تغییر سایز و تراز، ظاهر پاراگراف‌های طولانی در صفحات پروژه و درباره من تغییر می‌کند.
+              این یک پیش‌نمایش از متن محتواست. با تغییر سایز و تراز، ظاهر پاراگراف‌های طولانی در صفحات پروژه و درباره ما تغییر می‌کند.
             </p>
           </div>
         </div>

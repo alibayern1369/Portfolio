@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
-import { ThemeToggle } from "./theme-toggle";
 import { SiteLogo } from "./site-logo";
 import { cn } from "@/lib/utils";
 
@@ -13,7 +12,7 @@ const navLinks = [
   { href: "/", label: "خانه" },
   { href: "/services", label: "خدمات" },
   { href: "/projects", label: "پروژه‌ها" },
-  { href: "/about", label: "درباره من" },
+  { href: "/about", label: "درباره ما" },
   { href: "/contact", label: "تماس" },
 ];
 
@@ -34,10 +33,6 @@ export function Navbar({ logo, logoText }: NavbarProps) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  useEffect(() => {
-    setIsMobileOpen(false);
-  }, [pathname]);
-
   if (isAdmin) return null;
 
   return (
@@ -51,11 +46,11 @@ export function Navbar({ logo, logoText }: NavbarProps) {
           isScrolled ? "glass shadow-sm" : "bg-transparent"
         )}
       >
-        <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+        <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-10">
           <SiteLogo logo={logo} logoText={logoText} />
 
           {/* Desktop Nav */}
-          <div className="hidden items-center gap-1 md:flex">
+          <div className="hidden items-center gap-1 rounded-full border border-slate-200 bg-white/80 p-1 shadow-sm md:flex">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
@@ -80,7 +75,6 @@ export function Navbar({ logo, logoText }: NavbarProps) {
           </div>
 
           <div className="flex items-center gap-3">
-            <ThemeToggle />
             <button
               onClick={() => setIsMobileOpen(!isMobileOpen)}
               className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-secondary md:hidden"
@@ -116,6 +110,7 @@ export function Navbar({ logo, logoText }: NavbarProps) {
                 >
                   <Link
                     href={link.href}
+                    onClick={() => setIsMobileOpen(false)}
                     className={cn(
                       "block rounded-xl px-4 py-3 text-sm font-medium transition-colors",
                       pathname === link.href

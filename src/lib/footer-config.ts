@@ -8,7 +8,7 @@ export const defaultFooterConfig: FooterConfig = {
   title: "طراحی و توسعه محصول دیجیتال", buttonText: "شروع همکاری", buttonHref: "/contact", credit: "",
   navigationTitle: "دسترسی سریع", navigation: [
     { href: "/", label: "خانه" }, { href: "/services", label: "خدمات" }, { href: "/projects", label: "پروژه‌ها" },
-    { href: "/about", label: "درباره من" }, { href: "/contact", label: "تماس" },
+    { href: "/about", label: "درباره ما" }, { href: "/contact", label: "تماس" },
   ],
   moreTitle: "بیشتر بدانید", more: [
     { href: "/services", label: "خدمات کیش لند وب" }, { href: "/projects", label: "نمونه‌کارها" },

@@ -27,14 +27,14 @@ export function CTA({ name, title, description, buttonText }: CTAProps) {
           {title || "بیایید با هم کار کنیم"}
         </h2>
         <p className="mx-auto mt-4 max-w-lg text-muted-foreground leading-relaxed">
-          {description || "اگر برای طراحی، توسعه وبسایت، نرم‌افزار یا اپ موبایل نیاز به همکاری دارید، خوشحال می‌شوم گفتگو کنیم."}
+          {description || "برای طراحی سایت، نرم‌افزار یا اپلیکیشن موبایل، با تیم ما گفتگو کنید."}
         </p>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
           <Link
             href="/contact"
             className="inline-flex items-center gap-2 rounded-full bg-foreground px-8 py-3.5 text-sm font-medium text-background transition-all hover:opacity-90 hover:scale-105 active:scale-95"
           >
-            {buttonText || `تماس با ${name.split(" ")[0]}`}
+            {buttonText || "تماس با ما"}
             <ArrowLeft className="h-4 w-4" />
           </Link>
         </div>
